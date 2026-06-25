@@ -7,6 +7,7 @@ const WORDPRESS_BACKEND_URL = process.env.WORDPRESS_BACKEND_URL || 'https://wp-b
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
