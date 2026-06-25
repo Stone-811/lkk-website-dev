@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LKK4 中高齡四項體能挑戰賽｜練健康 LKK Wellness</title>
+<meta name="description" content="LKK4是由練健康創辦的台灣唯一專為50歲以上設計的年度中高齡競技賽事。涵蓋六角槓硬舉、功能性行走、上肢推拉與心肺耐力四項全能挑戰，用成績證明年齡不是終點。">
+<link rel="canonical" href="https://l-kk.tw/lkk4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS（完全同步官網系統） ── */
+:root {
+  --navy:       #2A5269;
+  --navy-dk:    #1a3545;
+  --navy-lt:    #3a6a85;
+  --orange:     #FB720A;
+  --orange-dk:  #d45c04;
+  --orange-lt:  #fc8c35;
+  --cream:      #F5EFE4;
+  --cream-dk:   #e8dfd0;
+  --white:      #ffffff;
+  --ink:        #1a1a1a;
+  --ink-lt:     #444;
+  --muted:      #7a7a7a;
+  --border:     rgba(42,82,105,0.15);
+  --serif:      'Noto Serif TC', serif;
+  --sans:       'Noto Sans TC', sans-serif;
+  --max-w:      1180px;
+  --pad-x:      clamp(1.2rem, 5vw, 3rem);
+  --shadow:     0 4px 32px rgba(42,82,105,0.10);
+  --shadow-btn: 0 4px 20px rgba(251,114,10,0.35);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:clamp(0.95rem,1.5vw,1.05rem);color:var(--ink);background:var(--cream);line-height:1.7;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x)}
+.section-pad{padding:clamp(4rem,8vw,7rem) 0}
+
+/* ── NAV（主要導覽列） ── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(26,53,69,0.97);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.nav-inner{
+  display:flex;align-items:center;gap:0;
+  height:64px;max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x);
+}
+.nav-logo{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  color:var(--white);letter-spacing:0.04em;margin-right:2rem;
+}
+.nav-logo span{color:var(--orange)}
+.nav-links{display:flex;align-items:center;gap:1.6rem;list-style:none;flex:1}
+.nav-links a{color:rgba(255,255,255,0.75);font-size:0.88rem;font-weight:400;transition:color 0.2s}
+.nav-links a:hover{color:var(--white)}
+.nav-sep{width:1px;height:20px;background:rgba(255,255,255,0.15);margin:0 0.8rem;flex-shrink:0}
+.nav-b2b-group{display:flex;align-items:center;gap:0.8rem}
+.nav-b2b{
+  color:rgba(255,255,255,0.45)!important;font-size:0.8rem!important;
+  border:1px solid rgba(255,255,255,0.18);padding:5px 12px;border-radius:40px;
+  transition:color 0.2s,border-color 0.2s;white-space:nowrap;
+}
+.nav-b2b:hover{color:rgba(255,255,255,0.8)!important;border-color:rgba(255,255,255,0.4)!important}
+.nav-lkk4{color:var(--orange)!important;font-size:0.88rem!important;font-weight:500!important;white-space:nowrap}
+.nav-cta{
+  background:var(--orange);color:var(--white)!important;
+  padding:8px 20px;border-radius:40px;
+  font-weight:500!important;font-size:0.88rem!important;
+  box-shadow:var(--shadow-btn);transition:background 0.2s,transform 0.15s;
+  white-space:nowrap;margin-left:0.8rem;
+}
+.nav-cta:hover{background:var(--orange-lt)!important;transform:translateY(-1px)}
+
+/* ── LKK4 HERO ── */
+#lkk4-hero{
+  background:#0e2230;padding:clamp(6rem,12vw,9rem) 0 clamp(4rem,8vw,6rem);
+  position:relative;overflow:hidden;text-align:center;
+}
+#lkk4-hero::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 40%,rgba(251,114,10,0.15) 0%,transparent 60%);
+  pointer-events:none;
+}
+.lkk4-hero-logo{
+  font-family:var(--serif);font-size:clamp(4rem,10vw,8rem);
+  font-weight:900;line-height:1;color:var(--white);letter-spacing:-0.03em;margin-bottom:0.5rem;
+}
+.lkk4-hero-logo span{color:var(--orange)}
+.lkk4-hero-tagline{
+  font-size:clamp(1.2rem,3vw,1.8rem);color:rgba(255,255,255,0.7);
+  font-weight:300;letter-spacing:0.1em;margin-bottom:1.5rem;
+}
+.lkk4-status-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(251,114,10,0.15);border:1px solid rgba(251,114,10,0.3);
+  border-radius:40px;padding:6px 18px;font-size:0.9rem;color:var(--orange);font-weight:500;margin-bottom:2rem;
+}
+.lkk4-pulse-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--orange);
+  animation:pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.85)}}
+.lkk4-hero-brief{
+  color:rgba(255,255,255,0.6);font-size:1.05rem;line-height:1.8;
+  max-width:640px;margin:0 auto 2.5rem;font-weight:300;
+}
+
+/* ── SECTION CORE STYLES ── */
+.sec-kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:0.8rem;font-weight:700;color:var(--orange);
+  letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.6rem;
+}
+.sec-kicker::before{content:'';display:block;width:20px;height:2px;background:var(--orange)}
+.sec-title{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;color:var(--navy-dk);margin-bottom:1rem}
+.sec-title em{font-style:normal;color:var(--orange)}
+.sec-lead{color:var(--ink-lt);font-size:1.05rem;line-height:1.8;max-width:680px;margin-bottom:3rem}
+
+/* ── BRAND STORY SECTION ── */
+#lkk4-story{background:var(--white)}
+.story-layout{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
+.story-text p{color:var(--ink-lt);margin-bottom:1.2rem;line-height:1.8;font-size:0.98rem}
+.story-text p strong{color:var(--navy-dk)}
+.story-highlights{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.sh-card{background:var(--cream);border-radius:16px;padding:1.6rem;border:1px solid var(--border)}
+.sh-num{font-family:var(--serif);font-size:2.5rem;font-weight:900;color:var(--orange);line-height:1;margin-bottom:0.4rem}
+.sh-title{font-size:1rem;font-weight:700;color:var(--navy-dk);margin-bottom:4px}
+.sh-desc{font-size:0.85rem;color:var(--muted);line-height:1.5}
+
+/* ── DISCIPLINE SECTION (四項賽制) ── */
+#lkk4-disciplines{background:var(--cream)}
+.disc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem}
+.disc-card{
+  background:var(--white);border-radius:20px;padding:2rem;
+  border:1px solid var(--border);box-shadow:var(--shadow);
+  transition:transform 0.2s;
+}
+.disc-card:hover{transform:translateY(-3px)}
+.disc-icon{font-size:2.2rem;margin-bottom:0.8rem}
+.disc-name{font-family:var(--serif);font-size:1.25rem;font-weight:700;color:var(--navy-dk);margin-bottom:4px}
+.disc-meta{font-size:0.82rem;color:var(--orange);font-weight:600;margin-bottom:0.8rem;letter-spacing:0.04em}
+.disc-desc{font-size:0.9rem;color:var(--ink-lt);line-height:1.6}
+.disc-note{
+  text-align:center;color:var(--muted);font-size:0.82rem;
+  margin-top:2.5rem;background:rgba(0,0,0,0.03);padding:8px;border-radius:8px;
+}
+
+/* ── HISTORY & MEDIA SECTION ── */
+#lkk4-history{background:var(--white)}
+.history-timeline{display:flex;flex-direction:column;gap:1.5rem;max-width:800px;margin:0 auto 4rem}
+.history-node{
+  display:grid;grid-template-columns:100px 1fr;gap:1.5rem;
+  background:var(--cream);border-radius:14px;padding:1.4rem;border:1px solid var(--border);
+}
+.hn-year{font-family:var(--serif);font-size:1.4rem;font-weight:900;color:var(--navy)}
+.hn-title{font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:4px}
+.hn-desc{font-size:0.9rem;color:var(--ink-lt);line-height:1.6}
+
+.media-strip{background:var(--cream);border-radius:16px;padding:2rem;border:1px solid var(--border)}
+.ms-label{font-size:0.82rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1rem;text-align:center}
+.ms-logos{display:flex;justify-content:center;align-items:center;gap:2.5rem;flex-wrap:wrap}
+.ms-logo{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--navy-lt);opacity:0.75}
+
+/* ── COMMERCIAL CTA SECTION（常駐商務入口） ── */
+#lkk4-commercial{
+  background:linear-gradient(135deg,#1a3545 0%,#0e2230 100%);
+  color:var(--white);padding:clamp(4rem,8vw,6rem) 0;
+}
+.comm-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
+.comm-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:2.5rem}
+.comm-title{font-family:var(--serif);font-size:1.5rem;font-weight:900;color:var(--white);margin-bottom:0.6rem}
+.comm-title span{color:var(--orange)}
+.comm-desc{color:rgba(255,255,255,0.65);font-size:0.95rem;line-height:1.7;margin-bottom:1.8rem}
+.btn-comm-orange{
+  display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:var(--white);
+  font-weight:700;font-size:0.95rem;padding:12px 28px;border-radius:50px;box-shadow:var(--shadow-btn);transition:all 0.2s;border:none;cursor:pointer;
+}
+.btn-comm-orange:hover{background:var(--orange-lt);transform:translateY(-1px)}
+.btn-comm-white{
+  display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--white);
+  font-weight:600;font-size:0.95rem;padding:12px 26px;border-radius:50px;border:1px solid rgba(255,255,255,0.25);transition:all 0.2s;cursor:pointer;
+}
+.btn-comm-white:hover{border-color:var(--white);background:rgba(255,255,255,0.05)}
+
+/* ── FOOTER（高級新版完整四欄位頁尾） ── */
+footer{background:var(--navy-dk);color:rgba(255,255,255,0.55);padding:4rem 0 2rem;border-top:1px solid rgba(255,255,255,0.06)}
+.footer-inner{max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x);display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:2.5rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+.footer-brand{font-family:var(--serif);font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:0.8rem}
+.footer-brand span{color:var(--orange)}
+.footer-copy{font-size:0.85rem;line-height:1.7;margin-bottom:1rem}
+.footer-col-title{font-size:0.88rem;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin-bottom:1.2rem}
+.footer-col-links{list-style:none;display:flex;flex-direction:column;gap:0.7rem}
+.footer-col-links a{font-size:0.92rem;transition:color 0.2s}
+.footer-col-links a:hover{color:var(--white)}
+.footer-b2b-link{display:inline-flex;align-items:center;gap:6px}
+.footer-b2b-link::after{content:'→';font-size:0.8rem;opacity:0.5;transition:opacity 0.2s,transform 0.2s}
+.footer-b2b-link:hover::after{opacity:1;transform:translateX(3px)}
+.footer-bottom{max-width:var(--max-w);margin:0 auto;padding:1.5rem var(--pad-x) 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-copy-bottom{font-size:0.88rem;color:rgba(255,255,255,0.55)}
+.footer-socials{display:flex;gap:10px}
+.social-btn{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:rgba(255,255,255,0.5);transition:border-color 0.2s,color 0.2s}
+.social-btn:hover{border-color:var(--orange);color:var(--orange)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .nav-links,.nav-sep,.nav-b2b-group{display:none}
+  .story-layout,.comm-grid{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .footer-brand-col{grid-column:1/-1}
+}
+@media(max-width:560px){
+  .footer-inner{grid-template-columns:1fr}
+  .story-highlights{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav" aria-label="主要導覽">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">練<span>健康</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html#services">服務內容</a></li>
+      <li><a href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/">學員案例</a></li>
+      <li><a href="https://l-kk.tw/team-intro/%e5%8f%b0%e5%8c%97%e5%8d%97%e4%ba%ac%e5%ba%97/">教練團隊</a></li>
+      <li><a href="locations.html">門店地點</a></li>
+      <li><a href="lkk4.html" class="nav-lkk4">🏆 LKK4</a></li>
+      <li><a href="index.html#faq">常見問題</a></li>
+    </ul>
+    <div class="nav-sep" aria-hidden="true"></div>
+    <div class="nav-b2b-group">
+      <a href="https://l-kk.tw/%e8%aa%b2%e7%a8%8b%e5%a0%b1%e5%90%8d/" class="nav-b2b">練健康學院</a><a href="franchise.html" class="nav-b2b">加盟說明</a><a href="en.html" class="nav-b2b">EN</a>
+    </div>
+    <a href="booking.html" class="nav-cta">預約體驗</a>
+  </div>
+</nav>
+
+<section id="lkk4-hero" aria-label="LKK4 賽事主視覺">
+  <div class="container">
+    <div class="lkk4-status-pill"><span class="lkk4-pulse-dot"></span>第六屆賽事・2026 年 12 月・籌備中</div>
+    <h1 class="lkk4-hero-logo">LKK<span>4</span></h1>
+    <div class="lkk4-hero-tagline">中高齡四項體能挑戰賽</div>
+    <p class="lkk4-hero-brief">台灣唯一專為 50 歲以上設計的年度競技賽事。擺脫被動老化，我們在安全無虞的運動醫學基礎上，號召全台銀髮強者用成績證明：年齡不是終點。</p>
+  </div>
+</section>
+
+<section id="lkk4-story" class="section-pad" aria-label="品牌故事">
+  <div class="container">
+    <div class="story-layout">
+      <div>
+        <div class="sec-kicker">賽事起源</div>
+        <h2 class="sec-title">從聖誕老人硬舉大賽<br>到<em>跨領域的全能挑戰</em></h2>
+        <div class="story-text">
+          <p><strong>LKK4</strong> 誕生於 2019 年，最初由「練健康」創辦。團隊發現許多中高齡學員在經過科學化肌力訓練後，展現出驚人的身體動作實力，卻苦於全台灣沒有任何一個專為他們設計的體能賽事舞台。</p>
+          <p>第一屆賽事以極具趣味性的「聖誕老人老人六角槓硬舉大賽」出發，成功引發大眾及媒體熱烈迴響。隨後數年間，隨著物理治療與呼吸治療背景的教練團隊深度介入，賽事規模逐年擴大。</p>
+          <p>演進至今，LKK4 已全面進化為涵蓋<strong>肌力、爆發力、心肺與靈活度</strong>的跨領域四項全能競技挑戰。這不只是一場賽事，更是台灣中高齡群體向被動老化宣戰的最高殿堂。</p>
+        </div>
+      </div>
+      <div class="story-highlights">
+        <div class="sh-card">
+          <div class="sh-num">50+</div>
+          <div class="sh-title">參賽年齡資格</div>
+          <div class="sh-desc">專為 50 歲以上健康長輩與特殊族群量身規劃的安全賽制。</div>
+        </div>
+        <div class="sh-card">
+          <div class="sh-num">5 屆</div>
+          <div class="sh-title">賽事歷史累積</div>
+          <div class="sh-desc">已成功舉辦五屆年度盛事，累計數百位中高齡選手參賽。</div>
+        </div>
+        <div class="sh-card">
+          <div class="sh-num">100%</div>
+          <div class="sh-title">醫療背景主導</div>
+          <div class="sh-desc">全程由專業物理治療師與合格教練進行安全監督與動作審查。</div>
+        </div>
+        <div class="sh-card">
+          <div class="sh-num">4 項</div>
+          <div class="sh-title">全能核心指標</div>
+          <div class="sh-desc">整合日常生活中最核心的動作功能，兼顧肌力與靈活性。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="lkk4-disciplines" class="section-pad" aria-label="賽制介紹">
+  <div class="container">
+    <div class="sec-kicker">2026 全新賽制</div>
+    <h2 class="sec-title">LKK4 核心<em>四項體能競技項目</em></h2>
+    <p class="sec-lead">賽事以全方位身體動作功能為核心目標。每位選手皆須依序完成以下四大挑戰項目，全面檢測動作整合能力：</p>
+    
+    <div class="disc-grid">
+      <div class="disc-card">
+        <div class="disc-icon">🏋️</div>
+        <h3 class="disc-name">六角槓硬舉</h3>
+        <div class="disc-meta">下肢肌力・爆發力</div>
+        <p class="disc-desc">LKK4 的最招牌經典項目。透過相較於傳統槓鈴更符合人體工學的六角槓，檢測中高齡選手的純力量外釋與下肢爆發綜合素質。</p>
+      </div>
+      <div class="disc-card">
+        <div class="disc-icon">🚶</div>
+        <h3 class="disc-name">功能性行走</h3>
+        <div class="disc-meta">步態穩定・平衡控制</div>
+        <p class="disc-desc">模擬日常生活中最常面臨的提重物行走情境，考驗選手在負重狀態下的核心抗旋轉能力、步態動態穩定度與平衡感。</p>
+      </div>
+      <div class="disc-card">
+        <div class="disc-icon">💪</div>
+        <h3 class="disc-name">上肢推拉力</h3>
+        <div class="disc-meta">肩部功能・核心整合</div>
+        <p class="disc-desc">全面檢測上半身非對稱結構下的推與拉力表現。不僅考驗肩關節的健康度，更強調力量從核心貫穿至上肢的連動控制。</p>
+      </div>
+      <div class="disc-card">
+        <div class="disc-icon">🫁</div>
+        <h3 class="disc-name">心肺耐力</h3>
+        <div class="disc-meta">有氧能力・恢復速度</div>
+        <p class="disc-desc">針對高強度間歇運動後的能量系統運作設計。考驗選手的有氧基底能力，以及身體在短暫休息後的機能高效率恢復速度。</p>
+      </div>
+    </div>
+    <div class="disc-note">＊註：以上四項賽制為 2026 年最新修訂標準，詳細官方競賽計分規則將於正式賽前 3 個月完整公告。</div>
+  </div>
+</section>
+
+<section id="lkk4-history" class="section-pad" aria-label="歷史回顧與媒體背書">
+  <div class="container">
+    <div class="sec-kicker">榮譽里程碑</div>
+    <h2 class="sec-title">歷屆足跡與<em>大眾媒體肯定</em></h2>
+    <p class="sec-lead">從地區型的趣味運動會，蛻變為各界關注的年度賽事，以下是我們的成長軌跡：</p>
+    
+    <div class="history-timeline">
+      <div class="history-node">
+        <div class="hn-year">2026</div>
+        <div>
+          <div class="hn-title">第六屆 LKK4 賽事籌備中</div>
+          <div class="hn-desc">全面引進國際化評分標準與 hreflang 多語言佈局，配合海外市場（如新加坡）發展計劃，打造全亞太區指標性中高齡挑戰賽。</div>
+        </div>
+      </div>
+      <div class="history-node">
+        <div class="hn-year">2025</div>
+        <div>
+          <div class="hn-title">第五屆 聖誕老人老人六角槓硬舉大賽</div>
+          <div class="hn-desc">參賽總人數創歷史新高，成功引爆主流社群話題。運動醫學與物理治療的整合規範獲得高度好評。</div>
+        </div>
+      </div>
+      <div class="history-node">
+        <div class="hn-year">2022-24</div>
+        <div>
+          <div class="hn-title">第二屆至第四屆 賽制功能化轉型</div>
+          <div class="hn-desc">賽事正式更名為 LKK4，擺脫單純的重量競技，全面納入心肺與步態穩定度等全能指標。</div>
+        </div>
+      </div>
+      <div class="history-node">
+        <div class="hn-year">2019</div>
+        <div>
+          <div class="hn-title">第一屆 聖誕老人硬舉邀請賽</div>
+          <div class="hn-desc">由練健康團隊內部發起，數十位阿公阿嬤首度披上聖誕戰袍參賽，顛覆社會大眾對高齡重訓危險的偏見。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="media-strip">
+      <div class="ms-label">曾受各大主流媒體及知識節目專題報導</div>
+      <div class="ms-logos">
+        <span class="ms-logo">BBC 國際新聞</span>
+        <span class="ms-logo">志祺七七 關鍵評論</span>
+        <span class="ms-logo">大愛新聞專題</span>
+        <span class="ms-logo">吳淡如人生實用商學院</span>
+        <span class="ms-logo">動思學院 MoveThink</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="lkk4-commercial" aria-label="商務合作與招商專區">
+  <div class="container">
+    <div class="sec-kicker" style="color:var(--orange-lt)">商業與公關洽詢</div>
+    <h2 class="sec-title" style="color:var(--white)">攜手 LKK4，共同開創<em>銀髮健康新經濟</em></h2>
+    <p class="sec-lead" style="color:rgba(255,255,255,0.6)">LKK4 是全台規模最大的中高齡全能體能挑戰賽，我們誠摯歡迎企業贊助、加盟通路、技術研究或媒體採訪，共同發揮品牌影響力：</p>
+    
+    <div class="comm-grid">
+      <div class="comm-box">
+        <h3 class="comm-title">企業贊助與<span>品牌合作</span></h3>
+        <p class="comm-desc">我們為重視大健康、高齡福祉、運動醫療與永續社會責任（ESG）的企業夥伴提供多元的賽事贊助方案，包含現場常駐 logo 牆露出、媒體聯合行銷等機會。</p>
+        <a href="cooperation.html" class="btn-comm-orange">洽談贊助與合作 →</a>
+      </div>
+      <div class="comm-box">
+        <h3 class="comm-title">媒體公關與<span>新聞專區</span></h3>
+        <p class="comm-desc">專為記者、節目製作人與研究機構設立。提供歷屆賽事影像資產、選手精彩故事、專業物理治療數據報告以及專屬媒體採訪席位登記。</p>
+        <a href="mailto:lkk@l-kk.tw" class="btn-comm-white">索取 Press Kit / 採訪登記</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer aria-label="頁尾資訊">
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <div class="footer-brand">練<span>健康</span> LKK Wellness</div>
+      <p class="footer-copy">健康是練出來的<br>© 2026 lkkwellness. All Rights Reserved.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">認識練健康</div>
+      <ul class="footer-col-links">
+        <li><a href="https://l-kk.tw/about/">關於練健康</a></li>
+        <li><a href="https://l-kk.tw/team-intro/%e5%8f%b0%e5%8c%97%e5%8d%97%e4%ba%ac%e5%ba%97/">教練介紹</a></li>
+        <li><a href="lkk4.html">LKK4 賽事品牌</a></li>
+        <li><a href="https://l-kk.tw/news/">最新消息</a></li>
+        <li><a href="https://l-kk.tw/about-us/">聯絡我們</a></li>
+        <li><a href="https://l-kk.tw/privacypolicy/">隱私權政策</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">知識・案例</div>
+      <ul class="footer-col-links">
+        <li><a href="https://l-kk.tw/category/knowledge/">運動知識</a></li>
+        <li><a href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/">學員案例</a></li>
+        <li><a href="https://l-kk.tw/category/中高齡訓練/">中高齡訓練</a></li>
+        <li><a href="https://l-kk.tw/category/特殊族群/">特殊族群訓練</a></li>
+        <li><a href="booking.html">預約體驗課</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">企業・專業合作</div>
+      <ul class="footer-col-links">
+        <li><a href="https://l-kk.tw/%e8%aa%b2%e7%a8%8b%e5%a0%b1%e5%90%8d/" class="footer-b2b-link">練健康學院</a></li>
+        <li><a href="franchise.html" class="footer-b2b-link">加盟・展店洽詢</a></li>
+        <li><a href="cooperation.html" class="footer-b2b-link">講座 / 採訪 / 合作洽詢</a></li>
+        <li><a href="lkk4.html" class="footer-b2b-link">LKK4 賽事贊助</a></li>
+        <li><a href="https://www.104.com.tw/company/1a2x6blv1x" class="footer-b2b-link">人才招募</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy-bottom">lkk@l-kk.tw</span>
+    <a href="en.html" style="font-size:0.78rem;color:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.3);padding:5px 16px;border-radius:20px;display:inline-block;text-align:center;">EN · English</a>
+    <div class="footer-socials">
+      <a href="https://www.facebook.com/LKKWellnessCenter/" class="social-btn" aria-label="Facebook">fb</a>
+      <a href="https://www.instagram.com/lkk_wellness/" class="social-btn" aria-label="Instagram">ig</a>
+      <a href="https://www.youtube.com/c/LKKWellness" class="social-btn" aria-label="YouTube">yt</a>
+      <a href="https://line.me/R/ti/p/%40201fzruh" class="social-btn" aria-label="LINE">L</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

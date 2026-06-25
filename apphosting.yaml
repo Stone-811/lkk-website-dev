@@ -1,0 +1,29 @@
+# Firebase App Hosting configuration
+# https://firebase.google.com/docs/app-hosting
+
+runConfig:
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: NEXT_PUBLIC_SITE_URL
+    value: https://l-kk.tw
+  - variable: WORDPRESS_BACKEND_URL
+    secret: WORDPRESS_BACKEND_URL
+  - variable: FIREBASE_PROJECT_ID
+    secret: FIREBASE_PROJECT_ID
+  - variable: FIREBASE_CLIENT_EMAIL
+    secret: FIREBASE_CLIENT_EMAIL
+  - variable: FIREBASE_PRIVATE_KEY
+    secret: FIREBASE_PRIVATE_KEY
+  - variable: SMTP_HOST
+    secret: SMTP_HOST
+  - variable: SMTP_USER
+    secret: SMTP_USER
+  - variable: SMTP_PASS
+    secret: SMTP_PASS
+  - variable: RECAPTCHA_SECRET
+    secret: RECAPTCHA_SECRET

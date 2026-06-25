@@ -1,0 +1,10 @@
+export { default as HeroSection } from './HeroSection';
+export { default as ServicesSection } from './ServicesSection';
+export { default as CasesSection } from './CasesSection';
+export { default as FlowSection } from './FlowSection';
+export { default as LKK4Section } from './LKK4Section';
+export { default as TeamSection } from './TeamSection';
+export { default as AcademyTeaser } from './AcademyTeaser';
+export { default as LocationsSection } from './LocationsSection';
+export { default as FAQSection } from './FAQSection';
+export { default as CTABanner } from './CTABanner';

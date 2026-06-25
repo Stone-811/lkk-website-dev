@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>練健康嚴選商城 ｜ 一頁式健康生活提案</title>
+<meta name="description" content="練健康官方商城示意網頁。由專業物理治療師與教練團隊嚴選，涵蓋銀髮族營養調理、居家安全輔具、自主健身器材，全面支援您的活躍老化生活。">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --navy:#2A5269;--navy-dk:#1a3545;--navy-xdk:#0f2130;
+  --orange:#FB720A;--og-lt:#fc8c35;
+  --cream:#F5EFE4;--white:#ffffff;
+  --ink:#1a1a1a;--ink-lt:#444;--muted:#6a8090;
+  --border:rgba(42,82,105,0.13);
+  --serif:'Noto Serif TC', serif;
+  --sans:'Noto Sans TC', system-ui, sans-serif;
+  --max-w:1200px;--px:clamp(1.4rem,5vw,3rem);
+  --sh:0 4px 32px rgba(42,82,105,0.08);
+  --sh-btn:0 4px 20px rgba(251,114,10,0.32);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:clamp(0.93rem,1.35vw,1rem);color:var(--ink);background:var(--white);line-height:1.75;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--max-w);margin:0 auto;padding:0 var(--px)}
+
+/* ── NAV ── */
+#nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(26,53,69,0.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.07)}
+.nav-i{display:flex;align-items:center;height:60px;max-width:var(--max-w);margin:0 auto;padding:0 var(--px)}
+.nav-logo{font-family:var(--serif);font-size:1.15rem;color:var(--white);font-weight:900;}
+.nav-logo span{color:var(--orange)}
+.nav-sp{flex:1}
+.nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+.nav-links a{font-size:0.85rem;color:rgba(255,255,255,0.6);transition:color .2s;font-weight:500}
+.nav-links a:hover{color:var(--white)}
+
+/* ── HERO ── */
+#hero{background:var(--navy-dk);padding:clamp(6rem,12vw,9rem) 0 4rem;position:relative;overflow:hidden;text-align:center}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(251,114,10,.08) 0%,transparent 60%)}
+.hero-inner{position:relative;z-index:1}
+.eyebrow{font-size:0.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);display:inline-flex;align-items:center;gap:10px;margin-bottom:1rem}
+.eyebrow::before,.eyebrow::after{content:'';flex:0 0 15px;height:1px;background:var(--orange)}
+h1{font-family:var(--serif);font-size:clamp(2rem,5vw,3rem);font-weight:900;color:var(--white);line-height:1.3;margin-bottom:1rem}
+h1 em{font-style:normal;color:var(--orange)}
+.hero-sub{font-size:1rem;font-weight:300;color:rgba(255,255,255,.65);max-width:600px;margin:0 auto}
+
+/* ── CATEGORY BAR (STICKY) ── */
+.cat-bar-holder{position:sticky;top:60px;z-index:90;background:var(--cream);border-bottom:1px solid var(--border)}
+.cat-bar{display:flex;justify-content:center;gap:10px;padding:0.8rem var(--px);max-width:var(--max-w);margin:0 auto}
+.cat-btn{padding:0.5rem 1.5rem;background:var(--white);border:1px solid var(--border);border-radius:30px;font-size:0.88rem;font-weight:500;color:var(--navy-dk);cursor:pointer;transition:.2s}
+.cat-btn:hover{border-color:var(--orange);color:var(--orange)}
+
+/* ── STORE SECTION ── */
+.store-sec{padding:4rem 0 2rem;border-bottom:1px solid var(--border)}
+.store-sec:last-of-type{border-bottom:none}
+.sec-head{margin-bottom:2.5rem;text-align:left}
+.sec-title{font-family:var(--serif);font-size:1.8rem;font-weight:900;color:var(--navy-dk);display:flex;align-items:center;gap:10px}
+.sec-title span{font-size:1.5rem}
+.sec-desc{font-size:0.9rem;color:var(--muted);margin-top:4px;font-weight:300}
+
+/* PRODUCT GRID ── */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem}
+.prod-card{background:var(--white);border:1px solid var(--border);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.25s, box-shadow 0.25s}
+.prod-card:hover{transform:translateY(-4px);box-shadow:var(--sh)}
+
+/* Styled Image Placeholders */
+.prod-img-box{height:180px;background:linear-gradient(135deg, #fdfbf7 0%, #f5efe4 100%);display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid rgba(42,82,105,0.06)}
+.prod-icon{font-size:3.5rem;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.06));transition:transform 0.3s}
+.prod-card:hover .prod-icon{transform:scale(1.08)}
+.prod-tag{position:absolute;top:0.8rem;left:0.8rem;font-size:0.65rem;font-weight:700;background:var(--navy-dk);color:var(--white);padding:2px 8px;border-radius:2px;letter-spacing:0.05em}
+.tag-hot{background:var(--orange)}
+
+/* Product Body */
+.prod-bd{padding:1.2rem;flex:1;display:flex;flex-direction:column;gap:6px}
+.prod-name{font-size:0.95rem;font-weight:700;color:var(--navy-dk);line-height:1.4}
+.prod-desc{font-size:0.82rem;color:var(--muted);line-height:1.5;font-weight:300;flex:1}
+.prod-ft{padding:0 1.2rem 1.2rem;display:flex;flex-direction:column;gap:10px}
+.prod-price{font-family:var(--serif);font-size:1.15rem;font-weight:900;color:var(--orange)}
+.prod-price small{font-size:0.75rem;color:var(--muted);font-weight:400;margin-right:2px}
+
+.btn-view{width:100%;padding:8px;background:var(--white);color:var(--navy);border:1px solid var(--navy);font-family:var(--sans);font-size:0.85rem;font-weight:500;border-radius:3px;cursor:pointer;transition:.2s;text-align:center}
+.btn-view:hover{background:var(--navy);color:var(--white)}
+
+/* ── MODAL DIALOG ── */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,33,48,0.6);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--white);padding:2.5rem 2rem;border-radius:4px;max-width:420px;width:100%;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.2);position:relative;animation:modalIn 0.3s ease forwards}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modal-ico{font-size:2.5rem;margin-bottom:1rem}
+.modal-t{font-family:var(--serif);font-size:1.25rem;font-weight:900;color:var(--navy-dk);margin-bottom:0.6rem}
+.modal-d{font-size:0.88rem;color:var(--ink-lt);line-height:1.6;margin-bottom:1.5rem}
+.btn-close{padding:8px 24px;background:var(--orange);color:var(--white);border:none;border-radius:3px;font-size:0.88rem;font-weight:500;cursor:pointer;box-shadow:var(--sh-btn)}
+.btn-close:hover{background:var(--og-lt)}
+
+/* ── FOOTER ── */
+footer{background:var(--navy-xdk);color:rgba(255,255,255,.4);padding:3rem var(--px);text-align:center;border-top:1px solid rgba(255,255,255,0.05)}
+.ft-brand{font-family:var(--serif);font-size:1.1rem;color:rgba(255,255,255,.65);margin-bottom:6px;font-weight:700}
+.ft-brand span{color:var(--orange)}
+.ft-copy{font-size:.75rem;line-height:1.6}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fu{opacity:0}.fu.on{animation:fadeUp .6s cubic-bezier(.25,.46,.45,.94) forwards}
+
+@media(max-width:760px){
+  .cat-bar{overflow-x:auto;justify-content:flex-start;white-space:nowrap}
+  .store-sec{padding:3rem 0 1rem}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-i">
+    <a href="/" class="nav-logo">練<span>健康嚴選商城</span></a>
+    <div class="nav-sp"></div>
+    <ul class="nav-links">
+      <li><a href="/">回首頁</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-inner wrap">
+    <div class="eyebrow">LKK Wellness Select</div>
+    <h1>支撐你一輩子的<em>自主健康生活</em></h1>
+    <p class="hero-sub">物理治療師與專業教練團隊嚴選。從精準調理、居家防跌到自主增肌，我們幫你挑選最安全、最科學化的銀髮健康必備品。</p>
+  </div>
+</section>
+
+<div class="cat-bar-holder">
+  <div class="cat-bar">
+    <button class="cat-btn" onclick="scrollToSec('#nutrition')">🥛 銀髮族營養調理</button>
+    <button class="cat-btn" onclick="scrollToSec('#safety')">🛁 居家安全輔具</button>
+    <button class="cat-btn" onclick="scrollToSec('#fitness')">🏋️ 專業健身器材</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <section id="nutrition" class="store-sec">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>🥛</span> 銀髮族營養調理</h2>
+      <p class="sec-desc">專為40歲後與高齡體質調配，著重高吸收率、肌肉維持與關節關鍵防護。</p>
+    </div>
+    
+    <div class="prod-grid">
+      <article class="prod-card fu">
+        <div class="prod-img-box"><span class="prod-tag tag-hot">熱銷推薦</span><div class="prod-icon">🥛</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">高純度乳清蛋白粉 (銀髮高吸收配方)</h3>
+          <p class="prod-desc">富含BCAA，極佳消化率，有效針對高齡肌肉流失進行日常營養阻截。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>1,280</div><button class="btn-view" onclick="openModal('高純度乳清蛋白粉')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🦴</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">活性海藻鈣＋維生素 D3 膠囊</h3>
+          <p class="prod-desc">高鈣足量添加，協同D3促進鈣吸收，強健中高齡骨質密度的關鍵基石。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>780</div><button class="btn-view" onclick="openModal('活性海藻鈣膠囊')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><span class="prod-tag">教練推薦</span><div class="prod-icon">🐟</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">專利深海魚油高濃縮軟膠囊</h3>
+          <p class="prod-desc">rTG型態高純度EPA/DHA，維持思緒敏捷與新陳代謝流暢循環。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>950</div><button class="btn-view" onclick="openModal('專利深海魚油')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🦠</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">高機能活性益生菌 (順暢防護型)</h3>
+          <p class="prod-desc">專利耐酸菌株，維護高齡腸道菌相平衡，全面提升自主消化防護力。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>880</div><button class="btn-view" onclick="openModal('高機能活性益生菌')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">💧</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">非變性二型膠原蛋白 (UC-II) 關鍵飲</h3>
+          <p class="prod-desc">每日一瓶，修復關鍵活動磨損，找回蹲低爬高的關節靈活自在度。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>1,680</div><button class="btn-view" onclick="openModal('UC-II 關鍵飲')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">💊</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">全效高齡綜合維他命加鐵鋅</h3>
+          <p class="prod-desc">依據銀髮微量元素需求調配，一粒補足日常因胃口不佳流失的基礎營養。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>650</div><button class="btn-view" onclick="openModal('全效高齡綜合維他命')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🥬</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">天然多酚葉黃素＋微藻 DHA 軟膠囊</h3>
+          <p class="prod-desc">全方位眼底照護配方，舒緩老化乾澀，看清生活中的每一步安全。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>890</div><button class="btn-view" onclick="openModal('天然多酚葉黃素')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🍵</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">高纖低糖銀髮專用五穀即食燕麥餐包</h3>
+          <p class="prod-desc">豐富膳食纖維加植物蛋白，高飽足、不升糖，早餐點心的優質首選。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>420</div><button class="btn-view" onclick="openModal('五穀即食燕麥餐包')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🔥</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">還原型輔酶 Q10 活力植物膠囊</h3>
+          <p class="prod-desc">直達細胞核心的發電廠，改善銀髮族日常體力疲憊與精神不濟。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>1,200</div><button class="btn-view" onclick="openModal('還原型輔酶 Q10')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🌱</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">高純度螯合鋅麥芽精華膠囊</h3>
+          <p class="prod-desc">高吸收螯合結構，增進皮膚組織與黏膜健康，全方位修復肌體活力。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>580</div><button class="btn-view" onclick="openModal('螯合鋅麥芽精華')">了解詳情</button></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="safety" class="store-sec">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>🛁</span> 居家安全輔具</h2>
+      <p class="sec-desc">守護長輩在家的最後防線，著重浴室、臥室與進出動線的防跌防護。</p>
+    </div>
+    
+    <div class="prod-grid">
+      <article class="prod-card fu">
+        <div class="prod-img-box"><span class="prod-tag tag-hot">核心防跌</span><div class="prod-icon">🛠️</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">強磁壓紋浴室防滑不鏽鋼扶手</h3>
+          <p class="prod-desc">物理治療師極力推薦，針對潮濕浴室起立坐下提供150kg極致穩固支撐。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>850</div><button class="btn-view" onclick="openModal('浴室防滑不鏽鋼扶手')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🪑</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">抗菌鋁合金高低可調防滑洗澡椅</h3>
+          <p class="prod-desc">高剛性防鏽支架，多檔高度微調，大幅度減少長輩洗澡時站立滑倒風險。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>1,480</div><button class="btn-view" onclick="openModal('鋁合金防滑洗澡椅')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><span class="prod-tag">外出首選</span><div class="prod-icon">🦯</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">醫療級四腳避震氣墊防滑健走杖</h3>
+          <p class="prod-desc">仿人體關節多視角抓地，分散雙膝壓力，讓每一次外出散步都穩健安心。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>980</div><button class="btn-view" onclick="openModal('四腳避震健走杖')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">♿</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">超輕量可折疊雙煞車鋁合金輪椅</h3>
+          <p class="prod-desc">全車重量僅9.8kg，一秒折疊收納，出院、旅遊銜接雙腿動作弱化的最佳幫手。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>5,500</div><button class="btn-view" onclick="openModal('鋁合金折疊輪椅')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🪜</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">門檻防滑無障礙加高斜坡墊 (全橡膠)</h3>
+          <p class="prod-desc">徹底解決掃地機器人與輪椅門檻阻礙，更是避免老人家小碎步絆倒的隱形功臣。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>680</div><button class="btn-view" onclick="openModal('無障礙斜坡墊')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🛏️</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">安全免打孔床邊起身安全護欄</h3>
+          <p class="prod-desc">利用床墊重量穩固壓實，輔助長輩晨間醒來借力撐起，並防止夜間翻滾跌落。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>1,250</div><button class="btn-view" onclick="openModal('床邊起身安全護欄')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">💡</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">無線光感應智能防跌夜間地燈 (組)</h3>
+          <p class="prod-desc">高感度夜間人體探測，溫和不刺眼，點亮長者深夜頻尿進出浴室的每一步安全。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>490</div><button class="btn-view" onclick="openModal('智能防跌夜間地燈')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🟩</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">浴室專用高效秒排水多孔防滑地墊</h3>
+          <p class="prod-desc">真空強力吸盤緊咬磁磚，大孔洞急速導流積水，全腳掌粗糙面抗滑力滿分。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>350</div><button class="btn-view" onclick="openModal('高效秒排水防滑地墊')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🛡️</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">高密度加厚防撞條與安全桌角套組</h3>
+          <p class="prod-desc">無毒環保NBR材質，全面包覆家中尖銳家具邊緣，防範碰撞產生的皮肉撕裂傷。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>290</div><button class="btn-view" onclick="openModal('高密度防撞套組')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">⌚</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">智能防跌倒重力感應警報通報手環</h3>
+          <p class="prod-desc">內建三軸陀螺儀，偵測到異常衝擊跌倒一秒發送警報至子女手機，黃金救援不延誤。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>3,200</div><button class="btn-view" onclick="openModal('重力感應警報手環')">了解詳情</button></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="fitness" class="store-sec">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>🏋️</span> 專業健身器材</h2>
+      <p class="sec-desc">迎擊肌肉衰退，適合居家自主操作與教練課後課表落實的精選器材。</p>
+    </div>
+    
+    <div class="prod-grid">
+      <article class="prod-card fu">
+        <div class="prod-img-box"><span class="prod-tag tag-hot">必備基礎</span><div class="prod-icon">🏋️</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">環保無味防滾動包膠六角啞鈴 (5kg/7.5kg/10kg組)</h3>
+          <p class="prod-desc">經典多邊防滾動設計，抓握手感細緻，居家進行阻力推舉、深蹲阻力加重核心。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>880</div><button class="btn-view" onclick="openModal('包膠六角啞鈴組')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🪑</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">多功能多角度快速調整加固重訓椅</h3>
+          <p class="prod-desc">高承重鋼管、加厚背墊，7檔角度調節，提供銀髮居家訓練最高層級防翻車支撐。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>2,980</div><button class="btn-view" onclick="openModal('多角度調整重訓椅')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><span class="prod-tag">彈性抗阻</span><div class="prod-icon">💪</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">天然乳膠防斷裂高剛性阻力帶五件組</h3>
+          <p class="prod-desc">物理治療復健、上肢開背、下肢蚌殼式必備，循序漸進安全對抗阻力。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>450</div><button class="btn-view" onclick="openModal('阻力帶五件組')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🚪</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">免打孔室內門框安全加固自鎖單槓</h3>
+          <p class="prod-desc">雙向防滑大基座、重力自鎖，居家垂吊伸展、脊椎減壓與上肢拉力養成利器。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>790</div><button class="btn-view" onclick="openModal('門框自鎖單槓')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🔵</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">核心訓練靜音防爆加厚防滑健身球</h3>
+          <p class="prod-desc">高彈防爆蜂巢結構，極佳的骨盆核心訓練工具，在安全晃動中召喚深層平衡肌肉群。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>490</div><button class="btn-view" onclick="openModal('加厚防爆健身球')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🪢</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">負重計數專業無繩/有繩兩用跳繩</h3>
+          <p class="prod-desc">室內可無繩甩動，訓練長者上下肢連動性與爆發力，不絆倒也能訓練心肺耐力。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>380</div><button class="btn-view" onclick="openModal('兩用計數跳繩')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🧘</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">專業級加厚減震防滑環保 TPE 瑜珈墊</h3>
+          <p class="prod-desc">10mm極致抗衝擊厚度，跪姿、核心死蟲式訓練時，完美保護脆弱的膝蓋與關節。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>620</div><button class="btn-view" onclick="openModal('減震環保瑜珈墊')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🧤</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">加長型腕部支撐防滑半指健身手套</h3>
+          <p class="prod-desc">強力防滑矽膠網格，加長束帶穩固手腕，免除長輩因握力不佳造成的器械脫手意外。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>290</div><button class="btn-view" onclick="openModal('腕部支撐健身手套')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🛹</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">智能液晶阻力可調微型油壓踏步機</h3>
+          <p class="prod-desc">垂直踩踏軌跡保護膝關節，體積小巧，是在客廳看電視時一邊維持心肺有氧與下肢力量的極佳選擇。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>1,980</div><button class="btn-view" onclick="openModal('微型油壓踏步機')">了解詳情</button></div>
+      </article>
+      <article class="prod-card fu">
+        <div class="prod-img-box"><div class="prod-icon">🪵</div></div>
+        <div class="prod-bd">
+          <h3 class="prod-name">肌肉放鬆高密度平衡泡沫軸 (筋膜滾筒)</h3>
+          <p class="prod-desc">中高密硬度不重疼，教練課後自主肌肉筋膜放鬆、延展緊繃背部與腿部肌群的最佳夥伴。</p>
+        </div>
+        <div class="prod-ft"><div class="prod-price"><small>NT$</small>390</div><button class="btn-view" onclick="openModal('高密度泡沫軸')">了解詳情</button></div>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<div id="modal-overlay" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-ico">🛒</div>
+    <div class="modal-t" id="modal-title">商品洽詢</div>
+    <div class="modal-d">本網頁為「練健康商城」之一頁式視覺與商品展示示意設計，目前暫不開放直接線上購物。<br><br><strong>若您對此商品有訂購或體驗需求，歡迎前往或致電練健康各大實體門店，由您的專屬教練或現場人員為您提供預購與諮詢服務！</strong></div>
+    <button class="btn-close" onclick="closeModal()">我知道了</button>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-brand">練<span>健康 LKK Wellness</span></div>
+  <div class="ft-copy">健康是練出來的，不是等出來的。<br>© 2026 LKK Wellness. 保留所有權利。</div>
+</footer>
+
+<script>
+// 滑入動畫控制
+const obs = new IntersectionObserver(e => {
+  e.forEach(el => { if (el.isIntersecting) { el.target.classList.add('on'); obs.unobserve(el.target); } });
+}, { threshold: 0.05 });
+document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+
+// 分類跳轉捲動
+function scrollToSec(id) {
+  const t = document.querySelector(id);
+  if (t) {
+    const offset = 120; // 扣除 sticky navbar / category bar 高度
+    const bodyRect = document.body.getBoundingClientRect().top;
+    const elementRect = t.getBoundingClientRect().top;
+    const elementPosition = elementRect - bodyRect;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  }
+}
+
+// 彈出視窗控制
+function openModal(prodName) {
+  document.getElementById('modal-title').textContent = prodName + ' · 洽詢';
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').style.display = 'none';
+}
+</script>
+</body>
+</html>

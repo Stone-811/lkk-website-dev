@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>預約體驗課｜練健康 LKK Wellness</title>
+<meta name="description" content="預約練健康一對一體驗課。50歲以上完全免費，一般首次體驗 $500。由物理治療師背景教練帶領，台北南京、松江、西門、新北新店四間門店。">
+<link rel="canonical" href="https://l-kk.tw/bodytest/">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Service",
+  "name":"練健康體驗課",
+  "provider":{"@type":"Organization","name":"練健康 LKK Wellness","url":"https://l-kk.tw"},
+  "description":"由物理治療師背景教練主導的中高齡肌力訓練體驗課，含身體素質檢測、活動度檢測、肌力檢測、核心訓練教學。50歲以上完全免費。",
+  "offers":{"@type":"Offer","price":"500","priceCurrency":"TWD","description":"一般首次體驗課，50歲以上免費"}
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS（完全同步新官網系統） ── */
+:root {
+  --navy:       #2A5269;
+  --navy-dk:    #1a3545;
+  --navy-lt:    #3a6a85;
+  --orange:     #FB720A;
+  --orange-dk:  #d45c04;
+  --orange-lt:  #fc8c35;
+  --cream:      #F5EFE4;
+  --cream-dk:   #e8dfd0;
+  --white:      #ffffff;
+  --ink:        #1a1a1a;
+  --ink-lt:     #444;
+  --muted:      #7a7a7a;
+  --border:     rgba(42,82,105,0.15);
+  --green:      #2d8a5e;
+  --serif:      'Noto Serif TC', serif;
+  --sans:       'Noto Sans TC', sans-serif;
+  --max-w:      1180px;
+  --pad-x:      clamp(1.2rem, 5vw, 3rem);
+  --shadow:     0 4px 32px rgba(42,82,105,0.10);
+  --shadow-btn: 0 4px 20px rgba(251,114,10,0.35);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:clamp(0.95rem,1.5vw,1.05rem);color:var(--ink);background:var(--cream);line-height:1.7;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x)}
+.section-pad{padding:clamp(4rem,8vw,7rem) 0}
+
+/* ── NAV（完全同步主要導覽列） ── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(26,53,69,0.97);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.nav-inner{
+  display:flex;align-items:center;gap:0;
+  height:64px;max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x);
+}
+.nav-logo{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  color:var(--white);letter-spacing:0.04em;margin-right:2rem;
+}
+.nav-logo span{color:var(--orange)}
+.nav-links{display:flex;align-items:center;gap:1.6rem;list-style:none;flex:1}
+.nav-links a{color:rgba(255,255,255,0.75);font-size:0.88rem;font-weight:400;transition:color 0.2s}
+.nav-links a:hover{color:var(--white)}
+.nav-sep{width:1px;height:20px;background:rgba(255,255,255,0.15);margin:0 0.8rem;flex-shrink:0}
+.nav-b2b-group{display:flex;align-items:center;gap:0.8rem}
+.nav-b2b{
+  color:rgba(255,255,255,0.45)!important;font-size:0.8rem!important;
+  border:1px solid rgba(255,255,255,0.18);padding:5px 12px;border-radius:40px;
+  transition:color 0.2s,border-color 0.2s;white-space:nowrap;
+}
+.nav-b2b:hover{color:rgba(255,255,255,0.8)!important;border-color:rgba(255,255,255,0.4)!important}
+.nav-lkk4{color:var(--orange)!important;font-size:0.88rem!important;font-weight:500!important;white-space:nowrap}
+.nav-lkk4:hover{opacity:0.75}
+.nav-cta{
+  background:var(--orange);color:var(--white)!important;
+  padding:8px 20px;border-radius:40px;
+  font-weight:500!important;font-size:0.88rem!important;
+  box-shadow:var(--shadow-btn);transition:background 0.2s,transform 0.15s;
+  white-space:nowrap;margin-left:0.8rem;
+}
+.nav-cta:hover{background:var(--orange-lt)!important;transform:translateY(-1px)}
+
+/* ── HERO ── */
+#hero{background:var(--navy-dk);padding-top:64px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(circle at 80% 30%,rgba(251,114,10,0.10) 0%,transparent 55%),radial-gradient(circle at 5% 75%,rgba(58,106,133,0.3) 0%,transparent 45%);pointer-events:none}
+.hero-bg::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);background-size:55px 55px}
+.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1fr 400px;gap:3rem;align-items:center;padding:clamp(3rem,7vw,5.5rem) var(--pad-x);max-width:var(--max-w);margin:0 auto;width:100%}
+.hero-free-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(251,114,10,0.18);border:1px solid rgba(251,114,10,0.4);color:var(--orange);font-size:0.78rem;font-weight:500;padding:5px 14px;border-radius:40px;margin-bottom:1.2rem;letter-spacing:0.04em}
+.hero-free-pill::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--orange);display:block}
+h1{font-family:var(--serif);font-size:clamp(1.9rem,5vw,3.2rem);font-weight:900;color:var(--white);line-height:1.2;margin-bottom:1rem}
+h1 em{font-style:normal;color:var(--orange)}
+.hero-sub{color:rgba(255,255,255,0.62);font-size:clamp(0.92rem,1.5vw,1.05rem);font-weight:300;line-height:1.8;margin-bottom:2rem;max-width:480px}
+
+.hero-gets{display:flex;flex-direction:column;gap:8px;margin-bottom:2rem}
+.get-item{display:flex;align-items:flex-start;gap:10px;font-size:0.88rem;color:rgba(255,255,255,0.7);line-height:1.5}
+.get-check{width:20px;height:20px;border-radius:50%;background:rgba(251,114,10,0.2);border:1px solid rgba(251,114,10,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:0.65rem;color:var(--orange)}
+.hero-cta-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hero-price{font-size:0.8rem;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:6px}
+.hero-price strong{color:var(--orange-lt)}
+
+.trust-card{background:rgba(255,255,255,0.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:1.6rem;display:flex;flex-direction:column;gap:1rem}
+.trust-card-inner{display:flex;flex-direction:column;gap:1rem}
+.trust-label{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px}
+.trust-logos{display:flex;flex-wrap:wrap;gap:8px}
+.trust-logo{font-size:0.75rem;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);padding:4px 10px;border-radius:20px}
+.trust-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ts-item{background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 12px;text-align:center}
+.ts-num{font-family:var(--serif);font-size:1.4rem;font-weight:900;color:var(--white);line-height:1}
+.ts-lbl{font-size:0.72rem;color:rgba(255,255,255,0.4);margin-top:2px}
+
+/* ── REASSURE STRIP ── */
+#reassure{background:var(--white);border-bottom:1px solid var(--border);padding:1.6rem 0}
+.reassure-inner{display:flex;align-items:center;gap:2.5rem;flex-wrap:wrap;justify-content:center;max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x)}
+.reassure-item{display:flex;align-items:center;gap:8px;font-size:0.83rem;color:var(--ink-lt)}
+.reassure-item svg{color:var(--green);flex-shrink:0}
+
+/* ── MAIN LAYOUT ── */
+#main{padding:clamp(2.5rem,5vw,4rem) 0}
+.main-grid{display:grid;grid-template-columns:520px 1fr;gap:3.5rem;align-items:start}
+
+/* ── LEFT COLUMN: FORM CARD ── */
+.form-col{position:sticky;top:84px}
+.form-card{background:var(--white);border-radius:20px;box-shadow:0 8px 48px rgba(42,82,105,0.12);border:1px solid var(--border);overflow:hidden}
+.form-header{background:var(--navy-dk);padding:1.4rem 1.8rem}
+.form-header-title{font-family:var(--serif);font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:4px}
+.form-header-sub{font-size:0.82rem;color:rgba(255,255,255,0.5)}
+.free-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(251,114,10,0.2);border:1px solid rgba(251,114,10,0.35);color:var(--orange);font-size:0.75rem;font-weight:600;padding:3px 12px;border-radius:20px;margin-top:8px}
+.form-body{padding:1.6rem 1.8rem}
+
+/* 表單子區塊標題 */
+.form-sec-title{font-family:var(--serif);font-size:1.05rem;color:var(--navy);margin:1.8rem 0 1rem;border-bottom:2px solid var(--border);padding-bottom:4px;font-weight:700}
+.form-sec-title:first-of-type{margin-top:0}
+
+.fg{margin-bottom:1.2rem}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:0.88rem;font-weight:600;color:var(--navy-dk);letter-spacing:0.04em;margin-bottom:6px}
+label .req{color:var(--orange)}
+label .opt{color:var(--muted);font-weight:400;font-size:0.78rem}
+input,select,textarea{width:100%;padding:11px 14px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px;font-family:var(--sans);font-size:0.95rem;color:var(--ink);transition:border-color 0.2s,box-shadow 0.2s;outline:none;appearance:none;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(42,82,105,0.1);background:var(--white)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a7a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-color:var(--cream);padding-right:38px}
+textarea{resize:vertical;min-height:80px}
+.field-hint{font-size:0.78rem;color:var(--muted);margin-top:5px;line-height:1.5}
+
+/* 視覺化單選塊/複選塊 */
+.radio-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.radio-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.opt-block{position:relative}
+.opt-block input{position:absolute;opacity:0;width:0;height:0}
+.opt-block label{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.2s;text-align:center;font-size:0.85rem;color:var(--ink-lt);font-weight:400;margin:0}
+.opt-block input:checked + label{border-color:var(--orange);background:rgba(251,114,10,0.08);color:var(--orange-dk);font-weight:600}
+.opt-block label .free-tag{font-size:0.68rem;color:var(--green);font-weight:600;margin-top:2px}
+
+/* 複選勾選盒效果 */
+.check-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.check-block{position:relative}
+.check-block input{position:absolute;opacity:0;width:0;height:0}
+.check-block label{display:flex;align-items:center;gap:6px;padding:9px 10px;background:var(--cream);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:0.85rem;color:var(--ink-lt);font-weight:400;margin:0;line-height:1.3}
+check-block input:checked + label{border-color:var(--navy);background:rgba(42,82,105,0.07);color:var(--navy-dk);font-weight:500}
+.check-block label::before{content:'';width:15px;height:15px;border:1.5px solid var(--border);border-radius:4px;flex-shrink:0;transition:all 0.2s;background:var(--white)}
+.check-block input:checked + label::before{background:var(--navy);border-color:var(--navy);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
+
+/* 動態增長代填區塊容器 */
+#conditional-filler-info{display:none;background:rgba(42,82,105,0.04);border:1px dashed var(--navy);padding:1.2rem;border-radius:12px;margin-bottom:1.2rem}
+
+.form-submit-wrap{margin-top:1.4rem}
+.btn-submit{width:100%;padding:14px;background:var(--orange);color:var(--white);font-family:var(--sans);font-size:1.05rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;box-shadow:var(--shadow-btn);transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-submit:hover{background:var(--orange-lt);transform:translateY(-1px)}
+.form-fine{font-size:0.75rem;color:var(--muted);text-align:center;margin-top:0.8rem;line-height:1.6}
+.form-tel{text-align:center;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--border);font-size:0.88rem;color:var(--ink-lt)}
+.form-tel a{color:var(--navy);font-weight:600}
+
+/* ── RIGHT COLUMN: CONTENT（乾淨無動畫版，防卡死） ── */
+.right-col{}
+.section-eyebrow{font-size:0.78rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--orange);margin-bottom:0.6rem;display:flex;align-items:center;gap:8px}
+.section-eyebrow::before{content:'';width:18px;height:2px;background:var(--orange);display:block}
+h2{font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2rem);font-weight:900;color:var(--navy-dk);line-height:1.25;margin-bottom:12rem}
+h2 em{font-style:normal;color:var(--orange)}
+
+.process-section, .doubt-section, .cases-teaser {margin-bottom:3rem}
+.process-steps{display:flex;flex-direction:column;position:relative}
+.process-steps::before{content:'';position:absolute;left:19px;top:20px;bottom:20px;width:1.5px;background:linear-gradient(to bottom,var(--orange),rgba(251,114,10,0.15))}
+.ps-item{display:flex;gap:1rem;align-items:flex-start;padding:1rem 0;position:relative;z-index:1}
+.ps-num{width:40px;height:40px;border-radius:50%;background:var(--orange);color:var(--white);font-family:var(--serif);font-size:1.05rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 4px rgba(251,114,10,0.12)}
+.ps-title{font-size:1rem;font-weight:600;color:var(--navy-dk);margin-bottom:2px}
+.ps-desc{font-size:0.88rem;color:var(--ink-lt);line-height:1.6}
+.ps-badge{display:inline-block;font-size:0.72rem;font-weight:700;padding:2px 10px;border-radius:20px;margin-top:6px}
+.ps-badge.free{background:rgba(45,138,94,0.12);color:var(--green)}
+.ps-badge.paid{background:rgba(42,82,105,0.1);color:var(--navy)}
+
+.doubt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.doubt-card{background:var(--white);border-radius:14px;padding:1.4rem;border:1px solid var(--border);box-shadow:var(--shadow)}
+.doubt-q{font-size:0.92rem;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.doubt-q::before{content:'Q';font-size:0.7rem;background:var(--navy);color:var(--white);width:18px;height:18px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900}
+.doubt-a{font-size:0.88rem;color:var(--ink-lt);line-height:1.65}
+
+.cases-teaser{background:var(--white);border-radius:20px;padding:1.6rem;border:1px solid var(--border);box-shadow:var(--shadow)}
+.ct-head{font-size:0.82rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1.2rem}
+.ct-items{display:flex;flex-direction:column;gap:12px}
+.ct-item{display:flex;gap:12px;align-items:center;padding:12px;background:var(--cream);border-radius:12px;border:1px solid var(--border)}
+.ct-avatar{width:40px;height:40px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--white);font-weight:700;font-size:0.95rem;flex-shrink:0}
+.ct-text{flex:1}
+.ct-name{font-size:0.88rem;font-weight:600;color:var(--navy-dk)}
+.ct-quote{font-size:0.88rem;color:var(--ink-lt);font-style:italic;margin-top:3px;line-height:1.5}
+.ct-more{display:block;text-align:center;font-size:0.88rem;color:var(--navy);font-weight:600;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
+
+/* ── SUCCESS PAGE ── */
+#success{display:none;padding:clamp(4rem,8vw,7rem) 0;text-align:center}
+.success-inner{max-width:560px;margin:0 auto;padding:0 var(--pad-x)}
+.success-icon{width:76px;height:76px;border-radius:50%;background:rgba(45,138,94,0.12);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2.2rem;color:var(--green)}
+.success-h{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:900;color:var(--navy-dk);margin-bottom:0.8rem}
+.success-sub{font-size:1.05rem;color:var(--ink-lt);line-height:1.8;margin-bottom:2rem}
+.success-notice{background:var(--white);border-radius:16px;padding:1.4rem 1.6rem;border:1px solid var(--border);text-align:left;margin-bottom:1.5rem;box-shadow:var(--shadow)}
+.sn-title{font-size:0.92rem;font-weight:700;color:var(--navy-dk);margin-bottom:0.8rem;display:flex;align-items:center;gap:6px}
+.sn-list{display:flex;flex-direction:column;gap:8px}
+.sn-row{display:flex;align-items:flex-start;gap:8px;font-size:0.92rem;color:var(--ink-lt);line-height:1.55}
+.sn-row::before{content:'→';color:var(--orange);flex-shrink:0}
+.success-tel{background:var(--navy-dk);border-radius:12px;padding:1.4rem;text-align:center}
+.st-label{font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:6px}
+.st-num{font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--white)}
+.st-num a{color:var(--orange)}
+.st-note{font-size:0.78rem;color:rgba(255,255,255,0.35);margin-top:4px}
+
+/* ── STICKY MOBILE BAR ── */
+#sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;background:rgba(26,53,69,0.97);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,0.08);padding:0.8rem 1.4rem;align-items:center;justify-content:space-between;gap:10px}
+.sticky-text{font-size:0.85rem;color:rgba(255,255,255,0.65)}
+.sticky-text strong{color:var(--white)}
+.sticky-btn{background:var(--orange);color:var(--white);font-weight:700;font-size:0.9rem;padding:10px 24px;border-radius:40px;white-space:nowrap;box-shadow:var(--shadow-btn)}
+
+/* ── FOOTER（高級新版完整四欄位頁尾） ── */
+footer{background:var(--navy-dk);color:rgba(255,255,255,0.55);padding:4rem 0 2rem;border-top:1px solid rgba(255,255,255,0.06)}
+.footer-inner{max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x);display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:2.5rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+.footer-brand{font-family:var(--serif);font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:0.8rem}
+.footer-brand span{color:var(--orange)}
+.footer-copy{font-size:0.85rem;line-height:1.7;margin-bottom:1rem}
+.footer-col-title{font-size:0.88rem;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin-bottom:1.2rem}
+.footer-col-links{list-style:none;display:flex;flex-direction:column;gap:0.7rem}
+.footer-col-links a{font-size:0.92rem;transition:color 0.2s}
+.footer-col-links a:hover{color:var(--white)}
+.footer-b2b-link{display:inline-flex;align-items:center;gap:6px}
+.footer-b2b-link::after{content:'→';font-size:0.8rem;opacity:0.5;transition:opacity 0.2s,transform 0.2s}
+.footer-b2b-link:hover::after{opacity:1;transform:translateX(3px)}
+.footer-bottom{max-width:var(--max-w);margin:0 auto;padding:1.5rem var(--pad-x) 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-copy-bottom{font-size:0.88rem;color:rgba(255,255,255,0.55)}
+.footer-socials{display:flex;gap:10px}
+.social-btn{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:rgba(255,255,255,0.5);transition:border-color 0.2s,color 0.2s}
+.social-btn:hover{border-color:var(--orange);color:var(--orange)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .main-grid{grid-template-columns:1fr}
+  .trust-card{display:none}
+  .form-col{position:static}
+  #sticky{display:flex}
+  body{padding-bottom:72px}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .footer-brand-col{grid-column:1/-1}
+}
+@media(max-width:560px) {
+  .doubt-grid{grid-template-columns:1fr}
+  .radio-grid-3, .radio-grid-2, .check-grid-2{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr}
+  .fg-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav" aria-label="主要導覽">
+  <div class="nav-inner">
+    <a href="https://l-kk.tw/" class="nav-logo">練<span>健康</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="https://l-kk.tw/#services">服務內容</a></li>
+      <li><a href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/">學員案例</a></li>
+      <li><a href="https://l-kk.tw/team-intro/%e5%8f%b0%e5%8c%97%e5%8d%97%e4%ba%ac%e5%ba%97/">教練團隊</a></li>
+      <li><a href="locations.html">門店地點</a></li>
+      <li><a href="https://l-kk.tw/%e7%ac%ac%e4%ba%94%e5%b1%86%e8%81%96%e8%aa%95%e8%80%81%e4%ba%ba%e5%85%ad%e8%a7%92%e6%a7%93%e7%a1%ac%e8%88%89%e5%a4%a7%e8%b3%bd/" class="nav-lkk4">🏆 LKK4</a></li>
+      <li><a href="https://l-kk.tw/#faq">常見問題</a></li>
+    </ul>
+    <div class="nav-sep" aria-hidden="true"></div>
+    <div class="nav-b2b-group">
+      <a href="https://l-kk.tw/%e8%aa%b2%e7%a8%8b%e5%a0%b1%e5%90%8d/" class="nav-b2b">練健康學院</a><a href="shop.html" class="nav-b2b">練健康商城</a><a href="en.html" class="nav-b2b">EN</a>
+    </div>
+    <a href="#form" class="nav-cta">預約體驗</a>
+  </div>
+</nav>
+
+<section id="hero" aria-label="主視覺">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-free-pill">50歲以上 · 首次體驗完全免費</div>
+      <h1>第一堂課<br><em>我們來了解你</em></h1>
+      <p class="hero-sub">不管幾歲、有沒有運動過、身體狀況如何——體驗課的目的是讓我們了解你，而不是評判你。由物理治療師背景教練帶領，安全有效。</p>
+      <div class="hero-gets" aria-label="體驗課內容">
+        <div class="get-item"><div class="get-check">✓</div>身體素質・活動度・肌力 全面檢測</div>
+        <div class="get-item"><div class="get-check">✓</div>核心啟動與基礎重訓教學</div>
+        <div class="get-item"><div class="get-check">✓</div>客製化訓練動作指導</div>
+        <div class="get-item"><div class="get-check">✓</div>訓練目標評估與規劃建議</div>
+      </div>
+      <div class="hero-cta-row">
+        <a href="#form" class="btn-primary">立即填寫預約 →</a>
+      </div>
+      <div class="hero-price" style="margin-top:0.8rem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        <strong>50歲以上免費</strong>・一般首次 $500・無隱藏費用・不強迫買課
+      </div>
+    </div>
+    <aside class="trust-card" aria-label="品牌可信度">
+      <div class="trust-card-inner">
+        <div class="trust-label">媒體報導</div>
+        <div class="trust-logos">
+          <span class="trust-logo">大愛新聞</span>
+          <span class="trust-logo">吳淡如</span>
+          <span class="trust-logo">動思學院</span>
+          <span class="trust-logo">高年級不打烊</span>
+        </div>
+      </div>
+      <div class="trust-stats">
+        <div class="ts-item"><div class="ts-num">1,000+</div><div class="ts-lbl">服務學員人次</div></div>
+        <div class="ts-item"><div class="ts-num">4 間</div><div class="ts-lbl">台北・新北門店</div></div>
+        <div class="ts-item"><div class="ts-num">PT</div><div class="ts-lbl">物理治療師教練</div></div>
+        <div class="ts-item"><div class="ts-num">7 年</div><div class="ts-lbl">深耕中高齡訓練</div></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<div id="reassure" aria-label="常見疑慮說明">
+  <div class="reassure-inner">
+    <div class="reassure-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      沒有運動習慣也可以來
+    </div>
+    <div class="reassure-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      有慢性病・術後也歡迎
+    </div>
+    <div class="reassure-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      體驗後不強迫買課
+    </div>
+    <div class="reassure-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      教練在 1 工作天內主動聯繫
+    </div>
+  </div>
+</div>
+
+<div id="main">
+  <div class="container">
+    <div class="main-grid">
+
+      <div class="form-col" id="form">
+        <div class="form-card">
+          <div class="form-header">
+            <div class="form-header-title">預約體驗課</div>
+            <div class="form-header-sub">教練會在 1 個工作天內主動聯繫安排時間</div>
+            <div class="free-badge">✓ 50歲以上 完全免費</div>
+          </div>
+          <div class="form-body">
+            <form id="booking-form" novalidate onsubmit="handleSubmit(event)">
+
+              <div class="form-sec-title">第一部分：基本資料</div>
+              
+              <div class="fg fg-row">
+                <div>
+                  <label>體驗者姓名 <span class="req">*</span></label>
+                  <input type="text" name="name" required placeholder="體驗者姓名" autocomplete="name">
+                </div>
+                <div>
+                  <label>體驗者性別 <span class="req">*</span></label>
+                  <div class="radio-grid-3" role="radiogroup">
+                    <div class="opt-block"><input type="radio" name="gender" id="g_m" value="男" required><label for="g_m">男</label></div>
+                    <div class="opt-block"><input type="radio" name="gender" id="g_f" value="女"><label for="g_f">女</label></div>
+                    <div class="opt-block"><input type="radio" name="gender" id="g_o" value="其他"><label for="g_o">其他</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fg">
+                <label>體驗者年齡區間 <span class="req">*</span></label>
+                <div class="age-opts" role="radiogroup">
+                  <div class="opt-block">
+                    <input type="radio" name="age" id="age1" value="50歲以下" required>
+                    <label for="age1">50歲以下</label>
+                  </div>
+                  <div class="opt-block">
+                    <input type="radio" name="age" id="age2" value="50–65歲">
+                    <label for="age2">50–65歲<span class="free-tag">免費</span></label>
+                  </div>
+                  <div class="opt-block">
+                    <input type="radio" name="age" id="age3" value="65歲以上">
+                    <label for="age3">65歲以上<span class="free-tag">免費</span></label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fg fg-row">
+                <div>
+                  <label>手機號碼 <span class="req">*</span></label>
+                  <input type="tel" name="phone" required placeholder="0912-345-678" autocomplete="tel">
+                </div>
+                <div>
+                  <label>電子郵件 <span class="req">*</span></label>
+                  <input type="email" name="email" required placeholder="name@email.com" autocomplete="email">
+                </div>
+              </div>
+
+              <div class="fg">
+                <label>是否為您本人親自填寫？ <span class="req">*</span></label>
+                <div class="radio-grid-2" role="radiogroup">
+                  <div class="opt-block"><input type="radio" name="is_filler_self" id="self_yes" value="是" required><label for="self_yes">是，我是本人</label></div>
+                  <div class="opt-block"><input type="radio" name="is_filler_self" id="self_no" value="否"><label for="self_no">否，我是幫家人/朋友填</label></div>
+                </div>
+              </div>
+
+              <div id="conditional-filler-info">
+                <div class="fg fg-row">
+                  <div>
+                    <label>您（預約者）的姓名 <span class="req">*</span></label>
+                    <input type="text" name="filler_name" id="filler_name" placeholder="您的姓名">
+                  </div>
+                  <div>
+                    <label>您與體驗者的關係 <span class="req">*</span></label>
+                    <input type="text" name="relationship" id="relationship" placeholder="例如：女兒、兒子、朋友">
+                  </div>
+                </div>
+                <div id="family-note">提醒：教練後續將會優先聯繫上方填寫的手機號碼。</div>
+              </div>
+
+
+              <div class="form-sec-title">第二部分：體驗者健康與需求</div>
+
+              <div class="fg">
+                <label>主要運動目的 <span class="opt">（可複選）</span></label>
+                <div class="purpose-opts">
+                  <div class="check-block"><input type="checkbox" name="purpose" id="p1" value="增加肌力"><label for="p1">增加肌力</label></div>
+                  <div class="check-block"><input type="checkbox" name="purpose" id="p2" value="術後復健"><label for="p2">術後復健</label></div>
+                  <div class="check-block"><input type="checkbox" name="purpose" id="p3" value="慢性病管理"><label for="p3">慢性病管理</label></div>
+                  <div class="check-block"><input type="checkbox" name="purpose" id="p4" value="體重管理"><label for="p4">體重管理</label></div>
+                  <div class="check-block"><input type="checkbox" name="purpose" id="p5" value="平衡與活動力"><label for="p5">平衡與活動力</label></div>
+                  <div class="check-block"><input type="checkbox" name="purpose" id="p6" value="想事先了解看看"><label for="p6">先了解看看</label></div>
+                </div>
+              </div>
+
+              <div class="fg">
+                <label>是否有任何疾病、舊傷或開刀史？ <span class="req">*</span></label>
+                <textarea name="medical_history" required placeholder="例如：高血壓、糖尿病、骨質疏鬆、膝關節退化退化、心臟病、曾動過何種手術...等。若完全健康，請填寫「無」。"></textarea>
+              </div>
+
+              <div class="fg">
+                <label>想去哪一間場館體驗？ <span class="req">*</span></label>
+                <select name="store" required>
+                  <option value="" disabled selected>請選擇偏好的門店地點</option>
+                  <option>南京店｜台北市中山區南京東路三段29號B1</option>
+                  <option>松江店｜台北市中山區松江路122號B1</option>
+                  <option>西門店｜台北市中正區寶慶路39號</option>
+                  <option>新店七張店｜新北市新店區北新路二段252號B1-2</option>
+                  <option>不確定，請教練為我推薦</option>
+                </select>
+              </div>
+
+              <div class="fg">
+                <label>本堂體驗課付款方式 <span class="req">*</span></label>
+                <div class="radio-grid-2" role="radiogroup">
+                  <div class="opt-block"><input type="radio" name="payment" id="pay_500" value="現場付款500元" required><label for="pay_500">現場付款 $500</label></div>
+                  <div class="opt-block"><input type="radio" name="payment" id="pay_free" value="50歲以上免費體驗"><label for="pay_free">50歲以上免費體驗</label></div>
+                </div>
+              </div>
+
+
+              <div class="form-sec-title">第三部分：其他調查</div>
+
+              <div class="fg">
+                <label>偏好教練與您電話聯繫的時段 <span class="opt">（選填）</span></label>
+                <select name="time">
+                  <option value="">不限時段，皆可聯繫</option>
+                  <option>早上（09:00–12:00）</option>
+                  <option>下午（12:00–18:00）</option>
+                  <option>傍晚（18:00–21:00）</option>
+                </select>
+              </div>
+
+              <div class="fg">
+                <label>您是從哪裡得知練健康體驗課資訊的呢？ <span class="opt">（可複選）</span></label>
+                <div class="check-grid-2">
+                  <div class="check-block"><input type="checkbox" name="source" id="s1" value="Facebook 臉書粉專"><label for="s1">Facebook 粉專</label></div>
+                  <div class="check-block"><input type="checkbox" name="source" id="s2" value="Instagram 視覺社群"><label for="s2">Instagram</label></div>
+                  <div class="check-block"><input type="checkbox" name="source" id="s3" value="YouTube 影片頻道"><label for="s3">YouTube 影片</label></div>
+                  <div class="check-block"><input type="checkbox" name="source" id="s4" value="親朋好友推薦分享"><label for="s4">親友推薦</label></div>
+                  <div class="check-block"><input type="checkbox" name="source" id="s5" value="新聞/節目/廣播報導"><label for="s5">媒體報導</label></div>
+                  <div class="check-block"><input type="checkbox" name="source" id="s6" value="門店路過看到"><label for="s6">路過看到門店</label></div>
+                </div>
+              </div>
+
+              <div class="fg">
+                <label>備註與其他想補充說明的細節 <span class="opt">（選填）</span></label>
+                <textarea name="note" placeholder="例如長輩不便接聽電話、特定時間不便連繫、或其他特殊身體狀況備忘..."></textarea>
+              </div>
+
+              <div class="form-submit-wrap">
+                <button type="submit" class="btn-submit">
+                  送出預約申請
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+              </div>
+              <p class="form-fine">送出即表示同意我們以電話或 LINE 與您聯繫安排體驗課，個人資料僅用於此預約目的。</p>
+              <div class="form-tel">
+                不想填表？直接來電也可以<br>
+                <a href="tel:+886225074196">(02) 2507-4196</a>（南京店）
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div><div class="right-col">
+
+        <div class="process-section">
+          <div class="section-eyebrow">接下來會發生什麼</div>
+          <h2>填完表單後<em>四個步驟</em></h2>
+          <div class="process-steps">
+            <div class="ps-item">
+              <div class="ps-num">1</div>
+              <div class="ps-body">
+                <div class="ps-title">填寫預約表單</div>
+                <div class="ps-desc">約 1~2 分鐘完成，只填必要資訊，詳細狀況讓教練直接聊</div>
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">2</div>
+              <div class="ps-body">
+                <div class="ps-title">教練主動電話聯繫</div>
+                <div class="ps-desc">1 個工作天內，我們會打電話給您安排時間。如果不方便接，我們也會留言或傳 LINE</div>
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">3</div>
+              <div class="ps-body">
+                <div class="ps-title">到店體驗課（60–75 分鐘）</div>
+                <div class="ps-desc">身體評估 + 基礎動作訓練 + 教練諮詢</div>
+                <span class="ps-badge free">50歲以上 免費</span>
+                <span class="ps-badge paid">一般首次 $500</span>
+              </div>
+            </div>
+            <div class="ps-item">
+              <div class="ps-num">4</div>
+              <div class="ps-body">
+                <div class="ps-title">課後說明 + 你自己決定</div>
+                <div class="ps-desc">教練說明適合的後續課程選項，沒有壓力，你來決定接下來的安排</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doubt-section">
+          <div class="section-eyebrow">你可能在想</div>
+          <h2>先回答你<em>最常問的問題</em></h2>
+          <div class="doubt-grid">
+            <div class="doubt-card">
+              <div class="doubt-q">我年紀這麼大，可以練嗎？</div>
+              <div class="doubt-a">練健康 70% 的學員都是中高齡族群。90 歲的阿嬤都在這裡練硬舉，你的年紀完全不是問題。</div>
+            </div>
+            <div class="doubt-card">
+              <div class="doubt-q">我從來沒運動過，會不會很奇怪？</div>
+              <div class="doubt-a">沒有運動習慣的人反而容易進步。教練會從最基礎的動作教起，不會有比較或評判。</div>
+            </div>
+            <div class="doubt-card">
+              <div class="doubt-q">我有高血壓／糖尿病，可以來嗎？</div>
+              <div class="doubt-a">可以。特殊族群訓練是我們的核心專業，由物理治療師督導，會先評估再設計適合的課表。</div>
+            </div>
+            <div class="doubt-card">
+              <div class="doubt-q">體驗完之後一定要買課嗎？</div>
+              <div class="doubt-a">不強迫。體驗課的目的是讓雙方了解彼此，教練會說明適合的選項，你自己決定。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cases-teaser">
+          <div class="ct-head">他們也是這樣開始的</div>
+          <div class="ct-items">
+            <div class="ct-item">
+              <div class="ct-avatar">林</div>
+              <div class="ct-text">
+                <div class="ct-name">林阿嬤 · 70歲 · 膝關節退化</div>
+                <div class="ct-quote">「以前膝蓋痛到走不了路，現在可以自己爬山、帶孫子去公園。」</div>
+              </div>
+            </div>
+            <div class="ct-item">
+              <div class="ct-avatar">王</div>
+              <div class="ct-text">
+                <div class="ct-name">王先生 · 62歲 · 腦中風後</div>
+                <div class="ct-quote">「以為這輩子就這樣了，沒想到可以自己走路去買東西。」</div>
+              </div>
+            </div>
+            <div class="ct-item">
+              <div class="ct-avatar">陳</div>
+              <div class="ct-text">
+                <div class="ct-name">陳小姐 · 55歲 · 乳癌術後</div>
+                <div class="ct-quote">「醫生說我的恢復狀況比預期好很多，我知道是因為練健康。」</div>
+              </div>
+            </div>
+          </div>
+          <a href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/" class="ct-more">看更多學員故事 →</a>
+        </div>
+
+      </div></div></div>
+</div>
+
+<div id="success" aria-live="polite">
+  <div class="success-inner">
+    <div class="success-icon" aria-hidden="true">✓</div>
+    <h2 class="success-h">預約申請已送出！</h2>
+    <p class="success-sub">謝謝你。<strong>你不需要做任何事</strong>，我們的教練會在 1 個工作天內主動打電話給你安排體驗課時間。</p>
+
+    <div class="success-notice">
+      <div class="sn-title">接下來會發生什麼</div>
+      <div class="sn-list">
+        <div class="sn-row">教練會在 1 個工作天內電話聯繫，請留意來電</div>
+        <div class="sn-row">如果第一通沒接到，我們會再試一次，或傳 LINE 訊息給你</div>
+        <div class="sn-row">確認時間後，直接到門店即可，不需要帶任何東西</div>
+        <div class="sn-row">50歲以上：到場完全免費。一般首次：臨櫃繳費 $500</div>
+      </div>
+    </div>
+
+    <div class="success-tel">
+      <div class="st-label">等不及了嗎？也可以直接來電</div>
+      <div class="st-num"><a href="tel:+886225074196">(02) 2507-4196</a></div>
+      <div class="st-note">南京店 · 週一至五 09:00–21:00 · 週六 09:00–18:00</div>
+    </div>
+  </div>
+</div>
+
+<div id="sticky">
+  <div class="sticky-text"><strong>50歲以上免費</strong>・一般 $500</div>
+  <a href="#form" class="sticky-btn">立即預約</a>
+</div>
+
+<footer aria-label="頁尾資訊">
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <div class="footer-brand">練<span>健康</span> LKK Wellness</div>
+      <p class="footer-copy">健康是練出來的<br>© 2026 lkkwellness. All Rights Reserved.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">認識練健康</div>
+      <ul class="footer-col-links">
+        <li><a href="https://l-kk.tw/about/">關於練健康</a></li>
+        <li><a href="https://l-kk.tw/team-intro/%e5%8f%b0%e5%8c%97%e5%8d%97%e4%ba%ac%e5%ba%97/">教練介紹</a></li>
+        <li><a href="https://l-kk.tw/%e7%ac%ac%e4%ba%94%e5%b1%86%e8%81%96%e8%aa%95%e8%80%81%e4%ba%ba%e5%85%ad%e8%a7%92%e6%a7%93%e7%a1%ac%e8%88%89%e5%a4%a7%e8%b3%bd/">LKK4 賽事品牌</a></li>
+        <li><a href="https://l-kk.tw/news/">最新消息</a></li>
+        <li><a href="https://l-kk.tw/about-us/">聯絡我們</a></li>
+        <li><a href="https://l-kk.tw/privacypolicy/">隱私權政策</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">知識・案例</div>
+      <ul class="footer-col-links">
+        <li><a href="https://l-kk.tw/category/knowledge/">運動知識</a></li>
+        <li><a href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/">學員案例</a></li>
+        <li><a href="https://l-kk.tw/category/中高齡訓練/">中高齡訓練</a></li>
+        <li><a href="https://l-kk.tw/category/特殊族群/">特殊族群訓練</a></li>
+        <li><a href="booking.html">預約體驗課</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">企業・專業合作</div>
+      <ul class="footer-col-links">
+        <li><a href="https://l-kk.tw/%e8%aa%b2%e7%a8%8b%e5%a0%b1%e5%90%8d/" class="footer-b2b-link">練健康學院</a></li>
+        <li><a href="franchise.html" class="footer-b2b-link">加盟・展店洽詢</a></li>
+        <li><a href="cooperation.html" class="footer-b2b-link">講座 / 採訪 / 合作洽詢</a></li>
+        <li><a href="https://l-kk.tw/%e7%ac%ac%e4%ba%94%e5%b1%86%e8%81%96%e8%aa%95%e8%80%81%e4%ba%ba%e5%85%ad%e8%a7%92%e6%a7%93%e7%a1%ac%e8%88%89%e5%a4%a7%e8%b3%bd/" class="footer-b2b-link">LKK4 賽事贊助</a></li>
+        <li><a href="https://www.104.com.tw/company/1a2x6blv1x" class="footer-b2b-link">人才招募</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy-bottom">lkk@l-kk.tw</span>
+    <a href="en.html" style="font-size:0.78rem;color:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.3);padding:5px 16px;border-radius:20px;display:inline-block;text-align:center;">EN · English</a>
+    <div class="footer-socials">
+      <a href="https://www.facebook.com/LKKWellnessCenter/" class="social-btn" aria-label="Facebook">fb</a>
+      <a href="https://www.instagram.com/lkk_wellness/" class="social-btn" aria-label="Instagram">ig</a>
+      <a href="https://www.youtube.com/c/LKKWellness" class="social-btn" aria-label="YouTube">yt</a>
+      <a href="https://line.me/R/ti/p/%40201fzruh" class="social-btn" aria-label="LINE">L</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// 動態代填關係顯示邏輯（改善判定）
+document.querySelectorAll('input[name="is_filler_self"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const conditionalBox = document.getElementById('conditional-filler-info');
+    const fillerNameInput = document.getElementById('filler_name');
+    const relationshipInput = document.getElementById('relationship');
+    
+    if (radio.value === '否' && radio.checked) {
+      conditionalBox.style.display = 'block';
+      fillerNameInput.setAttribute('required', 'required');
+      relationshipInput.setAttribute('required', 'required');
+    } else {
+      conditionalBox.style.display = 'none';
+      fillerNameInput.removeAttribute('required');
+      relationshipInput.removeAttribute('required');
+    }
+  });
+});
+
+// 平滑錨點滾動
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+
+// 表單驗證與成功頁面切換
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+
+  // 必填欄位驗證
+  const name = form.name.value.trim();
+  const gender = form.gender?.value;
+  const age = form.age?.value;
+  const phone = form.phone.value.trim();
+  const email = form.email.value.trim();
+  const isFillerSelf = form.is_filler_self?.value;
+  const store = form.store.value;
+  const medical_history = form.medical_history.value.trim();
+  const payment = form.payment?.value;
+
+  if (!name || !gender || !age || !phone || !email || !isFillerSelf || !store || !medical_history || !payment) {
+    alert('請填寫所有必填欄位（標有 * 的項目）');
+    return;
+  }
+
+  // 驗證代填欄位
+  if (isFillerSelf === '否') {
+    const fillerName = form.filler_name.value.trim();
+    const relationship = form.relationship.value.trim();
+    if (!fillerName || !relationship) {
+      alert('請填寫預約者姓名與體驗者關係');
+      return;
+    }
+  }
+
+  // 切換顯示
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('hero').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('success').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

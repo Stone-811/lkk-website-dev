@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>練健康加盟說明會｜LKK Wellness Franchise</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:     #1a3545;
+  --ink-lt:  #2e5166;
+  --muted:   #6a8a9a;
+  --rule:    rgba(42,82,105,0.14);
+  --orange:  #FB720A;
+  --orange-dk:#d45c04;
+  --navy:    #2A5269;
+  --navy-dk: #1a3545;
+  --navy-lt: #3a6a85;
+  --navy-xdk:#0f2130;
+  --cream:   #F5EFE4;
+  --cream-dk:#e8dfd0;
+  --white:   #ffffff;
+  --sans:    'Noto Sans TC',sans-serif;
+  --serif:   'Noto Serif TC',serif;
+  --display: 'DM Serif Display',serif;
+  --max-w:   1060px;
+  --pad-x:   clamp(1.4rem,6vw,3.5rem);
+  --shadow-soft: 0 2px 24px rgba(26,53,69,0.10);
+  --shadow-card: 0 8px 48px rgba(26,53,69,0.15);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:clamp(0.94rem,1.4vw,1rem);color:var(--ink);background:var(--cream);line-height:1.75;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x)}
+::selection{background:rgba(251,114,10,0.15)}
+
+/* ── NAV ── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(26,53,69,0.97);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.nav-inner{
+  display:flex;align-items:center;gap:1.5rem;
+  height:62px;max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x);
+}
+.nav-logo{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--white);letter-spacing:0.04em}
+.nav-logo span{color:var(--orange)}
+.nav-divider{height:18px;width:1px;background:rgba(255,255,255,0.12)}
+.nav-subtitle{font-size:0.75rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase}
+.nav-spacer{flex:1}
+.nav-cta{
+  background:var(--orange);color:var(--white);
+  font-size:0.82rem;font-weight:500;padding:7px 20px;
+  border-radius:40px;letter-spacing:0.02em;
+  transition:background 0.2s,transform 0.15s;
+  box-shadow:0 2px 14px rgba(251,114,10,0.35);
+}
+.nav-cta:hover{background:var(--orange-dk);transform:translateY(-1px)}
+
+/* ── HERO ── */
+#hero{
+  background:var(--navy-dk);
+  min-height:100svh;
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;
+  padding-top:62px;
+}
+.hero-noise{
+  position:absolute;inset:0;opacity:0.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size:200px;pointer-events:none;
+}
+.hero-glow{
+  position:absolute;
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(251,114,10,0.14) 0%,transparent 70%);
+  top:-200px;right:-150px;pointer-events:none;
+}
+.hero-glow2{
+  position:absolute;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(58,106,133,0.35) 0%,transparent 70%);
+  bottom:-100px;left:-100px;pointer-events:none;
+}
+/* subtle horizontal rule lines */
+.hero-lines{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(
+    0deg,transparent,transparent 79px,rgba(255,255,255,0.025) 79px,rgba(255,255,255,0.025) 80px
+  );
+}
+.hero-content{
+  position:relative;z-index:2;
+  width:100%;max-width:var(--max-w);margin:0 auto;
+  padding:clamp(4rem,10vw,8rem) var(--pad-x);
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:0.72rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:2rem;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:0 0 28px;height:1px;background:var(--orange)}
+.hero-h1{
+  font-family:var(--display);
+  font-size:clamp(3rem,8vw,7rem);
+  font-weight:400;color:var(--white);
+  line-height:1.05;letter-spacing:-0.01em;
+  margin-bottom:0.2em;
+}
+.hero-h1 em{font-style:italic;color:var(--orange)}
+.hero-h1-sub{
+  font-family:var(--serif);
+  font-size:clamp(1rem,2.5vw,1.5rem);font-weight:600;
+  color:rgba(255,255,255,0.45);
+  margin-bottom:2.5rem;letter-spacing:0.04em;
+}
+.hero-lead{
+  font-size:clamp(1rem,1.6vw,1.15rem);font-weight:300;
+  color:rgba(255,255,255,0.6);
+  line-height:1.85;max-width:580px;margin-bottom:3rem;
+}
+.hero-lead strong{color:rgba(255,255,255,0.85);font-weight:500}
+.hero-cta-row{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.btn-hero{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--orange);color:var(--white);
+  font-size:1rem;font-weight:500;
+  padding:15px 36px;border-radius:4px;
+  box-shadow:0 4px 24px rgba(251,114,10,0.4);
+  transition:background 0.2s,transform 0.2s;
+  letter-spacing:0.02em;
+}
+.btn-hero:hover{background:var(--orange-dk);transform:translateY(-2px)}
+.hero-disclaimer{font-size:0.78rem;color:rgba(255,255,255,0.25);letter-spacing:0.04em}
+.hero-scroll{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:rgba(255,255,255,0.2);font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;
+  animation:bob 3s ease-in-out infinite;
+}
+.hero-scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.2))}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* ── STAT BAR ── */
+#stats{background:var(--orange);padding:0}
+.stats-inner{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  max-width:var(--max-w);margin:0 auto;
+}
+.stat-cell{
+  padding:1.6rem var(--pad-x);
+  border-right:1px solid rgba(255,255,255,0.2);
+  text-align:center;
+}
+.stat-cell:last-child{border-right:none}
+.stat-n{font-family:var(--display);font-size:2.2rem;font-weight:400;color:var(--white);line-height:1}
+.stat-l{font-size:0.72rem;color:rgba(255,255,255,0.7);margin-top:4px;letter-spacing:0.06em;text-transform:uppercase}
+.stat-src{font-size:0.62rem;color:rgba(255,255,255,0.45);margin-top:3px}
+
+/* ── SECTION COMMON ── */
+.sp{padding:clamp(5rem,10vw,9rem) 0}
+.sp-sm{padding:clamp(3rem,6vw,5rem) 0}
+.eyebrow{
+  font-size:0.68rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:1rem;display:block;
+}
+h2{
+  font-family:var(--display);
+  font-size:clamp(2rem,5vw,3.8rem);
+  font-weight:400;color:var(--ink);
+  line-height:1.1;margin-bottom:1.2rem;
+}
+h2 em{font-style:italic;color:var(--orange)}
+h2.light{color:var(--white)}
+h2.light em{color:var(--orange)}
+.lead{font-size:clamp(0.97rem,1.5vw,1.08rem);color:var(--ink-lt);line-height:1.85;max-width:600px}
+.rule{border:none;border-top:1px solid var(--rule);margin:4rem 0}
+
+/* ── MARKET SECTION ── */
+#market{background:var(--cream)}
+.market-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-top:3.5rem}
+.market-text{}
+.data-callout{
+  background:var(--navy-xdk);border-radius:4px;padding:2rem;
+  display:flex;flex-direction:column;gap:1.5rem;
+}
+.data-item{}
+.data-num{
+  font-family:var(--display);font-size:3rem;font-weight:400;
+  color:var(--orange);line-height:1;margin-bottom:0.3rem;
+}
+.data-label{font-size:0.85rem;color:rgba(255,255,255,0.65);line-height:1.6}
+.data-src{font-size:0.68rem;color:rgba(255,255,255,0.3);margin-top:4px}
+.data-divider{height:1px;background:rgba(255,255,255,0.08)}
+.market-points{margin-top:2rem;display:flex;flex-direction:column;gap:1rem}
+.market-point{display:flex;gap:12px;align-items:flex-start}
+.mp-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:8px}
+.mp-text{font-size:0.95rem;color:var(--ink-lt);line-height:1.7}
+.mp-text strong{color:var(--ink);font-weight:500}
+
+/* ── TIMING SECTION ── */
+#timing{background:var(--navy-dk)}
+.timing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:3.5rem;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden}
+.timing-card{background:var(--navy-dk);padding:2rem 1.8rem;transition:background 0.2s}
+.timing-card:hover{background:rgba(255,255,255,0.04)}
+.tc-num{
+  font-family:var(--display);font-size:3.5rem;font-weight:400;
+  color:var(--orange);line-height:1;margin-bottom:1rem;
+  opacity:0.35;
+}
+.tc-title{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--white);margin-bottom:0.6rem}
+.tc-body{font-size:0.87rem;color:rgba(255,255,255,0.5);line-height:1.7}
+.timing-cta-strip{
+  margin-top:3rem;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:4px;padding:2rem;
+  display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;
+}
+.tcs-text{font-size:1rem;color:rgba(255,255,255,0.65);line-height:1.6;max-width:480px}
+.tcs-text strong{color:var(--white);font-weight:500}
+
+/* ── DIFFERENTIATION ── */
+#diff{background:var(--cream)}
+.diff-list{margin-top:3.5rem;display:flex;flex-direction:column;gap:0}
+.diff-item{
+  display:grid;grid-template-columns:3rem 1fr 1fr;gap:0 3rem;
+  padding:2.5rem 0;border-bottom:1px solid var(--rule);
+  align-items:start;
+}
+.diff-item:first-child{border-top:1px solid var(--rule)}
+.diff-num{
+  font-family:var(--display);font-size:2.4rem;font-weight:400;
+  color:var(--rule);line-height:1;padding-top:2px;
+}
+.diff-title{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:0.5rem}
+.diff-tag{display:inline-block;font-size:0.68rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--orange);margin-bottom:0.6rem}
+.diff-body{font-size:0.9rem;color:var(--ink-lt);line-height:1.75}
+
+/* ── LKK4 ── */
+#lkk4{
+  background:var(--navy);
+  position:relative;overflow:hidden;
+}
+#lkk4::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--orange) 30%,var(--orange) 70%,transparent);
+}
+.lkk4-inner{
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;
+}
+.lkk4-logo-block{position:relative}
+.lkk4-big{
+  font-family:var(--display);
+  font-size:clamp(6rem,14vw,12rem);font-weight:400;
+  color:rgba(255,255,255,0.06);line-height:1;
+  letter-spacing:-0.04em;user-select:none;
+  position:absolute;top:-1rem;left:-2rem;
+}
+.lkk4-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(251,114,10,0.15);border:1px solid rgba(251,114,10,0.3);
+  color:var(--orange);font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;
+  padding:5px 14px;border-radius:40px;margin-bottom:1.2rem;
+}
+.lkk4-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.lkk4-title{font-family:var(--display);font-size:clamp(2.5rem,5vw,4rem);font-weight:400;color:var(--white);line-height:1.1;margin-bottom:1rem}
+.lkk4-title span{color:var(--orange)}
+.lkk4-desc{font-size:0.95rem;color:rgba(255,255,255,0.6);line-height:1.85;margin-bottom:2rem}
+.lkk4-points{display:flex;flex-direction:column;gap:1rem}
+.lkk4-point{
+  display:flex;gap:1rem;align-items:flex-start;
+  padding:1rem 1.2rem;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:4px;
+  transition:background 0.2s;
+}
+.lkk4-point:hover{background:rgba(255,255,255,0.07)}
+.lkk4-point-icon{font-size:1.2rem;flex-shrink:0;margin-top:1px}
+.lkk4-point-t{font-size:0.88rem;font-weight:500;color:var(--white);margin-bottom:2px}
+.lkk4-point-d{font-size:0.8rem;color:rgba(255,255,255,0.45);line-height:1.55}
+
+/* ── SUPPORT ── */
+#support{background:var(--white)}
+.support-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;background:var(--rule);margin-top:3.5rem;border-radius:4px;overflow:hidden}
+.support-card{background:var(--white);padding:2rem;transition:background 0.2s}
+.support-card:hover{background:var(--cream)}
+.sc-icon{font-size:1.8rem;margin-bottom:1rem}
+.sc-title{font-family:var(--serif);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:0.5rem}
+.sc-body{font-size:0.85rem;color:var(--muted);line-height:1.7}
+.support-footer{
+  margin-top:2.5rem;padding:1.8rem 2rem;
+  background:var(--cream);border-radius:4px;border:1px solid var(--rule);
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+}
+.sf-text{font-size:0.88rem;color:var(--ink-lt);line-height:1.6;flex:1;min-width:240px}
+.sf-text strong{color:var(--ink);font-weight:500}
+
+/* ── FORM SECTION ── */
+#apply{background:var(--navy-dk);position:relative;overflow:hidden}
+#apply::before{
+  content:'';position:absolute;inset:0;opacity:0.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size:200px;pointer-events:none;
+}
+.apply-inner{
+  display:grid;grid-template-columns:1fr 1.2fr;gap:5rem;align-items:start;
+  position:relative;z-index:1;
+}
+.apply-left{}
+.apply-what{
+  margin-top:2.5rem;display:flex;flex-direction:column;gap:1rem;
+}
+.aw-item{display:flex;gap:10px;align-items:flex-start}
+.aw-icon{color:var(--orange);font-size:0.9rem;margin-top:3px;flex-shrink:0}
+.aw-text{font-size:0.9rem;color:rgba(255,255,255,0.55);line-height:1.6}
+.aw-text strong{color:rgba(255,255,255,0.8);font-weight:500}
+.apply-note{
+  margin-top:2rem;padding:1.2rem 1.4rem;
+  background:rgba(251,114,10,0.08);border:1px solid rgba(251,114,10,0.2);
+  border-radius:4px;font-size:0.82rem;color:rgba(255,255,255,0.45);line-height:1.65;
+}
+.apply-note strong{color:var(--orange)}
+
+/* FORM */
+.form-wrap{
+  background:var(--white);border-radius:4px;
+  padding:2.5rem;
+  box-shadow:var(--shadow-card);
+}
+.form-title{font-family:var(--serif);font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:0.3rem}
+.form-subtitle{font-size:0.83rem;color:var(--muted);margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--rule)}
+.form-group{margin-bottom:1.2rem}
+label{display:block;font-size:0.78rem;font-weight:500;color:var(--ink-lt);letter-spacing:0.04em;margin-bottom:5px}
+label span{color:var(--orange)}
+input,select,textarea{
+  width:100%;padding:10px 14px;
+  background:var(--white);border:1px solid rgba(42,82,105,0.18);border-radius:3px;
+  font-family:var(--sans);font-size:0.92rem;color:var(--ink);
+  transition:border-color 0.2s,box-shadow 0.2s;outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(42,82,105,0.12)}
+textarea{resize:vertical;min-height:80px}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a808c' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-submit{
+  width:100%;padding:14px;
+  background:var(--orange);color:var(--white);
+  font-family:var(--sans);font-size:1rem;font-weight:500;
+  border:none;border-radius:3px;cursor:pointer;
+  letter-spacing:0.04em;
+  box-shadow:0 4px 20px rgba(251,114,10,0.35);
+  transition:background 0.2s,transform 0.15s;
+  margin-top:0.8rem;
+}
+.form-submit:hover{background:var(--orange-dk);transform:translateY(-1px)}
+.form-fine{font-size:0.72rem;color:var(--muted);text-align:center;margin-top:0.8rem;line-height:1.6}
+.form-success{display:none;text-align:center;padding:3rem 2rem}
+.form-success-icon{font-size:3rem;margin-bottom:1rem}
+.form-success-t{font-family:var(--serif);font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:0.5rem}
+.form-success-d{font-size:0.88rem;color:var(--muted);line-height:1.7}
+
+/* ── FOOTER ── */
+footer{background:var(--navy-xdk);padding:2rem var(--pad-x);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-l{font-family:var(--serif);font-size:0.92rem;font-weight:700;color:rgba(255,255,255,0.5)}
+.footer-l span{color:var(--orange)}
+.footer-r{font-size:0.75rem;color:rgba(255,255,255,0.2)}
+.footer-back{font-size:0.78rem;color:rgba(255,255,255,0.3);display:flex;align-items:center;gap:5px;transition:color 0.2s}
+.footer-back:hover{color:rgba(255,255,255,0.6)}
+
+/* ── STICKY BAR ── */
+#sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;background:rgba(26,53,69,0.97);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,0.08);padding:0.8rem 1.4rem;align-items:center;justify-content:space-between;gap:1rem}
+.sticky-msg{font-size:0.82rem;color:rgba(255,255,255,0.5)}
+.sticky-msg strong{color:var(--white)}
+.sticky-btn{background:var(--orange);color:var(--white);font-size:0.85rem;font-weight:500;padding:9px 22px;border-radius:3px;white-space:nowrap;box-shadow:0 2px 14px rgba(251,114,10,0.4)}
+
+/* ── ANIM ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+.fu{opacity:0}
+.fu.on{animation:fadeUp 0.7s cubic-bezier(0.25,0.46,0.45,0.94) forwards}
+.d1{animation-delay:0.1s}.d2{animation-delay:0.2s}.d3{animation-delay:0.3s}.d4{animation-delay:0.4s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .market-grid,.lkk4-inner,.apply-inner{grid-template-columns:1fr}
+  .timing-grid{grid-template-columns:1fr}
+  .support-grid{grid-template-columns:1fr 1fr}
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .stat-cell{border-right:none;border-bottom:1px solid rgba(255,255,255,0.15)}
+  .stat-cell:nth-child(odd){border-right:1px solid rgba(255,255,255,0.15)}
+  .diff-item{grid-template-columns:2.5rem 1fr;grid-template-rows:auto auto}
+  .diff-item > *:last-child{grid-column:2}
+  #sticky{display:flex}
+  body{padding-bottom:70px}
+}
+@media(max-width:580px){
+  .form-row{grid-template-columns:1fr}
+  .support-grid{grid-template-columns:1fr}
+  .hero-h1{font-size:clamp(2.5rem,12vw,4rem)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="https://l-kk.tw/" class="nav-logo">練<span>健康</span></a>
+    <div class="nav-divider"></div>
+    <span class="nav-subtitle">加盟說明</span>
+    <div class="nav-spacer"></div>
+    <a href="#apply" class="nav-cta">預約說明會</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">練健康 LKK Wellness · 加盟說明</div>
+    <h1 class="hero-h1">亞洲正在<br><em>老去</em></h1>
+    <p class="hero-h1-sub">而這個市場，幾乎還沒有人在認真做</p>
+    <p class="hero-lead">
+      全球人口老化速度最快的地區，正是你我所在的亞洲。<br>
+      <strong>需求已經在這裡，缺的是有方法論的人來承接它。</strong><br>
+      練健康花了七年建立這套體系，現在我們正在選擇合適的夥伴，一起把它帶出去。
+    </p>
+    <div class="hero-cta-row">
+      <a href="#apply" class="btn-hero">預約加盟說明會 →</a>
+      <span class="hero-disclaimer">說明會保密進行，不對外公開</span>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    scroll
+  </div>
+</section>
+
+<!-- STATS -->
+<div id="stats">
+  <div class="stats-inner">
+    <div class="stat-cell fu">
+      <div class="stat-n">5.4億</div>
+      <div class="stat-l">亞太地區 60 歲以上人口</div>
+      <div class="stat-src">來源：WHO, 2024</div>
+    </div>
+    <div class="stat-cell fu d1">
+      <div class="stat-n">2030</div>
+      <div class="stat-l">亞洲每 5 人將有 1 人超過 60 歲</div>
+      <div class="stat-src">來源：聯合國人口署</div>
+    </div>
+    <div class="stat-cell fu d2">
+      <div class="stat-n">7年</div>
+      <div class="stat-l">練健康深耕中高齡訓練市場</div>
+      <div class="stat-src">2019 年成立至今</div>
+    </div>
+    <div class="stat-cell fu d3">
+      <div class="stat-n">6屆</div>
+      <div class="stat-l">LKK4 年度中高齡競技賽事</div>
+      <div class="stat-src">台灣唯一同類型賽事</div>
+    </div>
+  </div>
+</div>
+
+<!-- MARKET -->
+<section id="market" class="sp">
+  <div class="container">
+    <span class="eyebrow">市場機會</span>
+    <div class="market-grid">
+      <div class="market-text fu">
+        <h2>這個需求<br><em>已經存在</em></h2>
+        <p class="lead" style="margin-bottom:2rem">高齡人口不只是在增加，他們的消費能力和健康意識也在同步提升。這一代的 60 歲，和上一代的 60 歲完全不同——他們有意願、有能力、有需求，但幾乎找不到真正懂他們的訓練服務。</p>
+        <div class="market-points">
+          <div class="market-point">
+            <div class="mp-dot"></div>
+            <div class="mp-text">台灣 65 歲以上人口佔比已達 <strong>19.2%</strong>，預計 2025 年進入超高齡社會（20%）</div>
+          </div>
+          <div class="market-point">
+            <div class="mp-dot"></div>
+            <div class="mp-text">新加坡、馬來西亞、香港同步面對高齡化，且中高收入族群比例更高，消費力更強</div>
+          </div>
+          <div class="market-point">
+            <div class="mp-dot"></div>
+            <div class="mp-text">現有健身市場幾乎以年輕族群為主，專門服務中高齡、有醫療背景支撐的訓練品牌<strong>極度稀缺</strong></div>
+          </div>
+          <div class="market-point">
+            <div class="mp-dot"></div>
+            <div class="mp-text">肌少症、骨質疏鬆、術後復健的社會關注持續升高，帶動相關健康服務需求的快速成長</div>
+          </div>
+        </div>
+      </div>
+      <div class="data-callout fu d1">
+        <div class="data-item">
+          <div class="data-num">19.2%</div>
+          <div class="data-label">台灣 65 歲以上人口佔比<br>亞洲最快速高齡化地區之一</div>
+          <div class="data-src">來源：國家發展委員會, 2024</div>
+        </div>
+        <div class="data-divider"></div>
+        <div class="data-item">
+          <div class="data-num">2倍+</div>
+          <div class="data-label">亞太地區老年健康相關支出<br>預估 2035 年前成長速度</div>
+          <div class="data-src">來源：Deloitte Asia Pacific Health Report</div>
+        </div>
+        <div class="data-divider"></div>
+        <div class="data-item">
+          <div class="data-num">幾乎0</div>
+          <div class="data-label">具備系統化方法論、醫療背景支撐<br>且已有賽事品牌的中高齡訓練連鎖</div>
+          <div class="data-src">東南亞市場現況</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMING -->
+<section id="timing" class="sp">
+  <div class="container">
+    <span class="eyebrow" style="color:rgba(251,114,10,0.8)">為什麼是現在</span>
+    <h2 class="light">時機<em>從不等人</em></h2>
+    <div class="timing-grid">
+      <div class="timing-card fu">
+        <div class="tc-num">01</div>
+        <div class="tc-title">市場空窗正在關閉</div>
+        <p class="tc-body">高齡化帶來的商業機會已有更多人意識到，但能真正落地執行、有完整方法論的品牌仍然極少。先進場的品牌將取得定位優勢，後進者需要付出更高的市場教育成本。</p>
+      </div>
+      <div class="timing-card fu d1">
+        <div class="tc-num">02</div>
+        <div class="tc-title">練健康的體系已經成熟</div>
+        <p class="tc-body">七年的實戰經驗、四間門店的營運模式、完整的教練培訓體系、以及六屆 LKK4 建立的品牌知名度——這些都已就位。你不是在投資一個概念，而是一個已被市場驗證的系統。</p>
+      </div>
+      <div class="timing-card fu d2">
+        <div class="tc-num">03</div>
+        <div class="tc-title">我們正在選擇性擴張</div>
+        <p class="tc-body">我們不以規模為優先，而是選擇真正理解這個市場、有資源把事情做好的夥伴。現在是加入討論的合適時機，我們希望和有意思的人一起把這件事做大。</p>
+      </div>
+    </div>
+    <div class="timing-cta-strip fu">
+      <p class="tcs-text">若你也認同這個市場機會，<strong>我們希望和你進一步談談</strong>。說明會保密進行，沒有銷售壓力。</p>
+      <a href="#apply" class="btn-hero">預約說明會 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFERENTIATION -->
+<section id="diff" class="sp">
+  <div class="container">
+    <span class="eyebrow">為什麼是練健康</span>
+    <h2>不是自己做，<br><em>而是站在體系上做</em></h2>
+    <p class="lead">自己開一間健身房服務中高齡，和加入一個已有方法論、認證體系、品牌資產的體系，是完全不同的事。</p>
+    <div class="diff-list">
+      <div class="diff-item fu">
+        <div class="diff-num">01</div>
+        <div>
+          <div class="diff-tag">方法論</div>
+          <div class="diff-title">由物理治療師主導的訓練體系</div>
+        </div>
+        <div class="diff-body">一般健身品牌的教練是體育背景，練健康的核心團隊是物理治療師和呼吸治療師。這個差異讓我們能服務一般健身無法接觸的族群——術後、慢性病、骨質疏鬆——而這些正是中高齡市場中需求最強、黏著度最高的客群。</div>
+      </div>
+      <div class="diff-item fu d1">
+        <div class="diff-num">02</div>
+        <div>
+          <div class="diff-tag">認證體系</div>
+          <div class="diff-title">練健康學院：教練不靠外聘</div>
+        </div>
+        <div class="diff-body">我們自建教練認證培訓體系（練健康學院），採學分制發證。這意味著加盟夥伴的教練人才問題，不需要自行從市場上搜尋和篩選——有一個完整的培訓和認證系統在支撐。這是大多數連鎖健身品牌做不到的。</div>
+      </div>
+      <div class="diff-item fu d2">
+        <div class="diff-num">03</div>
+        <div>
+          <div class="diff-tag">品牌資產</div>
+          <div class="diff-title">已有媒體信任度和公眾知名度</div>
+        </div>
+        <div class="diff-body">大愛新聞、吳淡如、動思學院等媒體背書，以及六屆 LKK4 建立的賽事品牌，讓練健康在中高齡訓練這個品類上已有公眾辨識度。加盟夥伴進場時，不需要從零開始建立品牌信任——你站在一個已有高度的起點上。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LKK4 -->
+<section id="lkk4" class="sp">
+  <div class="container">
+    <div class="lkk4-inner">
+      <div>
+        <div class="lkk4-big" aria-hidden="true">LKK4</div>
+        <div class="lkk4-badge"><span class="lkk4-badge-dot"></span>護城河</div>
+        <h2 class="lkk4-title">競爭者可以<br>複製門市，<br>但複製不了<span> LKK4</span></h2>
+        <p class="lkk4-desc">LKK4 中高齡四項體能挑戰賽是練健康獨創的年度競技賽事，也是目前台灣唯一同類型賽事。六年的積累讓它成為一個有社群、有口碑、有媒體黏著度的品牌本身——而不只是一個活動。</p>
+      </div>
+      <div class="lkk4-points">
+        <div class="lkk4-point fu">
+          <div class="lkk4-point-icon">🏋️</div>
+          <div>
+            <div class="lkk4-point-t">賽事即行銷，無需另外投放廣告</div>
+            <div class="lkk4-point-d">每年一屆的 LKK4 產生大量媒體曝光、社群擴散和口碑，這些流量自然流入門店，降低加盟夥伴的行銷成本</div>
+          </div>
+        </div>
+        <div class="lkk4-point fu d1">
+          <div class="lkk4-point-icon">🌏</div>
+          <div>
+            <div class="lkk4-point-t">亞洲擴張的贊助吸引力</div>
+            <div class="lkk4-point-d">LKK4 進入新市場後，對保健品、保險、金融品牌的贊助吸引力，是一般健身中心無法比擬的附加資產</div>
+          </div>
+        </div>
+        <div class="lkk4-point fu d2">
+          <div class="lkk4-point-icon">📈</div>
+          <div>
+            <div class="lkk4-point-t">參賽者即最高黏著度學員</div>
+            <div class="lkk4-point-d">參加過 LKK4 的學員，流失率遠低於一般學員。賽事讓訓練有了目標，目標讓人留下來</div>
+          </div>
+        </div>
+        <div class="lkk4-point fu d3">
+          <div class="lkk4-point-icon">🛡️</div>
+          <div>
+            <div class="lkk4-point-t">模仿者已出現，但六年的積累無法複製</div>
+            <div class="lkk4-point-d">市面上已有品牌開始模仿練健康的方向，甚至出現類似賽事。但六屆的歷史、媒體認知、學員社群，是時間積累出來的護城河</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUPPORT -->
+<section id="support" class="sp">
+  <div class="container">
+    <span class="eyebrow">總部支援</span>
+    <h2>你不是一個人<br><em>在面對這個市場</em></h2>
+    <p class="lead">我們的目標不是找人開店，而是找對的夥伴，然後給他最好的後援讓他做好。</p>
+    <div class="support-grid">
+      <div class="support-card fu">
+        <div class="sc-icon">🎓</div>
+        <div class="sc-title">教練培訓與認證</div>
+        <p class="sc-body">練健康學院提供完整的教練培訓課程和學分制認證，確保每個門市的服務品質一致，不依賴外部人才市場的不確定性。</p>
+      </div>
+      <div class="support-card fu d1">
+        <div class="sc-icon">📋</div>
+        <div class="sc-title">營運方法論</div>
+        <p class="sc-body">七年累積的學員評估流程、課程設計框架、客戶管理系統，讓加盟夥伴不需要從頭摸索，直接站在已驗證的系統上運作。</p>
+      </div>
+      <div class="support-card fu d2">
+        <div class="sc-icon">🏆</div>
+        <div class="sc-title">LKK4 賽事體系</div>
+        <p class="sc-body">加盟夥伴進入 LKK4 的賽事生態，包含品牌使用、賽事籌辦支援、贊助招商協助，讓門市從第一天就有不同於競爭者的差異化資產。</p>
+      </div>
+      <div class="support-card fu d3">
+        <div class="sc-icon">📣</div>
+        <div class="sc-title">品牌與行銷支援</div>
+        <p class="sc-body">台灣總部建立的媒體關係、社群內容體系、品牌設計規範，提供給夥伴使用，確保品牌在不同市場的一致性。</p>
+      </div>
+      <div class="support-card fu d4">
+        <div class="sc-icon">🌐</div>
+        <div class="sc-title">在地市場進入支援</div>
+        <p class="sc-body">針對不同市場（新加坡、馬來西亞、香港等），提供在地化建議，包括法規差異、目標族群定位、語言本地化，協助夥伴減少進場摩擦。</p>
+      </div>
+      <div class="support-card fu d4">
+        <div class="sc-icon">🤝</div>
+        <div class="sc-title">持續的夥伴關係</div>
+        <p class="sc-body">不是簽約後就放生。我們建立持續的溝通機制，包含定期交流、問題回應、以及隨體系升級而同步更新的知識支援。</p>
+      </div>
+    </div>
+    <div class="support-footer fu">
+      <p class="sf-text">以上所有支援的細節，包含具體的合作模式和條件，<strong>只在說明會中說明</strong>。我們希望在真正的對話中，找到適合一起做這件事的夥伴。</p>
+      <a href="#apply" class="btn-hero" style="flex-shrink:0">預約說明會 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- APPLY -->
+<section id="apply" class="sp">
+  <div class="container">
+    <div class="apply-inner">
+      <div class="apply-left">
+        <span class="eyebrow" style="color:rgba(251,114,10,0.8)">預約說明會</span>
+        <h2 class="light">讓我們<br><em>深入談談</em></h2>
+        <p style="color:rgba(255,255,255,0.55);font-size:0.95rem;line-height:1.85;margin-bottom:2rem">說明會以線上或面談方式進行，通常 60–90 分鐘，保密進行，沒有任何銷售壓力。我們只是想多了解你，也讓你更了解我們。</p>
+        <div class="apply-what">
+          <div class="aw-item">
+            <div class="aw-icon">→</div>
+            <div class="aw-text"><strong>完整的品牌與市場說明</strong><br>無法在網站公開的資訊，在說明會中呈現</div>
+          </div>
+          <div class="aw-item">
+            <div class="aw-icon">→</div>
+            <div class="aw-text"><strong>雙向提問</strong><br>你問我們，我們也想了解你的背景和想法</div>
+          </div>
+          <div class="aw-item">
+            <div class="aw-icon">→</div>
+            <div class="aw-text"><strong>探索合作可能性</strong><br>不一定要立刻做決定，先看看有沒有可以一起做的事</div>
+          </div>
+        </div>
+        <div class="apply-note">
+          <strong>保密說明：</strong>本頁面不在搜尋引擎索引範圍，說明會內容保密，資料僅用於聯繫目的，不對外分享。
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <div class="form-wrap" id="form-wrap">
+        <div class="form-title">填寫基本資料</div>
+        <div class="form-subtitle">我們會在 3 個工作天內以您偏好的方式聯繫，安排說明會時間</div>
+        <form id="apply-form" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>姓名 <span>*</span></label>
+              <input type="text" name="name" required placeholder="您的姓名">
+            </div>
+            <div class="form-group">
+              <label>公司／機構名稱</label>
+              <input type="text" name="company" placeholder="如適用">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>電子郵件 <span>*</span></label>
+            <input type="email" name="email" required placeholder="主要聯繫信箱">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>聯繫電話</label>
+              <input type="tel" name="phone" placeholder="+886 或當地號碼">
+            </div>
+            <div class="form-group">
+              <label>所在地區 <span>*</span></label>
+              <select name="region" required>
+                <option value="" disabled selected>請選擇</option>
+                <option>台灣</option>
+                <option>新加坡</option>
+                <option>馬來西亞</option>
+                <option>香港</option>
+                <option>中國大陸</option>
+                <option>其他</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>您對哪種合作方式最感興趣？ <span>*</span></label>
+            <select name="interest" required>
+              <option value="" disabled selected>請選擇</option>
+              <option>實體加盟門店</option>
+              <option>區域代理／主加盟</option>
+              <option>教練認證授權</option>
+              <option>LKK4 賽事授權</option>
+              <option>尚在評估中，想先了解</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>偏好的說明會方式</label>
+            <select name="meeting">
+              <option value="" disabled selected>請選擇</option>
+              <option>線上視訊（Zoom / Google Meet）</option>
+              <option>台北面談</option>
+              <option>不限，請安排</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>想讓我們事先了解的事（選填）</label>
+            <textarea name="note" placeholder="您的背景、目前的想法、或任何想提前說明的事項..."></textarea>
+          </div>
+          <button type="submit" class="form-submit">送出預約申請 →</button>
+          <p class="form-fine">您的資料保密處理，僅用於說明會安排，不作其他用途</p>
+        </form>
+        <div class="form-success" id="form-success">
+          <div class="form-success-icon">✓</div>
+          <div class="form-success-t">已收到您的申請</div>
+          <p class="form-success-d">我們會在 3 個工作天內以您留下的電子郵件或電話聯繫，安排說明會時間。<br><br>感謝您對練健康的興趣。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-l">練<span>健康</span> LKK Wellness</div>
+  <a href="https://l-kk.tw/" class="footer-back">← 返回官網</a>
+  <div class="footer-r">本頁面資訊保密，不對外公開</div>
+</footer>
+
+<!-- STICKY -->
+<div id="sticky">
+  <div class="sticky-msg"><strong>有興趣了解加盟？</strong> 預約保密說明會</div>
+  <a href="#apply" class="sticky-btn">預約說明會</a>
+</div>
+
+<script>
+// Scroll animations
+const obs = new IntersectionObserver(e=>{
+  e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('on');obs.unobserve(el.target)}})
+},{threshold:0.1});
+document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+
+// Form submit
+function handleSubmit(e){
+  e.preventDefault();
+  const form = document.getElementById('apply-form');
+  const success = document.getElementById('form-success');
+  // In production: submit to your backend / SurveyCake / Zapier here
+  form.style.display = 'none';
+  success.style.display = 'block';
+  // scroll to success message
+  document.getElementById('form-wrap').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'})}
+  });
+});
+</script>
+</body>
+</html>

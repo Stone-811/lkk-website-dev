@@ -1,0 +1,60 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isEditor() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'editor'];
+    }
+
+    // Public read for active content
+    match /stores/{storeId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if isEditor();
+    }
+
+    match /coaches/{coachId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if isEditor();
+    }
+
+    match /faqs/{faqId} {
+      allow read: if resource.data.isActive == true;
+      allow write: if isEditor();
+    }
+
+    match /homePage/{docId} {
+      allow read: if true;
+      allow write: if isEditor();
+    }
+
+    // Leads - public can create, only authenticated can read/update
+    match /leads/{leadId} {
+      allow create: if true;
+      allow read, update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    // Users - only admin can manage
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // Settings - only admin can manage
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+  }
+}

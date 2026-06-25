@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>練健康｜台北新北中高齡肌力訓練專家</title>
+<meta name="description" content="40歲後肌肉每年流失1%，練健康由物理治療師與專業教練組成，提供中高齡、特殊族群一對一肌力訓練，台北南京、松江、西門、新北新店四間門店，50歲以上首次免費體驗。">
+<link rel="canonical" href="https://l-kk.tw/">
+<link rel="alternate" hreflang="zh-TW" href="https://l-kk.tw/"><link rel="alternate" hreflang="en" href="en.html">
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Organization",
+  "name":"練健康 LKK Wellness",
+  "url":"https://l-kk.tw",
+  "logo":"https://l-kk.tw/wp-content/uploads/logo.png",
+  "sameAs":[
+    "https://www.facebook.com/LKKWellnessCenter/",
+    "https://www.instagram.com/lkk_wellness/",
+    "https://www.youtube.com/c/LKKWellness"
+  ],
+  "contactPoint":{"@type":"ContactPoint","telephone":"+886-2-2507-4196","contactType":"customer service","areaServed":"TW","availableLanguage":"zh-TW"}
+}
+</script>
+
+<script type="application/ld+json">
+[
+  {"@context":"https://schema.org","@type":"HealthClub","name":"練健康南京店","address":{"@type":"PostalAddress","streetAddress":"南京東路三段29號B1","addressLocality":"台北市中山區","addressCountry":"TW"},"telephone":"+886-2-2507-4196","url":"https://l-kk.tw/stores/nanjing/"},
+  {"@context":"https://schema.org","@type":"HealthClub","name":"練健康松江店","address":{"@type":"PostalAddress","streetAddress":"松江路122號B1","addressLocality":"台北市中山區","addressCountry":"TW"},"url":"https://l-kk.tw/stores/songjiang/"},
+  {"@context":"https://schema.org","@type":"HealthClub","name":"練健康西門店","address":{"@type":"PostalAddress","streetAddress":"寶慶路39號","addressLocality":"台北市中正區","addressCountry":"TW"},"telephone":"+886-2-2370-3245","url":"https://l-kk.tw/stores/ximending/"},
+  {"@context":"https://schema.org","@type":"HealthClub","name":"練健康新店七張店","address":{"@type":"PostalAddress","streetAddress":"北新路二段252號B1-2","addressLocality":"新北市新店區","addressCountry":"TW"},"telephone":"+886-2-8914-6428","url":"https://l-kk.tw/stores/xindian/"}
+]
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"50歲以上可以來練健康嗎？","acceptedAnswer":{"@type":"Answer","text":"非常歡迎。練健康是台灣專注中高齡肌力訓練的先驅，50歲以上學員佔多數。首次體驗課完全免費。"}},
+    {"@type":"Question","name":"從來沒有運動習慣可以來嗎？","acceptedAnswer":{"@type":"Answer","text":"完全可以。我們的物理治療師背景教練會先進行身體評估，再設計安全有效的客製課表，不需要任何運動基礎。"}},
+    {"@type":"Question","name":"有慢性病或術後可以訓練嗎？","acceptedAnswer":{"@type":"Answer","text":"可以，特殊族群訓練是我們的核心專業之一。中風、癌症術後、糖尿病、骨質疏鬆等族群，我們有豐富的服務經驗，並由物理治療師督導。"}}
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ── TOKENS ── */
+:root {
+  --navy:      #2A5269;
+  --navy-dk:   #1a3545;
+  --navy-lt:   #3a6a85;
+  --orange:    #FB720A;
+  --orange-lt: #fc8c35;
+  --cream:     #F5EFE4;
+  --cream-dk:  #e8dfd0;
+  --white:     #ffffff;
+  --ink:       #1a1a1a;
+  --ink-lt:    #444;
+  --muted:     #7a7a7a;
+  --border:    rgba(42,82,105,0.15);
+  --serif:     'Noto Serif TC', serif;
+  --sans:      'Noto Sans TC', sans-serif;
+  --max-w:     1180px;
+  --pad-x:     clamp(1.2rem, 5vw, 3rem);
+  --shadow:    0 4px 32px rgba(42,82,105,0.10);
+  --shadow-btn:0 4px 20px rgba(251,114,10,0.35);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:clamp(0.95rem,1.5vw,1.05rem);color:var(--ink);background:var(--cream);line-height:1.7;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x)}
+.section-pad{padding:clamp(4rem,8vw,7rem) 0}
+
+/* ── NAV ── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(26,53,69,0.97);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.nav-inner{
+  display:flex;align-items:center;gap:0;
+  height:64px;max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x);
+}
+.nav-logo{
+  font-family:var(--serif);font-size:1.25rem;font-weight:700;
+  color:var(--white);letter-spacing:0.04em;margin-right:2rem;
+}
+.nav-logo span{color:var(--orange)}
+/* B2C links */
+.nav-links{display:flex;align-items:center;gap:1.6rem;list-style:none;flex:1}
+.nav-links a{color:rgba(255,255,255,0.75);font-size:0.88rem;font-weight:400;transition:color 0.2s}
+.nav-links a:hover{color:var(--white)}
+/* separator */
+.nav-sep{width:1px;height:20px;background:rgba(255,255,255,0.15);margin:0 0.8rem;flex-shrink:0}
+/* B2B links */
+.nav-b2b-group{display:flex;align-items:center;gap:0.8rem}
+.nav-b2b{
+  color:rgba(255,255,255,0.45)!important;font-size:0.8rem!important;
+  border:1px solid rgba(255,255,255,0.18);padding:5px 12px;border-radius:40px;
+  transition:color 0.2s,border-color 0.2s;white-space:nowrap;
+}
+.nav-b2b:hover{color:rgba(255,255,255,0.8)!important;border-color:rgba(255,255,255,0.4)!important}
+.nav-lkk4{color:var(--orange)!important;font-size:0.88rem!important;font-weight:500!important;white-space:nowrap}
+.nav-lkk4:hover{opacity:0.75}
+.nav-cta{
+  background:var(--orange);color:var(--white)!important;
+  padding:8px 20px;border-radius:40px;
+  font-weight:500!important;font-size:0.88rem!important;
+  box-shadow:var(--shadow-btn);transition:background 0.2s,transform(0.15s);
+  white-space:nowrap;margin-left:0.8rem;
+}
+.nav-cta:hover{background:var(--orange-lt)!important;transform:translateY(-1px)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;margin-left:auto}
+.nav-hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px}
+
+/* ── HERO ── */
+#hero{
+  min-height:100svh;background:var(--navy-dk);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;padding-top:64px;
+}
+.hero-bg::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 70% 40%,rgba(251,114,10,0.12) 0%,transparent 55%),
+    radial-gradient(circle at 10% 80%,rgba(42,82,105,0.6) 0%,transparent 50%);
+  pointer-events:none;
+}
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;
+}
+.hero-bg{position:absolute;inset:0}
+.hero-content{
+  position:relative;z-index:2;
+  max-width:var(--max-w);margin:0 auto;
+  padding:clamp(3rem,8vw,6rem) var(--pad-x);
+  display:grid;grid-template-columns:1fr 400px;gap:3rem;align-items:center;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(251,114,10,0.15);border:1px solid rgba(251,114,10,0.35);
+  color:var(--orange);font-size:0.8rem;font-weight:500;
+  padding:5px 14px;border-radius:40px;margin-bottom:1.4rem;letter-spacing:0.06em;
+}
+.hero-eyebrow::before{content:'';display:inline-block;width:6px;height:6px;background:var(--orange);border-radius:50%}
+.hero-h1{
+  font-family:var(--serif);font-size:clamp(2.6rem,7vw,5.2rem);
+  font-weight:900;color:var(--white);line-height:1.15;margin-bottom:1.5rem;
+}
+.hero-h1 em{font-style:normal;color:var(--orange)}
+.hero-sub{color:rgba(255,255,255,0.68);font-size:clamp(1rem,1.8vw,1.15rem);font-weight:300;line-height:1.75;margin-bottom:2.5rem;max-width:520px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--orange);color:var(--white);
+  font-weight:700;font-size:1rem;padding:14px 32px;border-radius:50px;
+  box-shadow:var(--shadow-btn);transition:transform 0.2s,background 0.2s;border:none;cursor:pointer;
+}
+.btn-primary:hover{background:var(--orange-lt);transform:translateY(-2px)}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;color:rgba(255,255,255,0.75);
+  font-size:0.95rem;padding:14px 24px;border-radius:50px;
+  border:1px solid rgba(255,255,255,0.2);transition:border-color 0.2s,color 0.2s;cursor:pointer;
+}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.5);color:var(--white)}
+.hero-free{
+  margin-top:1rem;display:flex;align-items:center;gap:8px;
+  color:rgba(255,255,255,0.5);font-size:0.85rem;
+}
+.hero-free strong{color:var(--orange)}
+
+/* Hero stats card */
+.hero-card{
+  background:rgba(255,255,255,0.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:2rem;
+  display:flex;flex-direction:column;gap:1.2rem;
+}
+.hero-stat{display:flex;align-items:center;gap:1rem;padding-bottom:1.2rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+.hero-stat:last-child{padding-bottom:0;border-bottom:none}
+.stat-icon{width:44px;height:44px;border-radius:8px;background:rgba(251,114,10,0.18);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.stat-num{font-family:var(--serif);font-size:1.6rem;font-weight:900;color:var(--white);line-height:1}
+.stat-lbl{font-size:0.8rem;color:rgba(255,255,255,0.5);margin-top:2px}
+.hero-scroll{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:rgba(255,255,255,0.3);font-size:0.75rem;
+  animation:bob 2.4s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── TRUST BAR ── */
+#trust{background:var(--white);border-bottom:1px solid var(--border);padding:1.4rem 0}
+.trust-inner{
+  display:flex;align-items:center;gap:2rem;flex-wrap:wrap;
+  max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x);
+}
+.trust-label{font-size:0.76rem;font-weight:500;color:var(--muted);letter-spacing:0.08em;white-space:nowrap}
+.trust-logos{display:flex;align-items:center;gap:2rem;flex-wrap:wrap}
+.trust-logo{font-family:var(--serif);font-size:0.9rem;font-weight:700;color:var(--muted);opacity:0.6;transition:opacity 0.2s;white-space:nowrap}
+.trust-logo:hover{opacity:1}
+
+/* ── DATA STRIP ── */
+#data{background:var(--navy-dk);padding:clamp(3rem,6vw,5rem) 0}
+.data-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:rgba(255,255,255,0.08);border-radius:14px;overflow:hidden}
+.data-item{background:var(--navy-dk);padding:2.2rem 2rem;transition:background 0.2s}
+.data-item:hover{background:rgba(255,255,255,0.04)}
+.data-num{font-family:var(--serif);font-size:clamp(2.4rem,4vw,3.5rem);font-weight:900;color:var(--orange);line-height:1;margin-bottom:0.5rem}
+.data-text{color:rgba(255,255,255,0.65);font-size:0.9rem;line-height:1.6}
+.data-text strong{color:var(--white)}
+
+/* ── SECTION LABELS ── */
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:0.76rem;font-weight:700;color:var(--orange);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.8rem}
+.section-label::before{content:'';display:block;width:22px;height:2px;background:var(--orange)}
+.section-h2{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;color:var(--navy-dk);line-height:1.25;margin-bottom:1rem}
+.section-h2 em{font-style:normal;color:var(--orange)}
+.section-lead{color:var(--ink-lt);line-height:1.8;max-width:580px}
+
+/* ── SERVICES ── */
+#services{background:var(--cream)}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:3rem}
+.service-card{background:var(--white);border-radius:24px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);transition:transform 0.25s,box-shadow 0.25s}
+.service-card:hover{transform:translateY(-4px);box-shadow:0 12px 48px rgba(42,82,105,0.15)}
+.service-img{height:200px;background:var(--navy);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.service-img-icon{font-size:4rem;opacity:0.35}
+.service-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(26,53,69,0.85) 0%,transparent 60%)}
+.service-tag{position:absolute;top:1rem;left:1rem;background:var(--orange);color:var(--white);font-size:0.72rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.06em}
+.service-body{padding:1.5rem}
+.service-title{font-family:var(--serif);font-size:1.3rem;font-weight:700;color:var(--navy-dk);margin-bottom:0.6rem}
+.service-desc{color:var(--ink-lt);font-size:0.92rem;line-height:1.7;margin-bottom:1.2rem}
+.service-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:0.76rem;font-weight:500;color:var(--navy);background:rgba(42,82,105,0.08);padding:3px 10px;border-radius:20px;border:1px solid rgba(42,82,105,0.12)}
+
+/* ── CASES ── */
+#cases{background:var(--white)}
+.cases-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:3rem}
+.case-card{background:var(--cream);border-radius:24px;padding:2rem;border:1px solid var(--border);transition:box-shadow 0.25s}
+.case-card:hover{box-shadow:var(--shadow)}
+.case-quote{font-family:var(--serif);font-size:5rem;font-weight:900;color:var(--orange);opacity:0.2;line-height:0.8;margin-bottom:0.5rem;display:block}
+.case-text{font-size:0.97rem;line-height:1.8;color:var(--ink-lt);margin-bottom:1.4rem;font-style:italic}
+.case-meta{display:flex;align-items:center;gap:0.8rem}
+.case-avatar{width:44px;height:44px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--white);font-weight:700;font-size:1rem;flex-shrink:0}
+.case-name{font-weight:600;font-size:0.92rem;color:var(--navy-dk)}
+.case-detail{font-size:0.8rem;color:var(--muted)}
+.case-badge{margin-left:auto;background:rgba(251,114,10,0.12);color:var(--orange);font-size:0.75rem;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
+
+/* ── FLOW ── */
+#flow{background:var(--navy-dk);padding:clamp(4rem,8vw,7rem) 0}
+.flow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;margin-top:3rem;position:relative}
+.flow-grid::before{content:'';position:absolute;top:28px;left:0;right:0;height:1px;background:rgba(251,114,10,0.3);z-index:0}
+.flow-step{position:relative;z-index:1;text-align:center;padding:0 1.5rem}
+.flow-num{width:56px;height:56px;border-radius:50%;background:var(--orange);color:var(--white);font-family:var(--serif);font-size:1.3rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;box-shadow:0 0 0 6px rgba(251,114,10,0.15)}
+.flow-title{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--white);margin-bottom:0.5rem}
+.flow-desc{font-size:0.85rem;color:rgba(255,255,255,0.5);line-height:1.6}
+.flow-cta{margin-top:3.5rem;text-align:center}
+.flow-cta p{color:rgba(255,255,255,0.45);font-size:0.85rem;margin-top:1rem}
+.flow-cta p strong{color:var(--orange)}
+
+/* ── LKK4 ── */
+#lkk4{background:#0e2230;padding:clamp(4rem,8vw,7rem) 0;position:relative;overflow:hidden}
+#lkk4::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--orange) 30%,var(--orange) 70%,transparent 100%)}
+#lkk4::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(251,114,10,0.08) 0%,transparent 50%),radial-gradient(circle at 10% 80%,rgba(42,82,105,0.3) 0%,transparent 40%);pointer-events:none}
+.lkk4-inner{position:relative;z-index:1;display:grid;grid-template-columns:1fr 380px;gap:4rem;align-items:center}
+.lkk4-kicker{display:inline-flex;align-items:center;gap:10px;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--orange);margin-bottom:1.2rem}
+.lkk4-kicker-line{display:inline-block;width:28px;height:2px;background:var(--orange)}
+.lkk4-logo{font-family:var(--serif);font-size:clamp(3rem,7vw,5.5rem);font-weight:900;line-height:1;color:var(--white);margin-bottom:0.4rem;letter-spacing:-0.02em}
+.lkk4-logo span{color:var(--orange)}
+.lkk4-tagline{font-size:clamp(1rem,2vw,1.2rem);color:rgba(255,255,255,0.55);font-weight:300;margin-bottom:1.4rem;letter-spacing:0.04em}
+.lkk4-season{display:inline-flex;align-items:center;gap:8px;background:rgba(251,114,10,0.12);border:1px solid rgba(251,114,10,0.25);border-radius:40px;padding:5px 14px;font-size:0.8rem;color:var(--orange);font-weight:500;margin-bottom:1.6rem}
+.lkk4-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+.lkk4-desc{color:rgba(255,255,255,0.65);font-size:0.97rem;line-height:1.8;max-width:520px;margin-bottom:2rem}
+.lkk4-stats{display:flex;gap:2.5rem;margin-bottom:2.5rem;flex-wrap:wrap}
+.lkk4-stat-num{font-family:var(--serif);font-size:2rem;font-weight:900;color:var(--orange);line-height:1}
+.lkk4-stat-lbl{font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:3px}
+.lkk4-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn-outline-orange{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--orange);font-size:0.9rem;font-weight:500;padding:11px 24px;border-radius:50px;border:1px solid rgba(251,114,10,0.5);transition:background 0.2s,border-color 0.2s}
+.btn-outline-orange:hover{background:rgba(251,114,10,0.1);border-color:var(--orange)}
+.lkk4-events{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lkk4-event{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.2rem 1.1rem;transition:background 0.2s,border-color 0.2s}
+.lkk4-event:hover{background:rgba(251,114,10,0.08);border-color:rgba(251,114,10,0.25)}
+.lkk4-event-icon{font-size:1.6rem;margin-bottom:0.5rem}
+.lkk4-event-name{font-family:var(--serif);font-size:0.97rem;font-weight:700;color:var(--white);margin-bottom:3px}
+.lkk4-event-desc{font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.5}
+
+/* ── TEAM ── */
+#team{background:var(--cream)}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3rem}
+.team-card{background:var(--white);border-radius:24px;padding:2rem;border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:var(--shadow);transition:transform 0.25s}
+.team-card:hover{transform:translateY(-3px)}
+.team-avatar{width:84px;height:84px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--white);font-family:var(--serif);font-size:1.6rem;font-weight:700;margin-bottom:1.2rem;border:3px solid var(--cream-dk)}
+.team-name{font-family:var(--serif);font-size:1.15rem;font-weight:700;color:var(--navy-dk);margin-bottom:4px}
+.team-role{font-size:0.82rem;color:var(--orange);font-weight:600;margin-bottom:0.8rem;letter-spacing:0.04em}
+.team-desc{font-size:0.87rem;color:var(--muted);line-height:1.65}
+.team-creds{margin-top:1rem;display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.cred{font-size:0.72rem;font-weight:500;color:var(--navy);background:rgba(42,82,105,0.08);padding:2px 8px;border-radius:20px}
+
+/* ── ACADEMY TEASER (B2B strip) ── */
+#academy-teaser{background:var(--navy);padding:clamp(2.5rem,5vw,4rem) 0}
+.academy-inner{display:flex;align-items:center;gap:2rem;flex-wrap:wrap;justify-content:space-between}
+.academy-left{}
+.academy-badge{display:inline-flex;align-items:center;gap:8px;font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:0.6rem}
+.academy-title{font-family:var(--serif);font-size:clamp(1.4rem,3vw,2rem);font-weight:900;color:var(--white);margin-bottom:0.5rem}
+.academy-title span{color:var(--orange)}
+.academy-desc{color:rgba(255,255,255,0.6);font-size:0.92rem;line-height:1.7;max-width:520px}
+.academy-right{display:flex;gap:10px;flex-wrap:wrap;flex-shrink:0}
+.btn-academy{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);color:var(--white);font-size:0.88rem;font-weight:500;padding:11px 22px;border-radius:50px;border:1px solid rgba(255,255,255,0.2);transition:background 0.2s,border-color 0.2s;white-space:nowrap}
+.btn-academy:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.4)}
+.btn-franchise{display:inline-flex;align-items:center;gap:8px;background:rgba(251,114,10,0.15);color:var(--orange);font-size:0.88rem;font-weight:500;padding:11px 22px;border-radius:50px;border:1px solid rgba(251,114,10,0.3);transition:background 0.2s;white-space:nowrap}
+.btn-franchise:hover{background:rgba(251,114,10,0.25)}
+
+/* ── LOCATIONS ── */
+#locations{background:var(--white)}
+.loc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:3rem}
+.loc-card{border:1px solid var(--border);border-radius:14px;padding:1.5rem;background:var(--cream);transition:border-color 0.2s,box-shadow 0.2s}
+.loc-card:hover{border-color:var(--navy-lt);box-shadow:var(--shadow)}
+.loc-num{width:32px;height:32px;border-radius:50%;background:var(--navy);color:var(--white);font-size:0.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:0.8rem}
+.loc-name{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--navy-dk);margin-bottom:4px}
+.loc-addr{font-size:0.83rem;color:var(--muted);line-height:1.6}
+.loc-phone{font-size:0.83rem;color:var(--navy);margin-top:6px;font-weight:500}
+
+/* ── FAQ ── */
+#faq{background:var(--cream)}
+.faq-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:0}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:1.2rem 0;background:none;border:none;cursor:pointer;text-align:left;
+  font-family:var(--sans);font-size:1rem;font-weight:500;color:var(--navy-dk);
+}
+.faq-icon{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color 0.2s,background 0.2s;font-size:1rem;color:var(--navy)}
+.faq-q[aria-expanded="true"] .faq-icon{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease}
+.faq-a-inner{padding-bottom:1.2rem;font-size:0.95rem;color:var(--ink-lt);line-height:1.8}
+
+/* ── CTA BANNER ── */
+#cta-banner{background:var(--orange);padding:clamp(3rem,6vw,5rem) 0;text-align:center}
+.cta-h{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;color:var(--white);margin-bottom:0.8rem}
+.cta-sub{color:rgba(255,255,255,0.8);font-size:1rem;margin-bottom:2rem}
+.btn-white{display:inline-flex;align-items:center;gap:8px;background:var(--white);color:var(--orange);font-weight:700;font-size:1rem;padding:14px 36px;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,0.15);transition:transform 0.2s}
+.btn-white:hover{transform:translateY(-2px)}
+.cta-note{color:rgba(255,255,255,0.65);font-size:0.82rem;margin-top:1rem}
+
+/* ── FOOTER ── */
+footer{background:var(--navy-dk);color:rgba(255,255,255,0.55);padding:3.5rem 0 2rem}
+.footer-inner{max-width:var(--max-w);margin:0 auto;padding:0 var(--pad-x);display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:2.5rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+.footer-brand{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:0.5rem}
+.footer-brand span{color:var(--orange)}
+.footer-copy{font-size:0.78rem;line-height:1.6;margin-bottom:1rem}
+.footer-col-title{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1rem}
+.footer-col-links{list-style:none;display:flex;flex-direction:column;gap:0.55rem}
+.footer-col-links a{font-size:0.85rem;transition:color 0.2s}
+.footer-col-links a:hover{color:var(--white)}
+.footer-b2b-link{display:inline-flex;align-items:center;gap:6px}
+.footer-b2b-link::after{content:'→';font-size:0.75rem;opacity:0.5;transition:opacity 0.2s,transform 0.2s}
+.footer-b2b-link:hover::after{opacity:1;transform:translateX(3px)}
+.footer-bottom{max-width:var(--max-w);margin:0 auto;padding:1.5rem var(--pad-x) 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-copy-bottom{font-size:0.76rem}
+.footer-socials{display:flex;gap:10px}
+.social-btn{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:rgba(255,255,255,0.5);transition:border-color 0.2s,color 0.2s}
+.social-btn:hover{border-color:var(--orange);color:var(--orange)}
+
+/* ── STICKY MOBILE BAR ── */
+#sticky-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;background:rgba(26,53,69,0.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,0.08);padding:0.8rem var(--pad-x);align-items:center;justify-content:space-between;gap:12px}
+.sticky-text{color:rgba(255,255,255,0.65);font-size:0.82rem}
+.sticky-text strong{color:var(--white)}
+.sticky-cta{background:var(--orange);color:var(--white);font-weight:700;font-size:0.9rem;padding:10px 22px;border-radius:40px;white-space:nowrap;flex-shrink:0;box-shadow:var(--shadow-btn)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{opacity:0}
+.fade-up.visible{animation:fadeUp 0.65s cubic-bezier(0.25,0.46,0.45,0.94) forwards}
+.delay-1{animation-delay:0.1s}.delay-2{animation-delay:0.2s}.delay-3{animation-delay:0.3s}.delay-4{animation-delay:0.4s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero-content{grid-template-columns:1fr}
+  .hero-card{display:none}
+  .lkk4-inner{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .footer-brand-col{grid-column:1/-1}
+}
+@media(max-width:780px){
+  .nav-links,.nav-sep,.nav-b2b-group{display:none}
+  .nav-hamburger{display:flex}
+  #sticky-bar{display:flex}
+  body{padding-bottom:72px}
+  .flow-grid::before{display:none}
+}
+@media(max-width:560px){
+  .hero-h1,.hero-sub,.hero-actions,.hero-eyebrow{text-align:center}
+  .hero-actions{justify-content:center}
+  .footer-inner{grid-template-columns:1fr}
+  .academy-inner{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav" aria-label="主要導覽">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">練<span>健康</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="#services">服務內容</a></li>
+      <li><a href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/">學員案例</a></li>
+      <li><a href="https://codepen.io/qrnkdnid-the-flexboxer/full/LEbyrza">教練團隊</a></li>
+      <li><a href="locations.html">門店地點</a></li>
+      <li><a href="lkk4.html" class="nav-lkk4">🏆 LKK4</a></li>
+      <li><a href="#faq">常見問題</a></li>
+    </ul>
+    <div class="nav-sep" aria-hidden="true"></div>
+    <div class="nav-b2b-group">
+      <a href="https://l-kk.tw/academy/" class="nav-b2b">練健康學院</a><a href="shop.html" class="nav-b2b">練健康商城</a><a href="en.html" class="nav-b2b">EN</a>
+    </div>
+    <a href="booking.html" class="nav-cta">預約體驗</a>
+    <button class="nav-hamburger" aria-label="開啟選單"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<section id="hero" aria-label="主視覺">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-content container">
+    <div>
+      <div class="hero-eyebrow">台北・新北 中高齡肌力訓練專家</div>
+      <h1 class="hero-h1">40歲後<br>肌肉每年<em>流失1%</em><br>我們讓你練回來</h1>
+      <p class="hero-sub">由物理治療師、呼吸治療師與專業教練組成，以運動醫學為基礎，為中高齡與特殊族群量身打造安全有效的肌力訓練課程。</p>
+      <div class="hero-actions">
+        <a href="booking.html" class="btn-primary">立即預約體驗課 →</a>
+        <a href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/" class="btn-ghost">看學員成果</a>
+      </div>
+      <div class="hero-free">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        <strong>50歲以上完全免費</strong>，一般首次體驗僅需 $500
+      </div>
+    </div>
+    <div class="hero-card" aria-hidden="true">
+      <div class="hero-stat">
+        <div class="stat-icon">🏋️</div>
+        <div><div class="stat-num">1,000+</div><div class="stat-lbl">服務學員人次</div></div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-icon">🏥</div>
+        <div><div class="stat-num">PT 背景</div><div class="stat-lbl">物理治療師・呼吸治療師主導</div></div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-icon">📍</div>
+        <div><div class="stat-num">4 間</div><div class="stat-lbl">門店｜台北・新北</div></div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-icon">🎖️</div>
+        <div><div class="stat-num">6 屆</div><div class="stat-lbl">LKK4 中高齡年度競技賽事</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    往下滑
+  </div>
+</section>
+
+<div id="trust" aria-label="媒體報導">
+  <div class="trust-inner">
+    <span class="trust-label">曾受報導</span>
+    <div class="trust-logos">
+      <span class="trust-logo">大愛新聞</span>
+      <span class="trust-logo">吳淡如人生實用商學院</span>
+      <span class="trust-logo">動思學院 MoveThink</span>
+      <span class="trust-logo">高年級不打烊</span>
+      <span class="trust-logo">強者我朋友</span>
+    </div>
+  </div>
+</div>
+
+<section id="data" aria-label="關鍵數據">
+  <div class="container">
+    <div class="data-grid">
+      <div class="data-item fade-up">
+        <div class="data-num">1%</div>
+        <p class="data-text"><strong>40歲後每年流失的肌肉量</strong><br>不訓練，就是被動老化</p>
+      </div>
+      <div class="data-item fade-up delay-1">
+        <div class="data-num">50+</div>
+        <p class="data-text"><strong>歲以上首次體驗完全免費</strong><br>零門檻開始第一堂課</p>
+      </div>
+      <div class="data-item fade-up delay-2">
+        <div class="data-num">90歲</div>
+        <p class="data-text"><strong>阿嬤也能做硬舉</strong><br>年齡不是限制，方法才是</p>
+      </div>
+      <div class="data-item fade-up delay-3">
+        <div class="data-num">醫療</div>
+        <p class="data-text"><strong>背景教練團隊</strong><br>物理治療師主導，安全不受傷</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="section-pad" aria-label="服務項目">
+  <div class="container">
+    <div class="section-label">我們的服務</div>
+    <h2 class="section-h2">找到<em>適合你</em>的訓練方式</h2>
+    <p class="section-lead">以運動醫學知識為核心，每位學員都有獨立的評估與客製化課表。</p>
+    <div class="services-grid">
+      <article class="service-card fade-up">
+        <div class="service-img" style="background:linear-gradient(135deg,#1a3545 0%,#2A5269 100%)">
+          <div class="service-img-icon">🧓</div>
+          <div class="service-img-overlay"></div>
+          <span class="service-tag">最受歡迎</span>
+        </div>
+        <div class="service-body">
+          <h3 class="service-title">中高齡肌力訓練</h3>
+          <p class="service-desc">40歲後肌肉、骨質流失速度增加。透過科學訓練，讓你找回身體動作能力，生活健康自主又有尊嚴。</p>
+          <div class="service-tags">
+            <span class="tag">肌少症預防</span><span class="tag">骨質強化</span><span class="tag">平衡訓練</span><span class="tag">一對一教練</span>
+          </div>
+        </div>
+      </article>
+      <article class="service-card fade-up delay-1">
+        <div class="service-img" style="background:linear-gradient(135deg,#2A5269 0%,#3a6a85 100%)">
+          <div class="service-img-icon">🏥</div>
+          <div class="service-img-overlay"></div>
+          <span class="service-tag">醫療背景</span>
+        </div>
+        <div class="service-body">
+          <h3 class="service-title">特殊族群訓練</h3>
+          <p class="service-desc">中風、癌症、手術後、糖尿病、骨質疏鬆族群之專業訓練介入，由物理治療師督導，讓身體在最安全的方式下恢復。</p>
+          <div class="service-tags">
+            <span class="tag">中風復健</span><span class="tag">術後訓練</span><span class="tag">慢性病管理</span><span class="tag">物理治療師督導</span>
+          </div>
+        </div>
+      </article>
+      <article class="service-card fade-up delay-2">
+        <div class="service-img" style="background:linear-gradient(135deg,#1a3545 0%,#2A5269 100%)">
+          <div class="service-img-icon">🏅</div>
+          <div class="service-img-overlay"></div>
+        </div>
+        <div class="service-body">
+          <h3 class="service-title">運動表現訓練</h3>
+          <p class="service-desc">針對專項需求與身體檢測，找出弱點，透過數據分析與專業肌力訓練提升你的運動表現。</p>
+          <div class="service-tags">
+            <span class="tag">數據化訓練</span><span class="tag">動作分析</span><span class="tag">運動傷害預防</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="cases" class="section-pad" aria-label="學員案例">
+  <div class="container">
+    <div class="section-label">學員見證</div>
+    <h2 class="section-h2"><em>真實改變</em>，不是口號</h2>
+    <p class="section-lead">每一位學員都有自己的故事，這裡是其中幾個。</p>
+    <div class="cases-grid">
+      <article class="case-card fade-up">
+        <span class="case-quote">"</span>
+        <p class="case-text">70歲開始重訓，現在可以自己爬山、帶孫子去公園玩。以前膝蓋痛到走不了路，現在根本不是問題。</p>
+        <div class="case-meta">
+          <div class="case-avatar">林</div>
+          <div><div class="case-name">林阿嬤</div><div class="case-detail">70歲，膝關節退化</div></div>
+          <span class="case-badge">訓練 8 個月</span>
+        </div>
+      </article>
+      <article class="case-card fade-up delay-1">
+        <span class="case-quote">"</span>
+        <p class="case-text">中風之後以為這輩子就這樣了。練健康的教練讓我重新相信身體的可能性，現在我可以自己走路去買東西。</p>
+        <div class="case-meta">
+          <div class="case-avatar">王</div>
+          <div><div class="case-name">王先生</div><div class="case-detail">62歲，腦中風後復健</div></div>
+          <span class="case-badge">訓練 1 年</span>
+        </div>
+      </article>
+      <article class="case-card fade-up delay-2">
+        <span class="case-quote">"</span>
+        <p class="case-text">癌症治療結束後體力虛弱，肌肉大量流失。在這裡重建體能，回診時醫生說我的恢復狀況比預期好很多。</p>
+        <div class="case-meta">
+          <div class="case-avatar">陳</div>
+          <div><div class="case-name">陳小姐</div><div class="case-detail">55歲，乳癌術後</div></div>
+          <span class="case-badge">訓練 6 個月</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="flow" aria-label="預約流程">
+  <div class="container">
+    <div class="section-label" style="color:rgba(251,114,10,0.85)">預約流程</div>
+    <h2 class="section-h2" style="color:var(--white)">四步驟，<em>開始改變</em></h2>
+    <div class="flow-grid">
+      <div class="flow-step fade-up"><div class="flow-num">1</div><div class="flow-title">填寫預約表單</div><p class="flow-desc">姓名、電話、選擇門店<br>30 秒完成</p></div>
+      <div class="flow-step fade-up delay-1"><div class="flow-num">2</div><div class="flow-title">教練主動聯繫</div><p class="flow-desc">1 個工作天內<br>電話或 LINE 聯絡</p></div>
+      <div class="flow-step fade-up delay-2"><div class="flow-num">3</div><div class="flow-title">身體評估檢測</div><p class="flow-desc">肌力、活動度、平衡<br>全面了解你的狀況</p></div>
+      <div class="flow-step fade-up delay-3"><div class="flow-num">4</div><div class="flow-title">客製課表訓練</div><p class="flow-desc">物理治療師背景教練<br>設計專屬課程</p></div>
+    </div>
+    <div class="flow-cta">
+      <a href="booking.html" class="btn-primary" style="font-size:1.05rem;padding:16px 40px">立即預約 →</a>
+      <p><strong>50歲以上免費</strong>・一般首次體驗 $500・無隱藏費用</p>
+    </div>
+  </div>
+</section>
+
+<section id="lkk4" aria-label="LKK4 中高齡四項體能挑戰賽">
+  <div class="container">
+    <div class="lkk4-inner">
+      <div>
+        <div class="lkk4-kicker"><span class="lkk4-kicker-line"></span>練健康年度賽事品牌</div>
+        <div class="lkk4-logo">LKK<span>4</span></div>
+        <div class="lkk4-tagline">中高齡四項體能挑戰賽</div>
+        <div class="lkk4-season"><span class="lkk4-dot"></span>第六屆・2026 年 12 月・籌備中</div>
+        <p class="lkk4-desc">由練健康創辦，台灣唯一專為 50 歲以上設計的年度競技賽事。從聖誕老人硬舉大賽出發，進化為涵蓋肌力、爆發力、心肺與靈活度的四項全能挑戰——讓每一位中高齡參賽者，用成績證明年齡不是終點。</p>
+        <div class="lkk4-stats">
+          <div><div class="lkk4-stat-num">5 屆</div><div class="lkk4-stat-lbl">賽事歷史</div></div>
+          <div><div class="lkk4-stat-num">50+</div><div class="lkk4-stat-lbl">歲以上參賽資格</div></div>
+          <div><div class="lkk4-stat-num">媒體</div><div class="lkk4-stat-lbl">大愛・吳淡如・動思學院</div></div>
+        </div>
+        <div class="lkk4-actions">
+          <a href="lkk4.html" class="btn-primary" style="font-size:0.92rem;padding:12px 28px">往屆精彩回顧 →</a>
+          <a href="cooperation.html" class="btn-outline-orange">贊助・合作洽談</a>
+        </div>
+      </div>
+      <div>
+        <div class="lkk4-events">
+          <div class="lkk4-event fade-up">
+            <div class="lkk4-event-icon">🏋️</div>
+            <div class="lkk4-event-name">六角槓硬舉</div>
+            <div class="lkk4-event-desc">下肢肌力・爆發力<br>招牌項目，傳承自第一屆</div>
+          </div>
+          <div class="lkk4-event fade-up delay-1">
+            <div class="lkk4-event-icon">🚶</div>
+            <div class="lkk4-event-name">功能性行走</div>
+            <div class="lkk4-event-desc">步態穩定・平衡控制<br>日常動作的極致挑戰</div>
+          </div>
+          <div class="lkk4-event fade-up delay-2">
+            <div class="lkk4-event-icon">💪</div>
+            <div class="lkk4-event-name">上肢推拉力</div>
+            <div class="lkk4-event-desc">肩部・核心整合<br>全身連動的力量展現</div>
+          </div>
+          <div class="lkk4-event fade-up delay-3">
+            <div class="lkk4-event-icon">🫁</div>
+            <div class="lkk4-event-name">心肺耐力</div>
+            <div class="lkk4-event-desc">有氧能力・恢復速度<br>展現中高齡的活力底蘊</div>
+          </div>
+        </div>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.25);margin-top:1rem;text-align:center">＊四項賽制為 2026 年新制，詳細規則賽前公告</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="team" class="section-pad" aria-label="教練團隊">
+  <div class="container">
+    <div class="section-label">專業教練團隊</div>
+    <h2 class="section-h2">由<em>醫療背景</em>專業人員組成</h2>
+    <p class="section-lead">練健康成立於 2019 年，由物理治療師帶領，結合最新醫學研究，專注服務中高齡族群。</p>
+    <div class="team-grid">
+      <div class="team-card fade-up">
+        <div class="team-avatar" style="overflow:hidden;padding:0">
+          <img src="https://l-kk.tw/wp-content/uploads/2025/06/20250410_官網_團隊介紹_形象照-3.png" alt="鄭宇劭教練" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+        </div>
+        <div class="team-name">鄭宇劭 教練</div>
+        <div class="team-role">物理治療師・總教練</div>
+        <p class="team-desc">世大運場館經理、競速滑冰世界盃隨隊物理治療師，深耕中高齡運動訓練超過十年。</p>
+        <div class="team-creds"><span class="cred">物理治療師</span><span class="cred">世大運</span><span class="cred">世界盃</span></div>
+      </div>
+      <div class="team-card fade-up delay-1">
+        <div class="team-avatar" style="overflow:hidden;padding:0">
+          <img src="https://l-kk.tw/wp-content/uploads/2025/06/20250410_官網_團隊介紹_形象照-3.png" alt="吳皓宇教練" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+        </div>
+        <div class="team-name">吳皓宇 教練</div>
+        <div class="team-role">營養師</div>
+        <p class="team-desc">運動營養與增肌減脂講師，新北市競速滑輪溜冰隊合作肌力體能教練，三鐵選手合作營養師。</p>
+        <div class="team-creds"><span class="cred">營養師</span><span class="cred">肌力體能</span><span class="cred">運動營養</span></div>
+      </div>
+      <div class="team-card fade-up delay-2">
+        <div class="team-avatar" style="overflow:hidden;padding:0">
+          <img src="https://l-kk.tw/wp-content/uploads/2025/06/20250410_官網_團隊介紹_形象照-3.png" alt="吳貫宇教練" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+        </div>
+        <div class="team-name">吳貫宇 教練</div>
+        <div class="team-role">呼吸治療師</div>
+        <p class="team-desc">彰化基督教醫院呼吸治療師背景，專注於呼吸功能與運動表現的整合訓練。</p>
+        <div class="team-creds"><span class="cred">呼吸治療師</span><span class="cred">呼吸訓練</span></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="https://l-kk.tw/team-intro/%e5%8f%b0%e5%8c%97%e5%8d%97%e4%ba%ac%e5%ba%97/" class="btn-ghost" style="color:var(--navy);border-color:var(--border);display:inline-flex">查看完整教練介紹（含照片）→</a>
+    </div>
+  </div>
+</section>
+
+<section id="academy-teaser" aria-label="練健康學院與加盟">
+  <div class="container">
+    <div class="academy-inner">
+      <div class="academy-left">
+        <div class="academy-badge">教練・加盟夥伴</div>
+        <h2 class="academy-title">你是教練或投資者？<br><span>這裡有屬於你的入口</span></h2>
+        <p class="academy-desc">練健康學院提供學分制教練認證課程；加盟說明頁面完整呈現市場機會、獲利模型與 LKK4 品牌差異化，讓你在填表前就能充分評估。</p>
+      </div>
+      <div class="academy-right">
+        <a href="https://l-kk.tw/academy/" class="btn-academy">練健康學院 →</a>
+        <a href="franchise.html" class="btn-franchise">加盟說明 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="locations" class="section-pad" aria-label="門店地點">
+  <div class="container">
+    <div class="section-label">四間門店</div>
+    <h2 class="section-h2">台北・新北，<em>找到離你最近</em>的門店</h2>
+    <div class="loc-grid">
+      <div class="loc-card fade-up">
+        <div class="loc-num">1</div>
+        <div class="loc-name">南京店</div>
+        <div class="loc-addr">台北市中山區南京東路三段 29 號 B1</div>
+        <div class="loc-phone">(02) 2507-4196</div>
+      </div>
+      <div class="loc-card fade-up delay-1">
+        <div class="loc-num">2</div>
+        <div class="loc-name">松江店</div>
+        <div class="loc-addr">台北市中山區松江路 122 號 B1</div>
+        <div class="loc-phone">請來電詢問</div>
+      </div>
+      <div class="loc-card fade-up delay-2">
+        <div class="loc-num">3</div>
+        <div class="loc-name">西門店</div>
+        <div class="loc-addr">台北市中正區寶慶路 39 號</div>
+        <div class="loc-phone">(02) 2370-3245</div>
+      </div>
+      <div class="loc-card fade-up delay-3">
+        <div class="loc-num">4</div>
+        <div class="loc-name">新店七張店</div>
+        <div class="loc-addr">新北市新店區北新路二段 252 號 B1-2</div>
+        <div class="loc-phone">(02) 8914-6428</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="section-pad" aria-label="常見問題">
+  <div class="container">
+    <div class="section-label">常見問題</div>
+    <h2 class="section-h2">你可能想知道的<em>事</em></h2>
+    <div class="faq-list" style="max-width:720px">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          50歲以上可以來練健康嗎？
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" role="region"><div class="faq-a-inner">非常歡迎。練健康是台灣專注中高齡肌力訓練的先驅，50歲以上學員佔多數。首次體驗課<strong>完全免費</strong>，不需要任何運動基礎，教練會先做評估再設計課表。</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          從來沒有運動習慣，可以來嗎？
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" role="region"><div class="faq-a-inner">完全可以。我們的物理治療師背景教練會先進行身體評估，再設計安全有效的客製課表。很多學員從零開始，反而因為沒有錯誤習慣，進步更快。</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          有慢性病或術後可以訓練嗎？
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" role="region"><div class="faq-a-inner">可以。特殊族群訓練是我們的核心專業之一。中風、癌症術後、糖尿病、骨質疏鬆、心臟病等族群，我們都有豐富的服務經驗，並由物理治療師全程督導，安全第一。</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          體驗課之後一定要買課嗎？
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" role="region"><div class="faq-a-inner">完全不強迫。體驗課的目的是讓你了解我們的訓練方式，以及評估是否適合。教練會在體驗課後說明適合的課程選項，由意自由決定。</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+          一對一還是團體課？
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" role="region"><div class="faq-a-inner">主要以一對一或小組（2–4人）為主，確保每位學員得到完整的教練關注和安全監督。中高齡與特殊族群的訓練需要個別化的動作修正，這是我們不做大班課的原因。</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta-banner" aria-label="立即預約">
+  <div class="container">
+    <h2 class="cta-h">開始你的第一步</h2>
+    <p class="cta-sub">不管幾歲，現在都不晚。先來一堂體驗課，讓我們了解你的狀況。</p>
+    <a href="booking.html" class="btn-white">立即預約免費體驗 →</a>
+    <p class="cta-note">50歲以上完全免費・一般首次體驗 $500・無隱藏費用</p>
+  </div>
+</section>
+
+<footer aria-label="頁尾資訊">
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <div class="footer-brand">練<span>健康</span> LKK Wellness</div>
+      <p class="footer-copy">健康是練出來的<br>© 2026 lkkwellness. All Rights Reserved.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">認識練健康</div>
+      <ul class="footer-col-links">
+        <li><a href="https://l-kk.tw/about/">關於練健康</a></li>
+        <li><a href="https://codepen.io/qrnkdnid-the-flexboxer/full/LEbyrza">教練介紹</a></li>
+        <li><a href="lkk4.html">LKK4 賽事品牌</a></li>
+        <li><a href="https://l-kk.tw/news/">最新消息</a></li>
+        <li><a href="https://l-kk.tw/about-us/">聯絡我們</a></li>
+        <li><a href="https://l-kk.tw/privacypolicy/">隱私權政策</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">知識・案例</div>
+      <ul class="footer-col-links">
+        <li><a href="https://l-kk.tw/category/knowledge/">運動知識</a></li>
+        <li><a href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/">學員案例</a></li>
+        <li><a href="https://l-kk.tw/category/中高齡訓練/">中高齡訓練</a></li>
+        <li><a href="https://l-kk.tw/category/特殊族群/">特殊族群訓練</a></li>
+        <li><a href="booking.html">預約體驗課</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">企業・專業合作</div>
+      <ul class="footer-col-links">
+        <li><a href="https://l-kk.tw/academy/" class="footer-b2b-link">練健康學院</a></li>
+        <li><a href="franchise.html" class="footer-b2b-link">加盟・展店洽詢</a></li>
+        <li><a href="cooperation.html" class="footer-b2b-link">講座 / 採訪 / 合作洽詢</a></li>
+        <li><a href="lkk4.html" class="footer-b2b-link">LKK4 賽事贊助</a></li>
+        <li><a href="https://www.104.com.tw/company/1a2x6blv1x" class="footer-b2b-link">人才招募</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy-bottom">lkk@l-kk.tw</span><a href="en.html" style="font-size:0.78rem;color:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.3);padding:3px 12px;border-radius:20px;">EN · English</a>
+    <div class="footer-socials">
+      <a href="https://www.facebook.com/LKKWellnessCenter/" class="social-btn" aria-label="Facebook">fb</a>
+      <a href="https://www.instagram.com/lkk_wellness/" class="social-btn" aria-label="Instagram">ig</a>
+      <a href="https://www.youtube.com/c/LKKWellness" class="social-btn" aria-label="YouTube">yt</a>
+      <a href="https://line.me/R/ti/p/%40201fzruh" class="social-btn" aria-label="LINE">L</a>
+    </div>
+  </div>
+</footer>
+
+<div id="sticky-bar" aria-label="預約呼籲">
+  <div class="sticky-text"><strong>50歲以上免費體驗</strong><br>一般首次 $500</div>
+  <a href="booking.html" class="sticky-cta">立即預約</a>
+</div>
+
+<script>
+// 手機版滑入動畫流暢度核心優化
+const obs = new IntersectionObserver(e => {
+  e.forEach(el => { 
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      obs.unobserve(el.target);
+    } 
+  });
+}, { 
+  threshold: 0.02 // 降低門檻，徹底解決高齡化手機螢幕容器滾動卡死白框的問題
+});
+
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+function toggleFaq(btn){
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  document.querySelectorAll('.faq-q').forEach(b => {
+    b.setAttribute('aria-expanded', 'false');
+    b.querySelector('.faq-icon').textContent = '+';
+    b.nextElementSibling.style.maxHeight = null;
+  });
+  if (!expanded) {
+    btn.setAttribute('aria-expanded', 'true');
+    btn.querySelector('.faq-icon').textContent = '−';
+    const a = btn.nextElementSibling;
+    a.style.maxHeight = a.scrollHeight + 'px';
+  }
+}
+</script>
+</body>
+</html>
