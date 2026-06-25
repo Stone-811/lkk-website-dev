@@ -103,17 +103,26 @@ export default async function TeamPage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {coaches.map((coach) => (
-              <div
+              <Link
                 key={coach.id}
-                className="bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
+                href={`/team/${coach.slug}`}
+                className="bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1 block"
               >
                 {/* Coach Image */}
                 <div className="aspect-square relative bg-cream-200">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="w-24 h-24 text-cream-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
+                  {coach.photo ? (
+                    <img
+                      src={coach.photo}
+                      alt={coach.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <svg className="w-24 h-24 text-cream-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
 
                 {/* Coach Info */}
@@ -123,12 +132,11 @@ export default async function TeamPage() {
                       <h2 className="text-xl font-bold text-navy-700 font-serif">{coach.name}</h2>
                       <p className="text-orange">{coach.title}</p>
                     </div>
-                    <Link
-                      href={`/locations/${coach.storeId}`}
-                      className="text-sm text-ink-500 hover:text-orange"
-                    >
-                      {coach.store}
-                    </Link>
+                    {coach.store && (
+                      <span className="text-sm text-ink-500">
+                        {coach.store}
+                      </span>
+                    )}
                   </div>
 
                   <p className="text-ink-600 text-sm mb-4 line-clamp-2">{coach.description}</p>
@@ -146,18 +154,20 @@ export default async function TeamPage() {
                   </div>
 
                   {/* Certifications */}
-                  <div className="pt-4 border-t border-cream-200">
-                    <p className="text-xs text-ink-500 mb-2">專業認證</p>
-                    <div className="flex flex-wrap gap-2">
-                      {coach.certifications.map((cert) => (
-                        <span key={cert} className="text-xs text-ink-600">
-                          {cert}
-                        </span>
-                      ))}
+                  {coach.certifications.length > 0 && (
+                    <div className="pt-4 border-t border-cream-200">
+                      <p className="text-xs text-ink-500 mb-2">專業認證</p>
+                      <div className="flex flex-wrap gap-2">
+                        {coach.certifications.map((cert) => (
+                          <span key={cert} className="text-xs text-ink-600">
+                            {cert}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
