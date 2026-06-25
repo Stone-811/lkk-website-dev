@@ -220,75 +220,60 @@ Site Address (URL):      https://l-kk.tw
 
 ## 專案結構
 
+本專案採用 **Turborepo Monorepo** 架構：
+
 ```
-lkk-website/
-├── app/
-│   ├── [locale]/
-│   │   ├── page.tsx              # 首頁
-│   │   ├── booking/page.tsx      # 預約體驗
-│   │   ├── locations/page.tsx    # 門店總覽
-│   │   ├── franchise/page.tsx    # 加盟說明
-│   │   ├── lkk4/page.tsx         # LKK4 賽事
-│   │   ├── cooperation/page.tsx  # 合作洽詢
-│   │   └── shop/page.tsx         # 商品導購
-│   │
-│   ├── admin/
-│   │   ├── login/page.tsx
-│   │   ├── dashboard/page.tsx
-│   │   ├── home/page.tsx         # 首頁內容管理
-│   │   ├── stores/page.tsx       # 門店管理
-│   │   ├── coaches/page.tsx      # 教練管理
-│   │   ├── links/page.tsx        # 連結管理
-│   │   ├── leads/page.tsx        # 表單名單
-│   │   └── settings/page.tsx
-│   │
-│   └── api/
-│       ├── public/
-│       │   ├── home/route.ts
-│       │   ├── stores/route.ts
-│       │   ├── coaches/route.ts
-│       │   └── leads/booking/route.ts
+lkk-website/                    # 根目錄（Monorepo）
+├── package.json                # workspaces: ["apps/*"]
+├── package-lock.json           # 統一管理所有依賴（唯一的 lock file）
+├── turbo.json                  # Turborepo 設定
+├── firebase.json               # Firebase 設定（含 apphosting 區塊）
+├── firestore.rules
+├── firestore.indexes.json
+├── storage.rules
+│
+├── apps/
+│   └── web/                    # Next.js 應用
+│       ├── package.json        # @lkk/web
+│       ├── apphosting.yaml     # Firebase App Hosting 設定
+│       ├── next.config.js      # output: 'standalone'
 │       │
-│       └── admin/
-│           ├── home/route.ts
-│           ├── stores/route.ts
-│           ├── coaches/route.ts
-│           ├── leads/route.ts
-│           └── auth/route.ts
+│       ├── app/
+│       │   ├── [locale]/       # 多語系頁面
+│       │   │   ├── page.tsx              # 首頁
+│       │   │   ├── booking/page.tsx      # 預約體驗
+│       │   │   ├── locations/page.tsx    # 門店總覽
+│       │   │   ├── franchise/page.tsx    # 加盟說明
+│       │   │   ├── lkk4/page.tsx         # LKK4 賽事
+│       │   │   ├── cooperation/page.tsx  # 合作洽詢
+│       │   │   └── shop/page.tsx         # 商品導購
+│       │   │
+│       │   ├── admin/          # CMS 後台
+│       │   │   ├── login/page.tsx
+│       │   │   ├── dashboard/page.tsx
+│       │   │   ├── stores/page.tsx
+│       │   │   ├── coaches/page.tsx
+│       │   │   ├── faqs/page.tsx
+│       │   │   ├── leads/page.tsx
+│       │   │   └── settings/page.tsx
+│       │   │
+│       │   └── api/            # API Routes
+│       │       ├── public/
+│       │       └── admin/
+│       │
+│       ├── components/
+│       ├── lib/
+│       └── messages/
 │
-├── components/
-│   ├── layout/
-│   ├── ui/
-│   ├── sections/
-│   └── admin/
-│
-├── lib/
-│   ├── firebase.ts        # Firebase Admin SDK
-│   ├── firebase-client.ts # Firebase Client SDK
-│   ├── auth.ts            # Firebase Auth 整合
-│   ├── storage.ts         # Firebase Storage
-│   ├── mail.ts
-│   └── wordpress.ts
-│
-├── messages/
-│   ├── zh-TW.json
-│   └── en.json
-│
-├── lkk-website/           # HTML Mockup 參考
-│   ├── index.html
-│   ├── booking.html
-│   ├── locations.html
-│   ├── franchise.html
-│   ├── lkk4.html
-│   ├── cooperation.html
-│   ├── shop.html
-│   └── en.html
-│
-├── next.config.js         # 含 WordPress rewrites 設定
-├── firebase.json          # Firebase 設定
-├── apphosting.yaml        # App Hosting 設定
-└── docs/
+└── lkk-website/                # HTML Mockup 參考
 ```
+
+### 重要：Monorepo 注意事項
+
+1. **只在根目錄執行 `npm install`**，不要在 apps/web 執行
+2. **只有根目錄有 `package-lock.json`**，子目錄不應該有
+3. **使用 `turbo` 執行 build**：`npm run build` 會自動使用 turbo
+4. **根目錄 package.json 必須有 `packageManager` 欄位**：Turbo 2.x 需要此欄位來解析 workspaces
 
 ---
 
@@ -570,30 +555,95 @@ NEXT_PUBLIC_RECAPTCHA_SITE_KEY=xxx
 ## 開發指令
 
 ```bash
-# 安裝依賴
+# 安裝依賴（在根目錄執行）
 npm install
 
-# 本地開發（使用 Firebase Emulator）
+# 本地開發（使用 Turbo）
 npm run dev
 
 # Firebase Emulator
-firebase emulators:start
+npx firebase-tools emulators:start
 
-# 建置
+# 建置（使用 Turbo）
 npm run build
 
-# 部署至 Firebase
-firebase deploy
+# 手動觸發部署
+npx firebase-tools apphosting:rollouts:create lkk-web --project lkk-website-dev
+
+# 查看部署狀態
+npx firebase-tools apphosting:backends:list --project lkk-website-dev
 
 # 預覽 HTML mockup
 cd lkk-website && python3 -m http.server 8080
 ```
+
+### 部署流程
+
+Firebase App Hosting 會自動監聽 GitHub push，自動部署：
+
+1. Push 到 `main` branch
+2. Firebase 自動觸發 Cloud Build
+3. 使用 Turborepo buildpack 建置
+4. 部署到 Cloud Run（由 Firebase 管理）
 
 ---
 
 ## 部署方式
 
 ### Firebase App Hosting
+
+使用 Firebase App Hosting 部署 Turborepo Monorepo。
+
+**Backend 設定**：
+- Backend ID: `lkk-web`
+- Region: `asia-east1`
+- Root Directory: `apps/web`
+- GitHub Repo: `Stone-811/lkk-website-dev`
+- Branch: `main`
+
+**關鍵設定檔**：
+
+```yaml
+# apps/web/apphosting.yaml
+runConfig:
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: NEXT_PUBLIC_SITE_URL
+    value: https://lkk-website-dev.web.app
+```
+
+```json
+// firebase.json
+{
+  "apphosting": [
+    {
+      "backendId": "web",
+      "rootDir": "./apps/web"
+    }
+  ]
+}
+```
+
+```json
+// turbo.json
+{
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    }
+  }
+}
+```
+
+**Next.js 設定**：
+- `output: 'standalone'`（必須）
+- WordPress Rewrites 設定
 
 單一 Next.js 應用，負責：
 - 前台頁面（SSR）
