@@ -4,105 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 
-// 暫用假資料
-const storesData: Record<string, Store> = {
-  'taipei-nanjing': {
-    id: 'taipei-nanjing',
-    name: '台北南京店',
-    slug: 'taipei-nanjing',
-    city: '台北市',
-    district: '松山區',
-    address: '南京東路四段 123 號 2 樓',
-    phone: '02-2712-3456',
-    googleMapUrl: 'https://maps.google.com/?q=台北市松山區南京東路四段123號',
-    businessHours: {
-      weekday: '10:00 - 22:00',
-      weekend: '09:00 - 20:00',
-    },
-    transportation: '捷運南京三民站 2 號出口步行 3 分鐘',
-    heroImage: '',
-    galleryImages: [],
-    sortOrder: 1,
-    isActive: true,
-  },
-  'taipei-minsheng': {
-    id: 'taipei-minsheng',
-    name: '台北民生店',
-    slug: 'taipei-minsheng',
-    city: '台北市',
-    district: '松山區',
-    address: '民生東路三段 456 號 3 樓',
-    phone: '02-2718-9012',
-    googleMapUrl: 'https://maps.google.com/?q=台北市松山區民生東路三段456號',
-    businessHours: {
-      weekday: '10:00 - 22:00',
-      weekend: '09:00 - 20:00',
-    },
-    transportation: '捷運中山國中站步行 5 分鐘',
-    heroImage: '',
-    galleryImages: [],
-    sortOrder: 2,
-    isActive: true,
-  },
-  'hsinchu': {
-    id: 'hsinchu',
-    name: '新竹店',
-    slug: 'hsinchu',
-    city: '新竹市',
-    district: '東區',
-    address: '光復路一段 789 號',
-    phone: '03-572-3456',
-    googleMapUrl: 'https://maps.google.com/?q=新竹市東區光復路一段789號',
-    businessHours: {
-      weekday: '10:00 - 22:00',
-      weekend: '09:00 - 20:00',
-    },
-    transportation: '近新竹火車站，步行約 10 分鐘',
-    heroImage: '',
-    galleryImages: [],
-    sortOrder: 3,
-    isActive: true,
-  },
-  'taichung': {
-    id: 'taichung',
-    name: '台中店',
-    slug: 'taichung',
-    city: '台中市',
-    district: '西屯區',
-    address: '台灣大道三段 567 號',
-    phone: '04-2345-6789',
-    googleMapUrl: 'https://maps.google.com/?q=台中市西屯區台灣大道三段567號',
-    businessHours: {
-      weekday: '10:00 - 22:00',
-      weekend: '09:00 - 20:00',
-    },
-    transportation: '近台中高鐵站，搭乘接駁車約 15 分鐘',
-    heroImage: '',
-    galleryImages: [],
-    sortOrder: 4,
-    isActive: true,
-  },
-  'kaohsiung': {
-    id: 'kaohsiung',
-    name: '高雄店',
-    slug: 'kaohsiung',
-    city: '高雄市',
-    district: '前鎮區',
-    address: '中山二路 321 號',
-    phone: '07-334-5678',
-    googleMapUrl: 'https://maps.google.com/?q=高雄市前鎮區中山二路321號',
-    businessHours: {
-      weekday: '10:00 - 22:00',
-      weekend: '09:00 - 20:00',
-    },
-    transportation: '捷運三多商圈站 2 號出口步行 5 分鐘',
-    heroImage: '',
-    galleryImages: [],
-    sortOrder: 5,
-    isActive: false,
-  },
-};
-
 interface Store {
   id: string;
   name: string;
@@ -155,14 +56,28 @@ export default function StoreEditPage() {
 
   useEffect(() => {
     if (!isNew && storeId) {
-      // 模擬 API 呼叫
-      setTimeout(() => {
-        const store = storesData[storeId];
-        if (store) {
-          setFormData(store);
+      // 從 API 取得門店資料
+      async function fetchStore() {
+        try {
+          const res = await fetch(`/api/admin/stores/${storeId}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success && data.data) {
+              setFormData({
+                ...data.data,
+                businessHours: data.data.businessHours || { weekday: '10:00 - 22:00', weekend: '09:00 - 20:00' },
+                heroImage: data.data.images?.[0] || '',
+                galleryImages: data.data.images?.slice(1) || [],
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch store:', error);
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
-      }, 300);
+      }
+      fetchStore();
     }
   }, [storeId, isNew]);
 
@@ -170,13 +85,44 @@ export default function StoreEditPage() {
     e.preventDefault();
     setSaving(true);
 
-    // TODO: API 呼叫儲存
-    console.log('Saving store:', formData);
+    try {
+      const payload = {
+        name: formData.name,
+        slug: formData.slug,
+        city: formData.city,
+        district: formData.district,
+        address: formData.address,
+        phone: formData.phone,
+        googleMapUrl: formData.googleMapUrl,
+        businessHours: JSON.stringify(formData.businessHours),
+        transportation: formData.transportation,
+        images: [formData.heroImage, ...formData.galleryImages].filter(Boolean),
+        sortOrder: formData.sortOrder,
+        isActive: formData.isActive,
+      };
 
-    // 模擬儲存
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setSaving(false);
-    router.push('/admin/stores');
+      const url = isNew ? '/api/admin/stores' : `/api/admin/stores/${storeId}`;
+      const method = isNew ? 'POST' : 'PATCH';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        router.push('/admin/stores');
+      } else {
+        alert(data.error || '儲存失敗');
+      }
+    } catch (error) {
+      console.error('Save failed:', error);
+      alert('儲存失敗，請稍後再試');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const generateSlug = (name: string) => {

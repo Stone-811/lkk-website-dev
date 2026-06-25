@@ -4,49 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 
-// 暫用假資料
-const coachesData: Record<string, Coach> = {
-  '1': {
-    id: '1',
-    name: '王小明',
-    roleTitle: '資深教練',
-    storeId: 'taipei-nanjing',
-    photo: '',
-    specialties: ['肌力訓練', '體態雕塑'],
-    certifications: ['ACE-CPT', 'NSCA-CSCS'],
-    experiences: ['5年健身教練經驗', '曾任職連鎖健身房'],
-    education: '台北體育大學運動科學系',
-    description: '專注於幫助學員達成體態目標，擅長設計個人化訓練計畫。',
-    sortOrder: 1,
-    isActive: true,
-  },
-  '2': {
-    id: '2',
-    name: '李小華',
-    roleTitle: '物理治療師',
-    storeId: 'taipei-minsheng',
-    photo: '',
-    specialties: ['運動復健', '疼痛改善'],
-    certifications: ['物理治療師執照', '紅繩訓練認證'],
-    experiences: ['3年醫院復健科經驗', '運動傷害專科'],
-    education: '長庚大學物理治療系',
-    description: '結合物理治療專業與運動訓練，協助學員解決疼痛問題。',
-    sortOrder: 2,
-    isActive: true,
-  },
-};
-
-const storeOptions = [
-  { value: 'taipei-nanjing', label: '台北南京店' },
-  { value: 'taipei-minsheng', label: '台北民生店' },
-  { value: 'hsinchu', label: '新竹店' },
-  { value: 'taichung', label: '台中店' },
-  { value: 'kaohsiung', label: '高雄店' },
-];
-
 interface Coach {
   id: string;
   name: string;
+  slug: string;
   roleTitle: string;
   storeId: string;
   photo: string;
@@ -59,17 +20,24 @@ interface Coach {
   isActive: boolean;
 }
 
+interface StoreOption {
+  value: string;
+  label: string;
+}
+
 export default function CoachEditPage() {
   const router = useRouter();
   const params = useParams();
   const coachId = params.id as string;
   const isNew = coachId === 'new';
 
-  const [loading, setLoading] = useState(!isNew);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [storeOptions, setStoreOptions] = useState<StoreOption[]>([]);
   const [formData, setFormData] = useState<Coach>({
     id: '',
     name: '',
+    slug: '',
     roleTitle: '',
     storeId: '',
     photo: '',
@@ -88,29 +56,83 @@ export default function CoachEditPage() {
   const [newExperience, setNewExperience] = useState('');
 
   useEffect(() => {
-    if (!isNew && coachId) {
-      // 模擬 API 呼叫
-      setTimeout(() => {
-        const coach = coachesData[coachId];
-        if (coach) {
-          setFormData(coach);
+    async function fetchData() {
+      try {
+        // 取得門店列表
+        const storesRes = await fetch('/api/admin/stores');
+        if (storesRes.ok) {
+          const storesData = await storesRes.json();
+          setStoreOptions(
+            storesData.data.map((s: any) => ({ value: s.id, label: s.name }))
+          );
         }
+
+        // 如果是編輯模式，取得教練資料
+        if (!isNew && coachId) {
+          const coachRes = await fetch(`/api/admin/coaches/${coachId}`);
+          if (coachRes.ok) {
+            const coachData = await coachRes.json();
+            if (coachData.success && coachData.data) {
+              const edu = coachData.data.education;
+              setFormData({
+                ...coachData.data,
+                education: Array.isArray(edu) ? edu.join(', ') : (edu || ''),
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      } finally {
         setLoading(false);
-      }, 300);
+      }
     }
+    fetchData();
   }, [coachId, isNew]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
-    // TODO: API 呼叫儲存
-    console.log('Saving coach:', formData);
+    try {
+      const slug = formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-');
+      const payload = {
+        name: formData.name,
+        slug,
+        roleTitle: formData.roleTitle,
+        storeId: formData.storeId,
+        photo: formData.photo,
+        specialties: formData.specialties,
+        certifications: formData.certifications,
+        experiences: formData.experiences,
+        education: formData.education ? formData.education.split(',').map(s => s.trim()).filter(Boolean) : [],
+        description: formData.description,
+        sortOrder: formData.sortOrder,
+        isActive: formData.isActive,
+      };
 
-    // 模擬儲存
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setSaving(false);
-    router.push('/admin/coaches');
+      const url = isNew ? '/api/admin/coaches' : `/api/admin/coaches/${coachId}`;
+      const method = isNew ? 'POST' : 'PATCH';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        router.push('/admin/coaches');
+      } else {
+        alert(data.error || '儲存失敗');
+      }
+    } catch (error) {
+      console.error('Save failed:', error);
+      alert('儲存失敗，請稍後再試');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const addToArray = (field: 'specialties' | 'certifications' | 'experiences', value: string) => {
