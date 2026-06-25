@@ -276,17 +276,29 @@ function AccessSection({ store }: { store: any }) {
         </h2>
 
         <div className="grid lg:grid-cols-2 gap-8 items-start">
-          {/* Map placeholder */}
-          <div className="aspect-[4/3] bg-cream-100 rounded-2xl shadow-lg flex flex-col items-center justify-center text-center p-8">
-            <div className="font-serif text-lg font-bold text-navy-700 mb-2">Google Maps 嵌入</div>
-            <p className="text-ink/50 text-sm mb-4">{store.district}{store.address}</p>
+          {/* Google Maps Embed */}
+          <div className="aspect-[4/3] bg-cream-100 rounded-2xl shadow-lg overflow-hidden relative">
+            <iframe
+              src={`https://www.google.com/maps?q=${store.geo.lat},${store.geo.lng}&z=16&output=embed`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={`${store.name} 地圖`}
+              className="absolute inset-0"
+            />
             <a
               href={store.googleMapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-navy-700 font-medium text-sm hover:text-orange transition-colors"
+              className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm text-navy-700 font-medium text-sm px-4 py-2 rounded-full shadow-lg hover:bg-white transition-colors flex items-center gap-2"
             >
-              在 Google Maps 開啟 →
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              在 Google Maps 開啟
             </a>
           </div>
 
