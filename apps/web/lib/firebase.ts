@@ -26,20 +26,28 @@ function getFirebaseAdmin(): App {
     return _app;
   }
 
-  // For production with service account
+  // Check if explicit service account credentials are provided
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
-  if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
-    throw new Error('Missing Firebase Admin credentials');
+  if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && privateKey) {
+    // Use explicit service account credentials
+    _app = initializeApp({
+      credential: cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: privateKey,
+      }),
+      storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`,
+    });
+    return _app;
   }
 
+  // Use Application Default Credentials (ADC)
+  // This works automatically on Firebase App Hosting, Cloud Run, etc.
+  const projectId = process.env.FIREBASE_PROJECT_ID || process.env.GCLOUD_PROJECT || process.env.GCP_PROJECT;
   _app = initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: privateKey,
-    }),
-    storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`,
+    projectId,
+    storageBucket: projectId ? `${projectId}.appspot.com` : undefined,
   });
 
   return _app;
