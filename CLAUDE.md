@@ -573,6 +573,12 @@ npx firebase-tools apphosting:rollouts:create lkk-web --project lkk-website-dev
 # 查看部署狀態
 npx firebase-tools apphosting:backends:list --project lkk-website-dev
 
+# 部署 Firestore 索引（首次或更新時必須執行）
+npx firebase-tools deploy --only firestore:indexes --project lkk-website-dev
+
+# 部署 Firestore 規則
+npx firebase-tools deploy --only firestore:rules --project lkk-website-dev
+
 # 預覽 HTML mockup
 cd lkk-website && python3 -m http.server 8080
 ```
@@ -615,6 +621,8 @@ runConfig:
 env:
   - variable: NEXT_PUBLIC_SITE_URL
     value: https://lkk-website-dev.web.app
+  - variable: FIREBASE_PROJECT_ID
+    value: lkk-website-dev
 ```
 
 ```json
@@ -656,6 +664,22 @@ env:
 - CMS 資料
 - 表單名單
 - 管理員帳號
+
+**重要：Firestore 索引部署**
+
+查詢需要複合索引，必須執行：
+```bash
+npx firebase-tools deploy --only firestore:indexes --project lkk-website-dev
+```
+
+### Firebase Admin SDK
+
+使用 Application Default Credentials (ADC) 連接 Firestore，在 Firebase App Hosting 環境自動運作。
+
+關鍵設定（`apps/web/lib/firebase.ts`）：
+- 優先使用明確的 service account 憑證（若有設定）
+- 否則使用 `applicationDefault()` 自動取得 ADC
+- 需要設定 `FIREBASE_PROJECT_ID` 環境變數
 
 ### Firebase Storage
 
