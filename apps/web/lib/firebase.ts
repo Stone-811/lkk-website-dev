@@ -1,4 +1,4 @@
-import { initializeApp, getApps, cert, App } from 'firebase-admin/app';
+import { initializeApp, getApps, cert, applicationDefault, App } from 'firebase-admin/app';
 import { getFirestore, Firestore, Timestamp } from 'firebase-admin/firestore';
 import { getAuth, Auth } from 'firebase-admin/auth';
 import { getStorage, Storage } from 'firebase-admin/storage';
@@ -45,10 +45,21 @@ function getFirebaseAdmin(): App {
   // Use Application Default Credentials (ADC)
   // This works automatically on Firebase App Hosting, Cloud Run, etc.
   const projectId = process.env.FIREBASE_PROJECT_ID || process.env.GCLOUD_PROJECT || process.env.GCP_PROJECT;
-  _app = initializeApp({
-    projectId,
-    storageBucket: projectId ? `${projectId}.appspot.com` : undefined,
-  });
+
+  try {
+    _app = initializeApp({
+      credential: applicationDefault(),
+      projectId,
+      storageBucket: projectId ? `${projectId}.appspot.com` : undefined,
+    });
+  } catch (error) {
+    // Fallback: initialize without explicit credential (for environments that auto-inject)
+    console.warn('Failed to use applicationDefault(), falling back to basic init:', error);
+    _app = initializeApp({
+      projectId,
+      storageBucket: projectId ? `${projectId}.appspot.com` : undefined,
+    });
+  }
 
   return _app;
 }
