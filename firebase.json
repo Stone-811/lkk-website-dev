@@ -1,14 +1,15 @@
 {
-  "hosting": {
-    "public": "apps/web/.next",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  },
+  "apphosting": [
+    {
+      "backendId": "web",
+      "rootDir": "./apps/web",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log"
+      ]
+    }
+  ],
   "emulators": {
     "auth": {
       "port": 9099
