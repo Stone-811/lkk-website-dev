@@ -42,20 +42,56 @@ const differentiators = [
 ];
 
 const lkk4Points = [
-  { icon: '🏋️', title: '賽事即行銷，無需另外投放廣告', desc: '每年一屆的 LKK4 產生大量媒體曝光、社群擴散和口碑，這些流量自然流入門店，降低加盟夥伴的行銷成本' },
-  { icon: '🌏', title: '亞洲擴張的贊助吸引力', desc: 'LKK4 進入新市場後，對保健品、保險、金融品牌的贊助吸引力，是一般健身中心無法比擬的附加資產' },
-  { icon: '📈', title: '參賽者即最高黏著度學員', desc: '參加過 LKK4 的學員，流失率遠低於一般學員。賽事讓訓練有了目標，目標讓人留下來' },
-  { icon: '🛡️', title: '模仿者已出現，但六年的積累無法複製', desc: '市面上已有品牌開始模仿練健康的方向，甚至出現類似賽事。但六屆的歷史、媒體認知、學員社群，是時間積累出來的護城河' },
+  { iconType: 'marketing', title: '賽事即行銷，無需另外投放廣告', desc: '每年一屆的 LKK4 產生大量媒體曝光、社群擴散和口碑，這些流量自然流入門店，降低加盟夥伴的行銷成本' },
+  { iconType: 'globe', title: '亞洲擴張的贊助吸引力', desc: 'LKK4 進入新市場後，對保健品、保險、金融品牌的贊助吸引力，是一般健身中心無法比擬的附加資產' },
+  { iconType: 'growth', title: '參賽者即最高黏著度學員', desc: '參加過 LKK4 的學員，流失率遠低於一般學員。賽事讓訓練有了目標，目標讓人留下來' },
+  { iconType: 'shield', title: '模仿者已出現，但六年的積累無法複製', desc: '市面上已有品牌開始模仿練健康的方向，甚至出現類似賽事。但六屆的歷史、媒體認知、學員社群，是時間積累出來的護城河' },
 ];
 
 const supports = [
-  { icon: '🎓', title: '教練培訓與認證', desc: '練健康學院提供完整的教練培訓課程和學分制認證，確保每個門市的服務品質一致，不依賴外部人才市場的不確定性。' },
-  { icon: '📋', title: '營運方法論', desc: '七年累積的學員評估流程、課程設計框架、客戶管理系統，讓加盟夥伴不需要從頭摸索，直接站在已驗證的系統上運作。' },
-  { icon: '🏆', title: 'LKK4 賽事體系', desc: '加盟夥伴進入 LKK4 的賽事生態，包含品牌使用、賽事籌辦支援、贊助招商協助，讓門市從第一天就有不同於競爭者的差異化資產。' },
-  { icon: '📣', title: '品牌與行銷支援', desc: '台灣總部建立的媒體關係、社群內容體系、品牌設計規範，提供給夥伴使用，確保品牌在不同市場的一致性。' },
-  { icon: '🌐', title: '在地市場進入支援', desc: '針對不同市場（新加坡、馬來西亞、香港等），提供在地化建議，包括法規差異、目標族群定位、語言本地化，協助夥伴減少進場摩擦。' },
-  { icon: '🤝', title: '持續的夥伴關係', desc: '不是簽約後就放生。我們建立持續的溝通機制，包含定期交流、問題回應、以及隨體系升級而同步更新的知識支援。' },
+  { iconType: 'education', title: '教練培訓與認證', desc: '練健康學院提供完整的教練培訓課程和學分制認證，確保每個門市的服務品質一致，不依賴外部人才市場的不確定性。' },
+  { iconType: 'clipboard', title: '營運方法論', desc: '七年累積的學員評估流程、課程設計框架、客戶管理系統，讓加盟夥伴不需要從頭摸索，直接站在已驗證的系統上運作。' },
+  { iconType: 'trophy', title: 'LKK4 賽事體系', desc: '加盟夥伴進入 LKK4 的賽事生態，包含品牌使用、賽事籌辦支援、贊助招商協助，讓門市從第一天就有不同於競爭者的差異化資產。' },
+  { iconType: 'megaphone', title: '品牌與行銷支援', desc: '台灣總部建立的媒體關係、社群內容體系、品牌設計規範，提供給夥伴使用，確保品牌在不同市場的一致性。' },
+  { iconType: 'globe', title: '在地市場進入支援', desc: '針對不同市場（新加坡、馬來西亞、香港等），提供在地化建議，包括法規差異、目標族群定位、語言本地化，協助夥伴減少進場摩擦。' },
+  { iconType: 'handshake', title: '持續的夥伴關係', desc: '不是簽約後就放生。我們建立持續的溝通機制，包含定期交流、問題回應、以及隨體系升級而同步更新的知識支援。' },
 ];
+
+function LKK4Icon({ type }: { type: string }) {
+  const iconClass = "w-6 h-6 text-orange";
+  switch (type) {
+    case 'marketing':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h4v12H4zM16 8h4v12h-4zM2 12h20M12 4v4" /></svg>;
+    case 'globe':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+    case 'growth':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>;
+    case 'shield':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>;
+    default:
+      return null;
+  }
+}
+
+function SupportIcon({ type }: { type: string }) {
+  const iconClass = "w-8 h-8 text-orange";
+  switch (type) {
+    case 'education':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>;
+    case 'clipboard':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>;
+    case 'trophy':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>;
+    case 'megaphone':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>;
+    case 'globe':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+    case 'handshake':
+      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>;
+    default:
+      return null;
+  }
+}
 
 export const metadata = {
   title: '練健康加盟說明會 | LKK Wellness Franchise',
@@ -242,7 +278,7 @@ export default function FranchisePage() {
             <div className="space-y-3">
               {lkk4Points.map((point) => (
                 <div key={point.title} className="flex gap-4 items-start p-4 bg-white/[0.04] border border-white/10 rounded hover:bg-white/[0.07] transition-colors">
-                  <div className="text-2xl flex-shrink-0 mt-0.5">{point.icon}</div>
+                  <div className="flex-shrink-0 mt-0.5"><LKK4Icon type={point.iconType} /></div>
                   <div>
                     <h4 className="text-white font-medium text-sm mb-1">{point.title}</h4>
                     <p className="text-white/45 text-xs leading-relaxed">{point.desc}</p>
@@ -268,7 +304,7 @@ export default function FranchisePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-navy-700/15 rounded overflow-hidden mb-8">
             {supports.map((item) => (
               <div key={item.title} className="bg-white p-6 hover:bg-cream-100 transition-colors">
-                <div className="text-3xl mb-4">{item.icon}</div>
+                <div className="mb-4"><SupportIcon type={item.iconType} /></div>
                 <h3 className="font-serif text-base font-bold text-navy-700 mb-2">{item.title}</h3>
                 <p className="text-ink/50 text-sm leading-relaxed">{item.desc}</p>
               </div>

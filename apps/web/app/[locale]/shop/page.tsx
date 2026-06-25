@@ -105,13 +105,13 @@ export default function ShopPage() {
         <div className="container mx-auto px-4">
           <div className="flex justify-center gap-3 py-3 overflow-x-auto">
             <a href="#nutrition" className="px-5 py-2 bg-white border border-navy-700/15 rounded-full text-sm font-medium text-navy-700 hover:border-orange hover:text-orange transition-colors whitespace-nowrap">
-              🥛 銀髮族營養調理
+              銀髮族營養調理
             </a>
             <a href="#safety" className="px-5 py-2 bg-white border border-navy-700/15 rounded-full text-sm font-medium text-navy-700 hover:border-orange hover:text-orange transition-colors whitespace-nowrap">
-              🛁 居家安全輔具
+              居家安全輔具
             </a>
             <a href="#fitness" className="px-5 py-2 bg-white border border-navy-700/15 rounded-full text-sm font-medium text-navy-700 hover:border-orange hover:text-orange transition-colors whitespace-nowrap">
-              🏋️ 專業健身器材
+              專業健身器材
             </a>
           </div>
         </div>
@@ -121,8 +121,8 @@ export default function ShopPage() {
         {/* Nutrition Section */}
         <section id="nutrition" className="mb-16 scroll-mt-32">
           <div className="mb-8">
-            <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700 flex items-center gap-3">
-              <span className="text-2xl">🥛</span> 銀髮族營養調理
+            <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700">
+              銀髮族營養調理
             </h2>
             <p className="text-ink/50 text-sm mt-1">專為40歲後與高齡體質調配，著重高吸收率、肌肉維持與關節關鍵防護。</p>
           </div>
@@ -136,8 +136,8 @@ export default function ShopPage() {
         {/* Safety Section */}
         <section id="safety" className="mb-16 scroll-mt-32">
           <div className="mb-8">
-            <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700 flex items-center gap-3">
-              <span className="text-2xl">🛁</span> 居家安全輔具
+            <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700">
+              居家安全輔具
             </h2>
             <p className="text-ink/50 text-sm mt-1">守護長輩在家的最後防線，著重浴室、臥室與進出動線的防跌防護。</p>
           </div>
@@ -151,8 +151,8 @@ export default function ShopPage() {
         {/* Fitness Section */}
         <section id="fitness" className="mb-8 scroll-mt-32">
           <div className="mb-8">
-            <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700 flex items-center gap-3">
-              <span className="text-2xl">🏋️</span> 專業健身器材
+            <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700">
+              專業健身器材
             </h2>
             <p className="text-ink/50 text-sm mt-1">迎擊肌肉衰退，適合居家自主操作與教練課後課表落實的精選器材。</p>
           </div>
@@ -168,7 +168,11 @@ export default function ShopPage() {
       {showModal && (
         <div className="fixed inset-0 z-50 bg-navy-700/60 backdrop-blur-sm flex items-center justify-center p-5" onClick={() => setShowModal(false)}>
           <div className="bg-white rounded-lg p-8 max-w-md w-full text-center shadow-2xl animate-in fade-in zoom-in duration-200" onClick={(e) => e.stopPropagation()}>
-            <div className="text-5xl mb-4">🛒</div>
+            <div className="flex justify-center mb-4">
+              <svg className="w-12 h-12 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
             <h3 className="font-serif text-xl font-black text-navy-700 mb-3">{modalProduct} · 洽詢</h3>
             <p className="text-ink/60 text-sm leading-relaxed mb-6">
               本網頁為「練健康商城」之一頁式視覺與商品展示示意設計，目前暫不開放直接線上購物。<br /><br />

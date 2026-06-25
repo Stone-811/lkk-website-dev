@@ -63,10 +63,27 @@ export default function HeroSection() {
             {/* Right - Stats Card */}
             <aside className="hidden lg:block bg-white/[0.06] backdrop-blur-md border border-white/12 rounded-3xl p-7">
               <div className="space-y-0">
-                <HeroStat icon="🏋️" num="1,000+" label="服務學員人次" />
-                <HeroStat icon="🏥" num="PT 背景" label="物理治療師・呼吸治療師主導" />
-                <HeroStat icon="📍" num="4 間" label="門店｜台北・新北" />
-                <HeroStat icon="🎖️" num="6 屆" label="LKK4 中高齡年度競技賽事" isLast />
+                <HeroStat
+                  icon={<svg className="w-5 h-5 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h4v12H4zM16 8h4v12h-4zM2 12h20M12 4v4" /></svg>}
+                  num="1,000+"
+                  label="服務學員人次"
+                />
+                <HeroStat
+                  icon={<svg className="w-5 h-5 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>}
+                  num="PT 背景"
+                  label="物理治療師・呼吸治療師主導"
+                />
+                <HeroStat
+                  icon={<svg className="w-5 h-5 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
+                  num="4 間"
+                  label="門店｜台北・新北"
+                />
+                <HeroStat
+                  icon={<svg className="w-5 h-5 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>}
+                  num="6 屆"
+                  label="LKK4 中高齡年度競技賽事"
+                  isLast
+                />
               </div>
             </aside>
           </div>
@@ -92,10 +109,10 @@ export default function HeroSection() {
   );
 }
 
-function HeroStat({ icon, num, label, isLast = false }: { icon: string; num: string; label: string; isLast?: boolean }) {
+function HeroStat({ icon, num, label, isLast = false }: { icon: React.ReactNode; num: string; label: string; isLast?: boolean }) {
   return (
     <div className={`flex items-center gap-4 py-4 ${!isLast ? 'border-b border-white/[0.08]' : ''}`}>
-      <div className="w-11 h-11 rounded-lg bg-orange/20 flex items-center justify-center text-xl flex-shrink-0">
+      <div className="w-11 h-11 rounded-lg bg-orange/20 flex items-center justify-center flex-shrink-0">
         {icon}
       </div>
       <div>

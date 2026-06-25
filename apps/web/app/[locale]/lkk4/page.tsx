@@ -7,32 +7,64 @@ const disciplines = [
   {
     id: 'deadlift',
     name: '六角槓硬舉',
-    icon: '🏋️',
+    iconType: 'deadlift',
     meta: '下肢肌力・爆發力',
     description: 'LKK4 的最招牌經典項目。透過相較於傳統槓鈴更符合人體工學的六角槓，檢測中高齡選手的純力量外釋與下肢爆發綜合素質。',
   },
   {
     id: 'walk',
     name: '功能性行走',
-    icon: '🚶',
+    iconType: 'walk',
     meta: '步態穩定・平衡控制',
     description: '模擬日常生活中最常面臨的提重物行走情境，考驗選手在負重狀態下的核心抗旋轉能力、步態動態穩定度與平衡感。',
   },
   {
     id: 'pushpull',
     name: '上肢推拉力',
-    icon: '💪',
+    iconType: 'pushpull',
     meta: '肩部功能・核心整合',
     description: '全面檢測上半身非對稱結構下的推與拉力表現。不僅考驗肩關節的健康度，更強調力量從核心貫穿至上肢的連動控制。',
   },
   {
     id: 'cardio',
     name: '心肺耐力',
-    icon: '🫁',
+    iconType: 'cardio',
     meta: '有氧能力・恢復速度',
     description: '針對高強度間歇運動後的能量系統運作設計。考驗選手的有氧基底能力，以及身體在短暫休息後的機能高效率恢復速度。',
   },
 ];
+
+function DisciplineIcon({ type }: { type: string }) {
+  const iconClass = "w-10 h-10 text-orange";
+  switch (type) {
+    case 'deadlift':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h4v12H4zM16 8h4v12h-4zM2 12h20M12 4v4" />
+        </svg>
+      );
+    case 'walk':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h3a2 2 0 012 2v9a2 2 0 01-2 2h-3m-6-4l3 3-3 3M7 15h6" />
+        </svg>
+      );
+    case 'pushpull':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      );
+    case 'cardio':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
 
 const history = [
   { year: '2026', title: '第六屆 LKK4 賽事籌備中', description: '全面引進國際化評分標準與 hreflang 多語言佈局，配合海外市場（如新加坡）發展計劃，打造全亞太區指標性中高齡挑戰賽。' },
@@ -140,7 +172,7 @@ export default function LKK4Page() {
                 key={item.id}
                 className="bg-white rounded-2xl p-6 border border-navy-700/10 shadow-sm hover:-translate-y-1 transition-transform"
               >
-                <div className="text-4xl mb-3">{item.icon}</div>
+                <div className="mb-3"><DisciplineIcon type={item.iconType} /></div>
                 <h3 className="font-serif text-xl font-bold text-navy-700 mb-1">{item.name}</h3>
                 <div className="text-xs font-semibold text-orange tracking-wide mb-3">{item.meta}</div>
                 <p className="text-sm text-ink/60 leading-relaxed">{item.description}</p>

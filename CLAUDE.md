@@ -216,6 +216,34 @@ Site Address (URL):      https://l-kk.tw
 | Noto Serif TC | 標題（h1-h6） |
 | Noto Sans TC | 內文 |
 
+### 圖示設計原則
+
+**不使用 Emoji，改用 SVG 圖示**
+
+為確保跨平台一致性與專業視覺效果，所有頁面圖示皆使用 SVG 而非 Emoji。
+
+| 類型 | 做法 |
+|------|------|
+| 單一圖示 | 直接使用 inline SVG |
+| 多個相關圖示 | 建立 Icon 元件（如 `ServiceIcon`、`EventIcon`） |
+| 共用圖示 | 放置於 `components/icons/` |
+
+範例：
+```tsx
+// 建立 Icon 元件
+function ServiceIcon({ type }: { type: string }) {
+  const iconClass = "w-12 h-12 text-orange";
+  switch (type) {
+    case 'personal':
+      return <svg className={iconClass} ...>...</svg>;
+    case 'rehab':
+      return <svg className={iconClass} ...>...</svg>;
+    default:
+      return null;
+  }
+}
+```
+
 ---
 
 ## 專案結構
@@ -384,12 +412,18 @@ lkk-website/                    # 根目錄（Monorepo）
   id: string
   email: string
   name: string
+  passwordHash: string  // bcrypt hashed password
   role: 'admin' | 'editor' | 'store_staff'
   storeId?: string
   isActive: boolean
   createdAt: Timestamp
 }
 ```
+
+**重要：密碼欄位**
+- 欄位名稱必須是 `passwordHash`（不是 `password`）
+- 使用 bcrypt 雜湊後的密碼
+- 建立新使用者時，可在 Firestore Console 直接建立文件，並使用線上 bcrypt 工具產生 hash
 
 ---
 
@@ -493,6 +527,62 @@ CMS 後台查詢與處理名單
 | scheduled | 已預約 |
 | completed | 已完成 |
 | cancelled | 已取消 |
+
+---
+
+## 分析追蹤
+
+### 追蹤未登入使用者
+
+本站使用以下方式追蹤訪客行為（不需登入）：
+
+| 工具 | 用途 | 優先級 |
+|------|------|--------|
+| Google Analytics 4 (GA4) | 基礎流量分析、轉換追蹤 | 必要 |
+| Google Tag Manager (GTM) | 統一管理追蹤碼 | 建議 |
+| Facebook Pixel | 廣告受眾、轉換追蹤 | 視廣告需求 |
+| LINE Tag | LINE 廣告追蹤 | 視廣告需求 |
+
+### GA4 建議追蹤事件
+
+| 事件名稱 | 觸發時機 | 參數 |
+|----------|----------|------|
+| `page_view` | 頁面載入 | `page_title`, `page_location` |
+| `form_start` | 開始填寫表單 | `form_type` |
+| `form_submit` | 表單送出成功 | `form_type`, `store_id` |
+| `click_cta` | 點擊 CTA 按鈕 | `button_text`, `destination` |
+| `click_phone` | 點擊電話連結 | `store_name` |
+| `view_store` | 檢視門店詳情 | `store_name`, `store_id` |
+| `view_coach` | 檢視教練頁面 | `coach_name` |
+
+### 實作方式
+
+建議使用 GTM 搭配 `next/script` 載入追蹤碼：
+
+```tsx
+// app/layout.tsx
+import Script from 'next/script';
+
+// GTM
+<Script id="gtm" strategy="afterInteractive">
+  {`(function(w,d,s,l,i){...})(window,document,'script','dataLayer','GTM-XXXXXX');`}
+</Script>
+
+// GA4 (若不用 GTM)
+<Script
+  src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXX"
+  strategy="afterInteractive"
+/>
+```
+
+### 轉換追蹤
+
+重要轉換點：
+
+1. **預約表單送出** - 主要轉換目標
+2. **加盟表單送出** - 商業開發轉換
+3. **合作洽詢送出** - B2B 轉換
+4. **門店電話點擊** - 微轉換
 
 ---
 

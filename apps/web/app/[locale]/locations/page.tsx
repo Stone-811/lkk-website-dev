@@ -250,26 +250,59 @@ function MapSection({ stores }: { stores: Store[] }) {
   );
 }
 
+// Reason Icon Component
+function ReasonIcon({ type }: { type: string }) {
+  const iconClass = "w-8 h-8 text-orange";
+  switch (type) {
+    case 'medical':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+      );
+    case 'transit':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h8m-8 4h8m-4 8V7m-4 12h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      );
+    case 'senior':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      );
+    case 'free':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
 // Why Choose Section
 function WhyChooseSection() {
   const reasons = [
     {
-      icon: '🏥',
+      iconType: 'medical',
       title: '物理治療師背景',
       desc: '每間門店都有物理治療師或運動科學專業教練，安全是最高原則。',
     },
     {
-      icon: '🚇',
+      iconType: 'transit',
       title: '捷運三分鐘可達',
       desc: '所有門店都在捷運站步行範圍內，不管刮風下雨都能輕鬆抵達。',
     },
     {
-      icon: '👴',
+      iconType: 'senior',
       title: '專為中高齡設計',
       desc: '70% 學員都是 50 歲以上，環境安靜、不擁擠、沒有壓力。',
     },
     {
-      icon: '💰',
+      iconType: 'free',
       title: '50歲以上免費體驗',
       desc: '不是試課，是真正完整的 60-75 分鐘體驗課，讓我們先了解你。',
     },
@@ -291,7 +324,7 @@ function WhyChooseSection() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {reasons.map((reason) => (
             <div key={reason.title} className="bg-white rounded-2xl p-6 border border-navy-700/15 shadow-sm">
-              <div className="text-3xl mb-4">{reason.icon}</div>
+              <div className="mb-4"><ReasonIcon type={reason.iconType} /></div>
               <h3 className="font-bold text-navy-700 mb-2">{reason.title}</h3>
               <p className="text-sm text-ink/60 leading-relaxed">{reason.desc}</p>
             </div>

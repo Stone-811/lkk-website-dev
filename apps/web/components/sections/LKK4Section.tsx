@@ -2,26 +2,58 @@ import Link from 'next/link';
 
 const events = [
   {
-    icon: '🏋️',
+    iconType: 'deadlift',
     name: '六角槓硬舉',
     desc: '下肢肌力・爆發力\n招牌項目，傳承自第一屆',
   },
   {
-    icon: '🚶',
+    iconType: 'walking',
     name: '功能性行走',
     desc: '步態穩定・平衡控制\n日常動作的極致挑戰',
   },
   {
-    icon: '💪',
+    iconType: 'strength',
     name: '上肢推拉力',
     desc: '肩部・核心整合\n全身連動的力量展現',
   },
   {
-    icon: '🫁',
+    iconType: 'cardio',
     name: '心肺耐力',
     desc: '有氧能力・恢復速度\n展現中高齡的活力底蘊',
   },
 ];
+
+function EventIcon({ type }: { type: string }) {
+  const iconClass = "w-6 h-6 text-orange";
+  switch (type) {
+    case 'deadlift':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h4v12H4zM16 8h4v12h-4zM2 12h20M12 4v4" />
+        </svg>
+      );
+    case 'walking':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h3a2 2 0 012 2v9a2 2 0 01-2 2h-3m-6-4l3 3-3 3M7 15h6" />
+        </svg>
+      );
+    case 'strength':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      );
+    case 'cardio':
+      return (
+        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
 
 export default function LKK4Section() {
   return (
@@ -100,7 +132,7 @@ export default function LKK4Section() {
                 key={event.name}
                 className="bg-white/[0.05] border border-white/[0.08] rounded-2xl p-5 hover:bg-orange/[0.08] hover:border-orange/25 transition-colors"
               >
-                <div className="text-2xl mb-2">{event.icon}</div>
+                <div className="mb-2"><EventIcon type={event.iconType} /></div>
                 <div className="font-serif font-bold text-white mb-0.5">{event.name}</div>
                 <div className="text-xs text-white/40 leading-relaxed whitespace-pre-line">{event.desc}</div>
               </div>

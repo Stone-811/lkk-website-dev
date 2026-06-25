@@ -55,9 +55,8 @@ export default function StoreEditPage() {
   });
 
   useEffect(() => {
-    if (!isNew && storeId) {
-      // 從 API 取得門店資料
-      async function fetchStore() {
+    const fetchStore = async () => {
+      if (!isNew && storeId) {
         try {
           const res = await fetch(`/api/admin/stores/${storeId}`);
           if (res.ok) {
@@ -77,8 +76,8 @@ export default function StoreEditPage() {
           setLoading(false);
         }
       }
-      fetchStore();
-    }
+    };
+    fetchStore();
   }, [storeId, isNew]);
 
   const handleSubmit = async (e: React.FormEvent) => {
