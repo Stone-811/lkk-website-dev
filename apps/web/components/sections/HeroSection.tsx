@@ -24,7 +24,7 @@ export default function HeroSection() {
               {/* Eyebrow */}
               <div className="inline-flex items-center gap-2 bg-orange/15 border border-orange/35 text-orange text-sm font-medium px-4 py-1.5 rounded-full mb-5 tracking-wide">
                 <span className="w-1.5 h-1.5 bg-orange rounded-full" />
-                台北・新北 中高齡肌力訓練專家
+                中高齡肌力訓練專家
               </div>
 
               <h1 className="font-serif text-4xl lg:text-6xl font-black text-white leading-tight mb-5">
@@ -100,8 +100,6 @@ export default function HeroSection() {
         </div>
       </section>
 
-      {/* Trust Bar */}
-      <TrustBar />
 
       {/* Data Strip */}
       <DataStrip />
@@ -118,34 +116,6 @@ function HeroStat({ icon, num, label, isLast = false }: { icon: React.ReactNode;
       <div>
         <div className="font-serif text-xl font-black text-white leading-none">{num}</div>
         <div className="text-xs text-white/50 mt-0.5">{label}</div>
-      </div>
-    </div>
-  );
-}
-
-function TrustBar() {
-  const logos = [
-    '大愛新聞',
-    '吳淡如人生實用商學院',
-    '動思學院 MoveThink',
-    '高年級不打烊',
-    '強者我朋友',
-  ];
-
-  return (
-    <div className="bg-white border-b border-navy-700/15 py-4">
-      <div className="container mx-auto px-4 flex items-center gap-8 flex-wrap">
-        <span className="text-xs font-medium text-ink/40 tracking-widest uppercase whitespace-nowrap">曾受報導</span>
-        <div className="flex items-center gap-8 flex-wrap">
-          {logos.map((logo) => (
-            <span
-              key={logo}
-              className="font-serif text-sm font-bold text-ink/30 hover:text-ink/60 transition-colors whitespace-nowrap"
-            >
-              {logo}
-            </span>
-          ))}
-        </div>
       </div>
     </div>
   );
