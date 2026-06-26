@@ -1,58 +1,31 @@
+import Image from 'next/image';
+
 const services = [
   {
     id: 'senior',
-    iconType: 'senior',
     title: '中高齡肌力訓練',
     description: '40歲後肌肉、骨質流失速度增加。透過科學訓練，讓你找回身體動作能力，生活健康自主又有尊嚴。',
     tags: ['肌少症預防', '骨質強化', '平衡訓練', '一對一教練'],
     badge: '最受歡迎',
-    gradient: 'from-navy-800 to-navy-700',
+    image: '/images/services/senior.jpg',
   },
   {
     id: 'special',
-    iconType: 'medical',
     title: '特殊族群訓練',
     description: '中風、癌症、手術後、糖尿病、骨質疏鬆族群之專業訓練介入，由物理治療師督導，讓身體在最安全的方式下恢復。',
     tags: ['中風復健', '術後訓練', '慢性病管理', '物理治療師督導'],
     badge: '醫療背景',
-    gradient: 'from-navy-700 to-navy-600',
+    image: '/images/services/special.png',
   },
   {
     id: 'performance',
-    iconType: 'performance',
     title: '運動表現訓練',
     description: '針對專項需求與身體檢測，找出弱點，透過數據分析與專業肌力訓練提升你的運動表現。',
     tags: ['數據化訓練', '動作分析', '運動傷害預防'],
     badge: null,
-    gradient: 'from-navy-800 to-navy-700',
+    image: '/images/services/performance.png',
   },
 ];
-
-function ServiceIcon({ type }: { type: string }) {
-  const iconClass = "w-16 h-16 text-white/50";
-  switch (type) {
-    case 'senior':
-      return (
-        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-      );
-    case 'medical':
-      return (
-        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-        </svg>
-      );
-    case 'performance':
-      return (
-        <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-        </svg>
-      );
-    default:
-      return null;
-  }
-}
 
 export default function ServicesSection() {
   return (
@@ -78,9 +51,15 @@ export default function ServicesSection() {
               className="bg-white rounded-3xl overflow-hidden shadow-lg border border-navy-700/15 hover:-translate-y-1 transition-transform"
             >
               {/* Card image */}
-              <div className={`h-48 bg-gradient-to-br ${service.gradient} relative flex items-center justify-center`}>
-                <ServiceIcon type={service.iconType} />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-800/85 to-transparent" />
+              <div className="h-48 relative overflow-hidden">
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-800/60 to-transparent" />
                 {service.badge && (
                   <span className="absolute top-4 left-4 bg-orange text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide">
                     {service.badge}
