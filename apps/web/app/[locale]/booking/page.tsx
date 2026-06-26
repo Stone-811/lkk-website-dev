@@ -133,43 +133,56 @@ function HeroSection() {
   );
 }
 
-// Process Steps Horizontal
-function ProcessStepsHorizontal() {
+// Process Steps (vertical)
+function ProcessSteps() {
   const steps = [
-    { title: '填寫預約表單', desc: '約 1~2 分鐘完成' },
-    { title: '教練電話聯繫', desc: '1 個工作天內安排' },
-    { title: '到店體驗課', desc: '60–75 分鐘', badge: '50歲以上免費' },
-    { title: '你自己決定', desc: '不強迫買課' },
+    { title: '填寫預約表單', desc: '約 1~2 分鐘完成，只填必要資訊，詳細狀況讓教練直接聊' },
+    { title: '教練主動電話聯繫', desc: '1 個工作天內，我們會打電話給您安排時間。如果不方便接，我們也會留言或傳 LINE' },
+    { title: '到店體驗課（60–75 分鐘）', desc: '身體評估 + 基礎動作訓練 + 教練諮詢', badges: [{ text: '50歲以上 免費', type: 'free' }, { text: '一般首次 $500', type: 'paid' }] },
+    { title: '課後說明 + 你自己決定', desc: '教練說明適合的後續課程選項，沒有壓力，你來決定接下來的安排' },
   ];
 
   return (
     <div>
-      <div className="flex items-center justify-center gap-2 text-xs font-bold text-orange tracking-widest uppercase mb-4">
-        <span className="w-4 h-0.5 bg-orange" />
+      <div className="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-3">
+        <span className="w-5 h-0.5 bg-orange" />
         接下來會發生什麼
-        <span className="w-4 h-0.5 bg-orange" />
       </div>
+      <h2 className="font-serif text-2xl font-black text-navy-700 mb-6">
+        填完表單後<span className="text-orange">四個步驟</span>
+      </h2>
 
-      <div className="bg-white rounded-xl p-6 border border-navy-700/15 shadow-sm">
-        <div className="grid grid-cols-4 gap-4 relative">
-          {/* Horizontal line */}
-          <div className="absolute top-4 left-8 right-8 h-[2px] bg-gradient-to-r from-orange via-orange to-orange/20" />
+      <div className="relative flex flex-col">
+        {/* Vertical line */}
+        <div className="absolute left-5 top-5 bottom-5 w-[1.5px] bg-gradient-to-b from-orange to-orange/20" />
 
-          {steps.map((step, idx) => (
-            <div key={step.title} className="text-center relative z-10">
-              <div className="w-8 h-8 rounded-full bg-orange text-white font-serif text-sm font-black flex items-center justify-center mx-auto mb-2">
-                {idx + 1}
-              </div>
-              <div className="text-sm font-semibold text-navy-700 mb-0.5">{step.title}</div>
-              <div className="text-xs text-ink/50 leading-relaxed">{step.desc}</div>
-              {step.badge && (
-                <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 mt-1">
-                  {step.badge}
-                </span>
+        {steps.map((step, idx) => (
+          <div key={step.title} className="flex gap-4 items-start py-4 relative z-10">
+            <div className="w-10 h-10 rounded-full bg-orange text-white font-serif text-lg font-black flex items-center justify-center flex-shrink-0 shadow-[0_0_0_4px_rgba(251,114,10,0.12)]">
+              {idx + 1}
+            </div>
+            <div>
+              <div className="text-base font-semibold text-navy-700 mb-0.5">{step.title}</div>
+              <div className="text-sm text-ink/60 leading-relaxed">{step.desc}</div>
+              {step.badges && (
+                <div className="flex gap-2 mt-2">
+                  {step.badges.map((badge) => (
+                    <span
+                      key={badge.text}
+                      className={`text-xs font-bold px-3 py-0.5 rounded-full ${
+                        badge.type === 'free'
+                          ? 'bg-green-500/10 text-green-600'
+                          : 'bg-navy-700/10 text-navy-700'
+                      }`}
+                    >
+                      {badge.text}
+                    </span>
+                  ))}
+                </div>
               )}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -182,15 +195,15 @@ export default function BookingPage() {
 
       <div className="py-12 lg:py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            {/* Form (centered & enlarged) */}
+          <div className="grid lg:grid-cols-[1fr_400px] gap-8 lg:gap-12">
+            {/* Left - Form */}
             <div id="form">
               <BookingForm />
             </div>
 
-            {/* Process Steps (horizontal, aligned with form) */}
-            <div className="mt-10">
-              <ProcessStepsHorizontal />
+            {/* Right - Process Steps */}
+            <div className="lg:sticky lg:top-24 lg:self-start">
+              <ProcessSteps />
             </div>
           </div>
         </div>
