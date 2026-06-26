@@ -1,7 +1,8 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { locales, type Locale } from '@/i18n';
 
 const localeNames: Record<Locale, string> = {
@@ -12,34 +13,43 @@ const localeNames: Record<Locale, string> = {
 export default function LanguageSwitcher() {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
-  const router = useRouter();
 
-  const switchLocale = (newLocale: Locale) => {
-    // Remove current locale from pathname
-    const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
-
-    // Navigate to new locale path
-    if (newLocale === 'zh-TW') {
-      router.push(pathWithoutLocale);
-    } else {
-      router.push(`/${newLocale}${pathWithoutLocale}`);
+  // Get the path without locale prefix
+  const getPathWithoutLocale = () => {
+    // For English pages, pathname starts with /en
+    if (pathname.startsWith('/en')) {
+      const pathWithoutEn = pathname.slice(3); // Remove '/en'
+      return pathWithoutEn || '/';
     }
+    // For Chinese (default), no prefix
+    return pathname;
+  };
+
+  // Generate the href for a given locale
+  const getLocalizedPath = (targetLocale: Locale) => {
+    const basePath = getPathWithoutLocale();
+    if (targetLocale === 'zh-TW') {
+      // Default locale doesn't need prefix
+      return basePath;
+    }
+    // Add locale prefix for non-default locales
+    return `/${targetLocale}${basePath === '/' ? '' : basePath}`;
   };
 
   return (
     <div className="flex items-center gap-2">
       {locales.map((l) => (
-        <button
+        <Link
           key={l}
-          onClick={() => switchLocale(l)}
+          href={getLocalizedPath(l)}
           className={`px-2 py-1 text-sm rounded transition-colors ${
             locale === l
-              ? 'bg-orange/20 text-orange font-medium'
+              ? 'bg-orange/20 text-orange font-medium pointer-events-none'
               : 'text-cream-200 hover:text-orange'
           }`}
         >
           {localeNames[l]}
-        </button>
+        </Link>
       ))}
     </div>
   );
