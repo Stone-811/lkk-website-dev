@@ -35,7 +35,7 @@ function HeroSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-[1fr_480px] gap-8 items-center py-16 lg:py-20">
+        <div className="grid lg:grid-cols-[1fr_560px] gap-8 items-center py-16 lg:py-20">
           {/* Left content */}
           <div>
             {/* Free badge */}
@@ -82,47 +82,47 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Right - FAQ & Cases Cards */}
-          <aside className="hidden lg:flex flex-col gap-4">
+          {/* Right - FAQ & Cases Cards (horizontal) */}
+          <aside className="hidden lg:flex flex-row gap-4">
             {/* FAQ Card */}
-            <div className="bg-white/[0.07] backdrop-blur-sm border border-white/10 rounded-2xl p-5">
-              <div className="text-xs font-bold tracking-widest uppercase text-white/30 mb-3">你可能在想</div>
-              <div className="space-y-2">
+            <div className="flex-1 bg-white/[0.07] backdrop-blur-sm border border-white/10 rounded-2xl p-4">
+              <div className="text-xs font-bold tracking-widest uppercase text-white/30 mb-2">你可能在想</div>
+              <div className="space-y-1.5">
                 {[
-                  { q: '我年紀這麼大，可以練嗎？', a: '練健康 70% 的學員都是中高齡族群，90 歲阿嬤都在這裡練硬舉。' },
-                  { q: '我從來沒運動過？', a: '沒運動習慣的人反而容易進步，教練會從最基礎教起。' },
-                  { q: '有慢性病可以來嗎？', a: '可以。由物理治療師督導，會先評估再設計適合的課表。' },
-                  { q: '一定要買課嗎？', a: '不強迫。體驗課的目的是讓雙方了解彼此，你自己決定。' },
+                  { q: '我年紀這麼大，可以練嗎？', a: '70% 學員都是中高齡，90 歲阿嬤也在練。' },
+                  { q: '從來沒運動過？', a: '沒運動習慣反而容易進步。' },
+                  { q: '有慢性病可以來嗎？', a: '可以，物理治療師會先評估。' },
+                  { q: '一定要買課嗎？', a: '不強迫，你自己決定。' },
                 ].map((faq) => (
-                  <div key={faq.q} className="bg-white/[0.05] rounded-lg p-2.5">
-                    <div className="text-sm font-semibold text-white mb-0.5">{faq.q}</div>
-                    <div className="text-xs text-white/50 leading-relaxed">{faq.a}</div>
+                  <div key={faq.q} className="bg-white/[0.05] rounded-lg p-2">
+                    <div className="text-xs font-semibold text-white mb-0.5">{faq.q}</div>
+                    <div className="text-[11px] text-white/50 leading-relaxed">{faq.a}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Cases Card */}
-            <div className="bg-white/[0.07] backdrop-blur-sm border border-white/10 rounded-2xl p-5">
-              <div className="text-xs font-bold tracking-widest uppercase text-white/30 mb-3">他們也是這樣開始的</div>
-              <div className="space-y-2">
+            <div className="flex-1 bg-white/[0.07] backdrop-blur-sm border border-white/10 rounded-2xl p-4">
+              <div className="text-xs font-bold tracking-widest uppercase text-white/30 mb-2">他們也是這樣開始的</div>
+              <div className="space-y-1.5">
                 {[
                   { name: '林阿嬤', info: '70歲・膝關節退化', quote: '以前膝蓋痛到走不了路，現在可以自己爬山。' },
                   { name: '王先生', info: '62歲・腦中風後', quote: '以為這輩子就這樣了，沒想到可以自己走路買東西。' },
                   { name: '陳小姐', info: '55歲・乳癌術後', quote: '醫生說我的恢復狀況比預期好很多。' },
                 ].map((c) => (
-                  <div key={c.name} className="flex gap-2 items-center bg-white/[0.05] rounded-lg p-2.5">
-                    <div className="w-8 h-8 rounded-full bg-orange/30 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                  <div key={c.name} className="flex gap-2 items-center bg-white/[0.05] rounded-lg p-2">
+                    <div className="w-7 h-7 rounded-full bg-orange/30 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                       {c.name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-semibold text-white">{c.name}・{c.info}</div>
-                      <div className="text-xs text-white/50 italic line-clamp-1">「{c.quote}」</div>
+                      <div className="text-[11px] text-white/50 italic line-clamp-1">「{c.quote}」</div>
                     </div>
                   </div>
                 ))}
               </div>
-              <Link href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/" className="block text-center text-xs text-white/50 hover:text-white mt-3 pt-2 border-t border-white/10">
+              <Link href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/" className="block text-center text-[11px] text-white/50 hover:text-white mt-2 pt-2 border-t border-white/10">
                 看更多學員故事 →
               </Link>
             </div>
@@ -133,41 +133,40 @@ function HeroSection() {
   );
 }
 
-// Process Steps Compact
-function ProcessStepsCompact() {
+// Process Steps Horizontal
+function ProcessStepsHorizontal() {
   const steps = [
     { title: '填寫預約表單', desc: '約 1~2 分鐘完成' },
-    { title: '教練電話聯繫', desc: '1 個工作天內安排時間' },
-    { title: '到店體驗課', desc: '60–75 分鐘，身體評估 + 訓練', badge: '50歲以上免費' },
-    { title: '你自己決定', desc: '沒有壓力，不強迫買課' },
+    { title: '教練電話聯繫', desc: '1 個工作天內安排' },
+    { title: '到店體驗課', desc: '60–75 分鐘', badge: '50歲以上免費' },
+    { title: '你自己決定', desc: '不強迫買課' },
   ];
 
   return (
-    <div className="mb-6">
-      <div className="flex items-center gap-2 text-xs font-bold text-orange tracking-widest uppercase mb-2">
+    <div>
+      <div className="flex items-center justify-center gap-2 text-xs font-bold text-orange tracking-widest uppercase mb-4">
         <span className="w-4 h-0.5 bg-orange" />
         接下來會發生什麼
+        <span className="w-4 h-0.5 bg-orange" />
       </div>
 
-      <div className="bg-white rounded-xl p-4 border border-navy-700/15 shadow-sm">
-        <div className="relative flex flex-col">
-          {/* Vertical line */}
-          <div className="absolute left-3.5 top-3.5 bottom-3.5 w-[1px] bg-gradient-to-b from-orange to-orange/20" />
+      <div className="bg-white rounded-xl p-6 border border-navy-700/15 shadow-sm">
+        <div className="grid grid-cols-4 gap-4 relative">
+          {/* Horizontal line */}
+          <div className="absolute top-4 left-8 right-8 h-[2px] bg-gradient-to-r from-orange via-orange to-orange/20" />
 
           {steps.map((step, idx) => (
-            <div key={step.title} className="flex gap-3 items-start py-2 relative z-10">
-              <div className="w-7 h-7 rounded-full bg-orange text-white font-serif text-sm font-black flex items-center justify-center flex-shrink-0">
+            <div key={step.title} className="text-center relative z-10">
+              <div className="w-8 h-8 rounded-full bg-orange text-white font-serif text-sm font-black flex items-center justify-center mx-auto mb-2">
                 {idx + 1}
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-navy-700">{step.title}</div>
-                <div className="text-xs text-ink/50 leading-relaxed">{step.desc}</div>
-                {step.badge && (
-                  <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 mt-1">
-                    {step.badge}
-                  </span>
-                )}
-              </div>
+              <div className="text-sm font-semibold text-navy-700 mb-0.5">{step.title}</div>
+              <div className="text-xs text-ink/50 leading-relaxed">{step.desc}</div>
+              {step.badge && (
+                <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 mt-1">
+                  {step.badge}
+                </span>
+              )}
             </div>
           ))}
         </div>
@@ -189,9 +188,9 @@ export default function BookingPage() {
               <BookingForm />
             </div>
 
-            {/* Process Steps (aligned with form) */}
+            {/* Process Steps (horizontal, aligned with form) */}
             <div className="mt-10">
-              <ProcessStepsCompact />
+              <ProcessStepsHorizontal />
             </div>
           </div>
         </div>
