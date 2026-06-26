@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const coaches = [
   {
@@ -32,7 +33,7 @@ const coaches = [
 
 export default function TeamSection() {
   return (
-    <section className="bg-cream-100 py-16 lg:py-24">
+    <section className="bg-white py-16 lg:py-24">
       <div className="container mx-auto px-4">
         {/* Section header */}
         <div className="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
@@ -42,7 +43,7 @@ export default function TeamSection() {
         <h2 className="font-serif text-3xl lg:text-4xl font-black text-navy-700 mb-3">
           由<span className="text-orange">醫療背景</span>專業人員組成
         </h2>
-        <p className="text-ink/60 leading-relaxed mb-10 max-w-xl">
+        <p className="text-ink/60 leading-relaxed mb-10">
           練健康成立於 2019 年，由物理治療師帶領，結合最新醫學研究，專注服務中高齡族群。
         </p>
 
@@ -54,12 +55,15 @@ export default function TeamSection() {
               className="bg-white rounded-3xl p-6 lg:p-8 border border-navy-700/15 shadow-lg flex flex-col items-center text-center hover:-translate-y-1 transition-transform"
             >
               {/* Avatar */}
-              <div className="w-20 h-20 rounded-full bg-navy-700 flex items-center justify-center text-white font-serif text-2xl font-bold mb-4 border-[3px] border-cream-200 overflow-hidden">
+              <div className="w-20 h-20 rounded-full bg-navy-700 flex items-center justify-center text-white font-serif text-2xl font-bold mb-4 border-[3px] border-cream-200 overflow-hidden relative">
                 {coach.photo ? (
-                  <img
+                  <Image
                     src={coach.photo}
                     alt={coach.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="80px"
+                    loading="eager"
                   />
                 ) : (
                   coach.avatar
@@ -100,7 +104,7 @@ export default function TeamSection() {
             href="/team"
             className="inline-flex items-center gap-2 text-navy-700 border border-navy-700/15 px-6 py-2.5 rounded-full hover:border-navy-700 transition-colors"
           >
-            查看完整教練介紹（含照片）→
+            查看完整教練介紹 →
           </Link>
         </div>
       </div>

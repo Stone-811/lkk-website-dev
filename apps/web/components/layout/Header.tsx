@@ -19,6 +19,8 @@ export default function Header() {
     { name: t('team'), href: '/team' },
     { name: t('locations'), href: '/locations' },
     { name: t('articles'), href: '/category/knowledge', external: true },
+    { name: 'LKK4', href: '/lkk4' },
+    { name: '異業結盟', href: '/cooperation' },
   ];
 
   const isActive = (href: string) => {

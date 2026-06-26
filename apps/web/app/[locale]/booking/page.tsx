@@ -82,30 +82,20 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Right - Trust Card */}
+          {/* Right - FAQ Card */}
           <aside className="hidden lg:block bg-white/[0.07] backdrop-blur-sm border border-white/10 rounded-2xl p-6">
             <div className="space-y-4">
-              <div>
-                <div className="text-xs font-bold tracking-widest uppercase text-white/30 mb-2">媒體報導</div>
-                <div className="flex flex-wrap gap-2">
-                  {['大愛新聞', '吳淡如', '動思學院', '高年級不打烊'].map((logo) => (
-                    <span key={logo} className="text-xs text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1 rounded-full">
-                      {logo}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
+              <div className="text-xs font-bold tracking-widest uppercase text-white/30 mb-2">你可能在想</div>
+              <div className="space-y-3">
                 {[
-                  { num: '1,000+', label: '服務學員人次' },
-                  { num: '4 間', label: '台北・新北門店' },
-                  { num: 'PT', label: '物理治療師教練' },
-                  { num: '7 年', label: '深耕中高齡訓練' },
-                ].map((stat) => (
-                  <div key={stat.label} className="bg-white/[0.05] rounded-lg p-3 text-center">
-                    <div className="font-serif text-2xl font-black text-white">{stat.num}</div>
-                    <div className="text-xs text-white/40 mt-0.5">{stat.label}</div>
+                  { q: '我年紀這麼大，可以練嗎？', a: '練健康 70% 的學員都是中高齡族群，90 歲阿嬤都在這裡練硬舉。' },
+                  { q: '我從來沒運動過？', a: '沒運動習慣的人反而容易進步，教練會從最基礎教起。' },
+                  { q: '有慢性病可以來嗎？', a: '可以。由物理治療師督導，會先評估再設計適合的課表。' },
+                  { q: '一定要買課嗎？', a: '不強迫。體驗課的目的是讓雙方了解彼此，你自己決定。' },
+                ].map((faq) => (
+                  <div key={faq.q} className="bg-white/[0.05] rounded-lg p-3">
+                    <div className="text-sm font-semibold text-white mb-1">{faq.q}</div>
+                    <div className="text-xs text-white/50 leading-relaxed">{faq.a}</div>
                   </div>
                 ))}
               </div>
@@ -144,90 +134,44 @@ function ReassureStrip() {
   );
 }
 
-// Process Steps
-function ProcessSteps() {
+// Process Steps Compact
+function ProcessStepsCompact() {
   const steps = [
-    { title: '填寫預約表單', desc: '約 1~2 分鐘完成，只填必要資訊，詳細狀況讓教練直接聊' },
-    { title: '教練主動電話聯繫', desc: '1 個工作天內，我們會打電話給您安排時間。如果不方便接，我們也會留言或傳 LINE' },
-    { title: '到店體驗課（60–75 分鐘）', desc: '身體評估 + 基礎動作訓練 + 教練諮詢', badges: [{ text: '50歲以上 免費', type: 'free' }, { text: '一般首次 $500', type: 'paid' }] },
-    { title: '課後說明 + 你自己決定', desc: '教練說明適合的後續課程選項，沒有壓力，你來決定接下來的安排' },
+    { title: '填寫預約表單', desc: '約 1~2 分鐘完成' },
+    { title: '教練電話聯繫', desc: '1 個工作天內安排時間' },
+    { title: '到店體驗課', desc: '60–75 分鐘，身體評估 + 訓練', badge: '50歲以上免費' },
+    { title: '你自己決定', desc: '沒有壓力，不強迫買課' },
   ];
 
   return (
-    <div className="mb-12">
-      <div className="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-3">
-        <span className="w-5 h-0.5 bg-orange" />
+    <div className="mb-6">
+      <div className="flex items-center gap-2 text-xs font-bold text-orange tracking-widest uppercase mb-2">
+        <span className="w-4 h-0.5 bg-orange" />
         接下來會發生什麼
       </div>
-      <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700 mb-6">
-        填完表單後<span className="text-orange">四個步驟</span>
-      </h2>
 
-      <div className="relative flex flex-col">
-        {/* Vertical line */}
-        <div className="absolute left-5 top-5 bottom-5 w-[1.5px] bg-gradient-to-b from-orange to-orange/20" />
+      <div className="bg-white rounded-xl p-4 border border-navy-700/15 shadow-sm">
+        <div className="relative flex flex-col">
+          {/* Vertical line */}
+          <div className="absolute left-3.5 top-3.5 bottom-3.5 w-[1px] bg-gradient-to-b from-orange to-orange/20" />
 
-        {steps.map((step, idx) => (
-          <div key={step.title} className="flex gap-4 items-start py-4 relative z-10">
-            <div className="w-10 h-10 rounded-full bg-orange text-white font-serif text-lg font-black flex items-center justify-center flex-shrink-0 shadow-[0_0_0_4px_rgba(251,114,10,0.12)]">
-              {idx + 1}
+          {steps.map((step, idx) => (
+            <div key={step.title} className="flex gap-3 items-start py-2 relative z-10">
+              <div className="w-7 h-7 rounded-full bg-orange text-white font-serif text-sm font-black flex items-center justify-center flex-shrink-0">
+                {idx + 1}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold text-navy-700">{step.title}</div>
+                <div className="text-xs text-ink/50 leading-relaxed">{step.desc}</div>
+                {step.badge && (
+                  <span className="inline-block text-xs font-bold px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 mt-1">
+                    {step.badge}
+                  </span>
+                )}
+              </div>
             </div>
-            <div>
-              <div className="text-base font-semibold text-navy-700 mb-0.5">{step.title}</div>
-              <div className="text-sm text-ink/60 leading-relaxed">{step.desc}</div>
-              {step.badges && (
-                <div className="flex gap-2 mt-2">
-                  {step.badges.map((badge) => (
-                    <span
-                      key={badge.text}
-                      className={`text-xs font-bold px-3 py-0.5 rounded-full ${
-                        badge.type === 'free'
-                          ? 'bg-green-500/10 text-green-600'
-                          : 'bg-navy-700/10 text-navy-700'
-                      }`}
-                    >
-                      {badge.text}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// FAQ Section
-function FAQSection() {
-  const faqs = [
-    { q: '我年紀這麼大，可以練嗎？', a: '練健康 70% 的學員都是中高齡族群。90 歲的阿嬤都在這裡練硬舉，你的年紀完全不是問題。' },
-    { q: '我從來沒運動過，會不會很奇怪？', a: '沒有運動習慣的人反而容易進步。教練會從最基礎的動作教起，不會有比較或評判。' },
-    { q: '我有高血壓／糖尿病，可以來嗎？', a: '可以。特殊族群訓練是我們的核心專業，由物理治療師督導，會先評估再設計適合的課表。' },
-    { q: '體驗完之後一定要買課嗎？', a: '不強迫。體驗課的目的是讓雙方了解彼此，教練會說明適合的選項，你自己決定。' },
-  ];
-
-  return (
-    <div className="mb-12">
-      <div className="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-3">
-        <span className="w-5 h-0.5 bg-orange" />
-        你可能在想
-      </div>
-      <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700 mb-6">
-        先回答你<span className="text-orange">最常問的問題</span>
-      </h2>
-
-      <div className="grid md:grid-cols-2 gap-3">
-        {faqs.map((faq) => (
-          <div key={faq.q} className="bg-white rounded-xl p-5 border border-navy-700/15 shadow-sm">
-            <div className="flex items-start gap-2 text-base font-bold text-navy-700 mb-2">
-              <span className="text-xs bg-navy-700 text-white w-5 h-5 rounded flex items-center justify-center flex-shrink-0 font-black">Q</span>
-              {faq.q}
-            </div>
-            <div className="text-sm text-ink/60 leading-relaxed">{faq.a}</div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -272,16 +216,15 @@ export default function BookingPage() {
 
       <div className="py-12 lg:py-16">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-[520px_1fr] gap-8 lg:gap-12">
-            {/* Left - Form */}
+          <div className="grid lg:grid-cols-[1fr_360px] gap-8 lg:gap-10">
+            {/* Left - Form (enlarged) */}
             <div id="form" className="lg:sticky lg:top-24">
               <BookingForm />
             </div>
 
-            {/* Right - Info Sections */}
+            {/* Right - Info Sections (compact) */}
             <div>
-              <ProcessSteps />
-              <FAQSection />
+              <ProcessStepsCompact />
               <CasesTeaser />
             </div>
           </div>

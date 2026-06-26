@@ -22,8 +22,7 @@ export default function HeroSection() {
             {/* Left content */}
             <div className="text-center lg:text-left">
               {/* Eyebrow */}
-              <div className="inline-flex items-center gap-2 bg-orange/15 border border-orange/35 text-orange text-sm font-medium px-4 py-1.5 rounded-full mb-5 tracking-wide">
-                <span className="w-1.5 h-1.5 bg-orange rounded-full" />
+              <div className="inline-flex items-center bg-orange/15 border border-orange/35 text-orange text-sm font-medium px-4 py-1.5 rounded-full mb-5 tracking-wide">
                 中高齡肌力訓練專家
               </div>
 

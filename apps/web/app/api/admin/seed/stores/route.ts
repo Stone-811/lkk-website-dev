@@ -62,6 +62,48 @@ const stores = [
   },
 ];
 
+// GET: Seed stores if collection is empty (for initial setup)
+export async function GET() {
+  try {
+    // Check if stores already exist
+    const existingStores = await db.collection('stores').limit(1).get();
+
+    if (!existingStores.empty) {
+      return NextResponse.json({
+        success: true,
+        message: 'Stores already exist, skipping seed',
+        count: (await db.collection('stores').get()).size,
+      });
+    }
+
+    // Seed stores
+    const results: { slug: string; status: string; id?: string }[] = [];
+    const now = Timestamp.now();
+
+    for (const store of stores) {
+      const docRef = await db.collection('stores').add({
+        ...store,
+        createdAt: now,
+        updatedAt: now,
+      });
+      results.push({ slug: store.slug, status: 'created', id: docRef.id });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Stores seeded successfully',
+      results,
+    });
+  } catch (error) {
+    console.error('Error seeding stores:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to seed stores' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST: Seed stores with admin auth (for manual re-seeding)
 export async function POST() {
   try {
     // Verify admin authentication

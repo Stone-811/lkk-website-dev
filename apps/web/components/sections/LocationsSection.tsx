@@ -33,12 +33,12 @@ const stores = [
 
 export default function LocationsSection() {
   return (
-    <section className="bg-white py-16 lg:py-24">
+    <section className="bg-cream-100 py-16 lg:py-24">
       <div className="container mx-auto px-4">
         {/* Section header */}
         <div className="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
           <span className="w-5 h-0.5 bg-orange" />
-          四間門店
+          分店資訊
         </div>
         <h2 className="font-serif text-3xl lg:text-4xl font-black text-navy-700 mb-10">
           台北・新北，<span className="text-orange">找到離你最近</span>的門店
@@ -50,7 +50,7 @@ export default function LocationsSection() {
             <Link
               key={store.id}
               href={`/locations/${store.id}`}
-              className="bg-cream-100 border border-navy-700/15 rounded-2xl p-5 hover:border-navy-700/30 hover:shadow-lg transition-all"
+              className="bg-white border border-navy-700/15 rounded-2xl p-5 hover:border-navy-700/30 hover:shadow-lg transition-all"
             >
               {/* Number badge */}
               <div className="w-8 h-8 rounded-full bg-navy-700 text-white text-sm font-bold flex items-center justify-center mb-3">
@@ -73,6 +73,16 @@ export default function LocationsSection() {
               </p>
             </Link>
           ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-10">
+          <Link
+            href="/locations"
+            className="inline-flex items-center gap-2 text-navy-700 border border-navy-700/15 px-6 py-2.5 rounded-full hover:border-navy-700 transition-colors"
+          >
+            查看練健康分店 →
+          </Link>
         </div>
       </div>
     </section>

@@ -14,11 +14,10 @@ export default function Footer() {
   ];
 
   const stores = [
-    { name: '台北南京店', href: '/locations/taipei-nanjing' },
-    { name: '台北民生店', href: '/locations/taipei-minsheng' },
-    { name: '新竹店', href: '/locations/hsinchu' },
-    { name: '台中店', href: '/locations/taichung' },
-    { name: '高雄店', href: '/locations/kaohsiung' },
+    { name: '南京店', phone: '(02) 2507-4196', href: '/locations/nanjing' },
+    { name: '松江店', phone: '請來電詢問', href: '/locations/songjiang' },
+    { name: '西門店', phone: '(02) 2370-3245', href: '/locations/ximending' },
+    { name: '新店七張店', phone: '(02) 8914-6428', href: '/locations/xindian' },
   ];
 
   const socials = [
@@ -108,15 +107,16 @@ export default function Footer() {
           {/* Stores */}
           <div>
             <h3 className="font-medium mb-4 font-serif">門店資訊</h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {stores.map((store) => (
                 <li key={store.name}>
                   <Link
                     href={store.href}
-                    className="text-cream-200 hover:text-white transition-colors text-sm"
+                    className="text-cream-200 hover:text-white transition-colors text-sm block"
                   >
                     {store.name}
                   </Link>
+                  <span className="text-cream-300/60 text-xs">{store.phone}</span>
                 </li>
               ))}
             </ul>

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const cases = [
   {
     id: 1,
@@ -78,6 +80,16 @@ export default function CasesSection() {
               </div>
             </article>
           ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-10">
+          <Link
+            href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/"
+            className="inline-flex items-center gap-2 text-navy-700 border border-navy-700/15 px-6 py-2.5 rounded-full hover:border-navy-700 transition-colors"
+          >
+            查看更多學員案例 →
+          </Link>
         </div>
       </div>
     </section>

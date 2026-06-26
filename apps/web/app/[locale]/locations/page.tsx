@@ -5,39 +5,88 @@ import { db, StoreDoc, docsToArray } from '@/lib/firebase';
 // Force dynamic rendering for Firestore data
 export const dynamic = 'force-dynamic';
 
+// 靜態門店資料（備援用）
+const fallbackStores = [
+  {
+    id: 'nanjing',
+    name: '南京店',
+    district: '台北市中山區',
+    address: '台北市中山區南京東路三段 29 號 B1',
+    phone: '(02) 2507-4196',
+    mrt: '捷運南京復興站 步行3分鐘',
+    features: ['一對一訓練', '團體課程'],
+    coachCount: 3,
+  },
+  {
+    id: 'songjiang',
+    name: '松江店',
+    district: '台北市中山區',
+    address: '台北市中山區松江路 122 號 B1',
+    phone: '請來電詢問',
+    mrt: '捷運松江南京站 步行2分鐘',
+    features: ['一對一訓練'],
+    coachCount: 2,
+  },
+  {
+    id: 'ximending',
+    name: '西門店',
+    district: '台北市中正區',
+    address: '台北市中正區寶慶路 39 號',
+    phone: '(02) 2370-3245',
+    mrt: '捷運西門站 步行5分鐘',
+    features: ['一對一訓練', '團體課程'],
+    coachCount: 2,
+  },
+  {
+    id: 'xindian',
+    name: '新店七張店',
+    district: '新北市新店區',
+    address: '新北市新店區北新路二段 252 號 B1-2',
+    phone: '(02) 8914-6428',
+    mrt: '捷運七張站 步行1分鐘',
+    features: ['一對一訓練', '寬敞空間'],
+    coachCount: 3,
+  },
+];
+
 // 從 Firestore 取得門店資料
 async function getStores() {
-  const storesSnapshot = await db
-    .collection('stores')
-    .where('isActive', '==', true)
-    .orderBy('sortOrder', 'asc')
-    .get();
+  try {
+    const storesSnapshot = await db
+      .collection('stores')
+      .where('isActive', '==', true)
+      .orderBy('sortOrder', 'asc')
+      .get();
 
-  const stores = docsToArray<StoreDoc>(storesSnapshot);
+    const stores = docsToArray<StoreDoc>(storesSnapshot);
 
-  // 計算每個門店的教練數量
-  const storeCoachCounts = new Map<string, number>();
-  const coachesSnapshot = await db
-    .collection('coaches')
-    .where('isActive', '==', true)
-    .get();
-  coachesSnapshot.docs.forEach((doc) => {
-    const storeId = doc.data().storeId;
-    if (storeId) {
-      storeCoachCounts.set(storeId, (storeCoachCounts.get(storeId) || 0) + 1);
-    }
-  });
+    // 計算每個門店的教練數量
+    const storeCoachCounts = new Map<string, number>();
+    const coachesSnapshot = await db
+      .collection('coaches')
+      .where('isActive', '==', true)
+      .get();
+    coachesSnapshot.docs.forEach((doc) => {
+      const storeId = doc.data().storeId;
+      if (storeId) {
+        storeCoachCounts.set(storeId, (storeCoachCounts.get(storeId) || 0) + 1);
+      }
+    });
 
-  return stores.map((store) => ({
-    id: store.slug,
-    name: store.name,
-    district: `${store.city || ''}${store.district || ''}`,
-    address: store.address || '',
-    phone: store.phone || '',
-    mrt: store.transportation || '',
-    features: [], // TODO: 可從資料庫新增 features 欄位
-    coachCount: storeCoachCounts.get(store.id) || 0,
-  }));
+    return stores.map((store) => ({
+      id: store.slug,
+      name: store.name,
+      district: `${store.city || ''}${store.district || ''}`,
+      address: store.address || '',
+      phone: store.phone || '',
+      mrt: store.transportation || '',
+      features: [], // TODO: 可從資料庫新增 features 欄位
+      coachCount: storeCoachCounts.get(store.id) || 0,
+    }));
+  } catch (error) {
+    console.error('Failed to fetch stores from Firestore, using fallback data:', error);
+    return fallbackStores;
+  }
 }
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {

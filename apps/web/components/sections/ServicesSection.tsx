@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 const services = [
   {
@@ -46,48 +47,56 @@ export default function ServicesSection() {
         {/* Services grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service) => (
-            <article
-              key={service.id}
-              className="bg-white rounded-3xl overflow-hidden shadow-lg border border-navy-700/15 hover:-translate-y-1 transition-transform"
-            >
-              {/* Card image */}
-              <div className="h-48 relative overflow-hidden">
-                <Image
-                  src={service.image}
-                  alt={service.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-800/60 to-transparent" />
-                {service.badge && (
-                  <span className="absolute top-4 left-4 bg-orange text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide">
-                    {service.badge}
-                  </span>
-                )}
-              </div>
-
-              {/* Card body */}
-              <div className="p-6">
-                <h3 className="font-serif text-xl font-bold text-navy-700 mb-2">
-                  {service.title}
-                </h3>
-                <p className="text-ink/60 text-sm leading-relaxed mb-4">
-                  {service.description}
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {service.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs font-medium text-navy-700 bg-navy-700/[0.08] px-2.5 py-0.5 rounded-full border border-navy-700/12"
-                    >
-                      {tag}
+            <Link key={service.id} href="/services">
+              <article className="bg-white rounded-3xl overflow-hidden shadow-lg border border-navy-700/15 hover:-translate-y-1 transition-transform cursor-pointer h-full">
+                {/* Card image */}
+                <div className="aspect-[4/3] relative overflow-hidden bg-navy-100">
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                  {service.badge && (
+                    <span className="absolute top-4 left-4 bg-orange text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide">
+                      {service.badge}
                     </span>
-                  ))}
+                  )}
                 </div>
-              </div>
-            </article>
+
+                {/* Card body */}
+                <div className="p-6">
+                  <h3 className="font-serif text-xl font-bold text-navy-700 mb-2">
+                    {service.title}
+                  </h3>
+                  <p className="text-ink/60 text-sm leading-relaxed mb-4">
+                    {service.description}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {service.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs font-medium text-navy-700 bg-navy-700/[0.08] px-2.5 py-0.5 rounded-full border border-navy-700/12"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            </Link>
           ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-10">
+          <Link
+            href="/services"
+            className="inline-flex items-center gap-2 text-navy-700 border border-navy-700/15 px-6 py-2.5 rounded-full hover:border-navy-700 transition-colors"
+          >
+            查看完整服務方案 →
+          </Link>
         </div>
       </div>
     </section>
