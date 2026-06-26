@@ -92,7 +92,9 @@ export default function BookingForm() {
       if (formData.phone && !/^09\d{8}$/.test(formData.phone)) {
         newErrors.phone = '請輸入有效的手機號碼';
       }
-      if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      if (!formData.email.trim()) {
+        newErrors.email = '請輸入 Email';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
         newErrors.email = '請輸入有效的 Email';
       }
     }
@@ -247,7 +249,9 @@ export default function BookingForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">{t('form.email')}</label>
+              <label className="block text-sm font-medium mb-2 text-navy-700">
+                {t('form.email')} <span className="text-red-500">*</span>
+              </label>
               <input
                 type="email"
                 value={formData.email}
@@ -428,12 +432,10 @@ export default function BookingForm() {
                 <span className="text-ink-600">手機</span>
                 <span className="font-medium">{formData.phone}</span>
               </div>
-              {formData.email && (
-                <div className="flex justify-between">
-                  <span className="text-ink-600">Email</span>
-                  <span className="font-medium">{formData.email}</span>
-                </div>
-              )}
+              <div className="flex justify-between">
+                <span className="text-ink-600">Email</span>
+                <span className="font-medium">{formData.email}</span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-ink-600">門店</span>
                 <span className="font-medium">{stores.find((s) => s.id === formData.storeId)?.name}</span>

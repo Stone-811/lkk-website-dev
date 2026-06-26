@@ -35,7 +35,7 @@ function HeroSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-[1fr_400px] gap-8 items-center py-16 lg:py-20">
+        <div className="grid lg:grid-cols-[1fr_480px] gap-8 items-center py-16 lg:py-20">
           {/* Left content */}
           <div>
             {/* Free badge */}
@@ -82,55 +82,54 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Right - FAQ Card */}
-          <aside className="hidden lg:block bg-white/[0.07] backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-            <div className="space-y-4">
-              <div className="text-xs font-bold tracking-widest uppercase text-white/30 mb-2">你可能在想</div>
-              <div className="space-y-3">
+          {/* Right - FAQ & Cases Cards */}
+          <aside className="hidden lg:flex flex-col gap-4">
+            {/* FAQ Card */}
+            <div className="bg-white/[0.07] backdrop-blur-sm border border-white/10 rounded-2xl p-5">
+              <div className="text-xs font-bold tracking-widest uppercase text-white/30 mb-3">你可能在想</div>
+              <div className="space-y-2">
                 {[
                   { q: '我年紀這麼大，可以練嗎？', a: '練健康 70% 的學員都是中高齡族群，90 歲阿嬤都在這裡練硬舉。' },
                   { q: '我從來沒運動過？', a: '沒運動習慣的人反而容易進步，教練會從最基礎教起。' },
                   { q: '有慢性病可以來嗎？', a: '可以。由物理治療師督導，會先評估再設計適合的課表。' },
                   { q: '一定要買課嗎？', a: '不強迫。體驗課的目的是讓雙方了解彼此，你自己決定。' },
                 ].map((faq) => (
-                  <div key={faq.q} className="bg-white/[0.05] rounded-lg p-3">
-                    <div className="text-sm font-semibold text-white mb-1">{faq.q}</div>
+                  <div key={faq.q} className="bg-white/[0.05] rounded-lg p-2.5">
+                    <div className="text-sm font-semibold text-white mb-0.5">{faq.q}</div>
                     <div className="text-xs text-white/50 leading-relaxed">{faq.a}</div>
                   </div>
                 ))}
               </div>
             </div>
+
+            {/* Cases Card */}
+            <div className="bg-white/[0.07] backdrop-blur-sm border border-white/10 rounded-2xl p-5">
+              <div className="text-xs font-bold tracking-widest uppercase text-white/30 mb-3">他們也是這樣開始的</div>
+              <div className="space-y-2">
+                {[
+                  { name: '林阿嬤', info: '70歲・膝關節退化', quote: '以前膝蓋痛到走不了路，現在可以自己爬山。' },
+                  { name: '王先生', info: '62歲・腦中風後', quote: '以為這輩子就這樣了，沒想到可以自己走路買東西。' },
+                  { name: '陳小姐', info: '55歲・乳癌術後', quote: '醫生說我的恢復狀況比預期好很多。' },
+                ].map((c) => (
+                  <div key={c.name} className="flex gap-2 items-center bg-white/[0.05] rounded-lg p-2.5">
+                    <div className="w-8 h-8 rounded-full bg-orange/30 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                      {c.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-semibold text-white">{c.name}・{c.info}</div>
+                      <div className="text-xs text-white/50 italic line-clamp-1">「{c.quote}」</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Link href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/" className="block text-center text-xs text-white/50 hover:text-white mt-3 pt-2 border-t border-white/10">
+                看更多學員故事 →
+              </Link>
+            </div>
           </aside>
         </div>
       </div>
     </section>
-  );
-}
-
-// Reassure Strip
-function ReassureStrip() {
-  const items = [
-    '沒有運動習慣也可以來',
-    '有慢性病・術後也歡迎',
-    '體驗後不強迫買課',
-    '教練在 1 工作天內主動聯繫',
-  ];
-
-  return (
-    <div className="bg-white border-b border-navy-700/15 py-4">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-wrap justify-center gap-6">
-          {items.map((item) => (
-            <div key={item} className="flex items-center gap-2 text-sm text-ink/70">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d8a5e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              {item}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -177,55 +176,22 @@ function ProcessStepsCompact() {
   );
 }
 
-// Cases Teaser
-function CasesTeaser() {
-  const cases = [
-    { name: '林阿嬤', info: '70歲 · 膝關節退化', quote: '以前膝蓋痛到走不了路，現在可以自己爬山、帶孫子去公園。' },
-    { name: '王先生', info: '62歲 · 腦中風後', quote: '以為這輩子就這樣了，沒想到可以自己走路去買東西。' },
-    { name: '陳小姐', info: '55歲 · 乳癌術後', quote: '醫生說我的恢復狀況比預期好很多，我知道是因為練健康。' },
-  ];
-
-  return (
-    <div className="bg-white rounded-2xl p-5 border border-navy-700/15 shadow-sm">
-      <div className="text-sm font-bold text-ink/50 tracking-widest uppercase mb-4">他們也是這樣開始的</div>
-      <div className="space-y-3">
-        {cases.map((c) => (
-          <div key={c.name} className="flex gap-3 items-center p-3 bg-cream-100 rounded-xl border border-navy-700/10">
-            <div className="w-10 h-10 rounded-full bg-navy-700 flex items-center justify-center text-white font-bold text-base flex-shrink-0">
-              {c.name.charAt(0)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-semibold text-navy-700">{c.name} · {c.info}</div>
-              <div className="text-sm text-ink/60 italic mt-0.5 line-clamp-2">「{c.quote}」</div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <Link href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/" className="block text-center text-sm text-navy-700 font-semibold mt-4 pt-4 border-t border-navy-700/10">
-        看更多學員故事 →
-      </Link>
-    </div>
-  );
-}
-
 export default function BookingPage() {
   return (
     <div className="min-h-screen bg-cream-100">
       <HeroSection />
-      <ReassureStrip />
 
       <div className="py-12 lg:py-16">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-[1fr_360px] gap-8 lg:gap-10">
-            {/* Left - Form (enlarged) */}
-            <div id="form" className="lg:sticky lg:top-24">
+          <div className="max-w-2xl mx-auto">
+            {/* Form (centered & enlarged) */}
+            <div id="form">
               <BookingForm />
             </div>
 
-            {/* Right - Info Sections (compact) */}
-            <div>
+            {/* Process Steps (aligned with form) */}
+            <div className="mt-10">
               <ProcessStepsCompact />
-              <CasesTeaser />
             </div>
           </div>
         </div>
