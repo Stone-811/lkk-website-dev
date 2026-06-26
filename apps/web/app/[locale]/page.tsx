@@ -9,6 +9,7 @@ import {
   LocationsSection,
   FAQSection,
   CTABanner,
+  ArticlesSection,
 } from '@/components/sections';
 
 // Force dynamic rendering for next-intl
@@ -20,6 +21,7 @@ export default function HomePage() {
       <HeroSection />
       <ServicesSection />
       <CasesSection />
+      <ArticlesSection />
       <FlowSection />
       <LKK4Section />
       <TeamSection />

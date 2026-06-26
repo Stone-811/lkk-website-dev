@@ -8,3 +8,4 @@ export { default as AcademyTeaser } from './AcademyTeaser';
 export { default as LocationsSection } from './LocationsSection';
 export { default as FAQSection } from './FAQSection';
 export { default as CTABanner } from './CTABanner';
+export { default as ArticlesSection } from './ArticlesSection';
