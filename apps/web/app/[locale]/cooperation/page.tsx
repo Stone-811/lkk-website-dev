@@ -47,8 +47,68 @@ const enquiryTypes = [
   { label: '🤝 採訪與異業合作', value: '媒體採訪與異業合作', placeholder: '請詳述您的採訪需求或異業合作提案內容（例如：報導專題、產品跨界結合構想、海外教練培訓授權洽談等）…' },
 ];
 
+interface FormData {
+  organization: string;
+  name: string;
+  phone: string;
+  lineId: string;
+  email: string;
+  message: string;
+}
+
+const initialFormData: FormData = {
+  organization: '',
+  name: '',
+  phone: '',
+  lineId: '',
+  email: '',
+  message: '',
+};
+
 export default function CooperationPage() {
   const [activeType, setActiveType] = useState(0);
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setErrorMessage('');
+
+    try {
+      const res = await fetch('/api/leads/cooperation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          cooperationType: enquiryTypes[activeType].value,
+          sourcePage: '/cooperation',
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSubmitStatus('success');
+        setFormData(initialFormData);
+      } else {
+        setSubmitStatus('error');
+        setErrorMessage(data.error || '送出失敗，請稍後再試');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      setErrorMessage('網路錯誤，請稍後再試');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const updateField = (field: keyof FormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -238,48 +298,115 @@ export default function CooperationPage() {
               ))}
             </div>
 
-            <form className="space-y-5">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-ink/70 block mb-1.5">公司 / 單位名稱 <span className="text-orange">*</span></label>
-                  <input type="text" className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm" placeholder="請輸入完整的公司或單位名稱" />
+            {submitStatus === 'success' ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
-                <div>
-                  <label className="text-xs font-bold text-ink/70 block mb-1.5">聯絡人姓名 <span className="text-orange">*</span></label>
-                  <input type="text" className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm" placeholder="請輸入聯絡人姓名" />
+                <h3 className="font-serif text-2xl font-bold text-navy-700 mb-2">表單已送出！</h3>
+                <p className="text-ink/60 mb-6">我們將於 2 個工作天內與您聯繫</p>
+                <button
+                  type="button"
+                  onClick={() => setSubmitStatus('idle')}
+                  className="text-orange font-medium hover:underline"
+                >
+                  填寫另一份表單
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {submitStatus === 'error' && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+                    {errorMessage}
+                  </div>
+                )}
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-ink/70 block mb-1.5">公司 / 單位名稱 <span className="text-orange">*</span></label>
+                    <input
+                      type="text"
+                      value={formData.organization}
+                      onChange={(e) => updateField('organization', e.target.value)}
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
+                      placeholder="請輸入完整的公司或單位名稱"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-ink/70 block mb-1.5">聯絡人姓名 <span className="text-orange">*</span></label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => updateField('name', e.target.value)}
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
+                      placeholder="請輸入聯絡人姓名"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-ink/70 block mb-1.5">聯絡電話 <span className="text-orange">*</span></label>
-                  <input type="tel" className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm" placeholder="請輸入您的聯絡電話" />
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-ink/70 block mb-1.5">聯絡電話 <span className="text-orange">*</span></label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => updateField('phone', e.target.value)}
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
+                      placeholder="請輸入您的聯絡電話"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-ink/70 block mb-1.5">Line ID <span className="text-orange">*</span></label>
+                    <input
+                      type="text"
+                      value={formData.lineId}
+                      onChange={(e) => updateField('lineId', e.target.value)}
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
+                      placeholder="請輸入 Line ID 以利快速聯絡"
+                    />
+                  </div>
                 </div>
+
                 <div>
-                  <label className="text-xs font-bold text-ink/70 block mb-1.5">Line ID <span className="text-orange">*</span></label>
-                  <input type="text" className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm" placeholder="請輸入 Line ID 以利快速聯絡" />
+                  <label className="text-xs font-bold text-ink/70 block mb-1.5">電子郵件</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => updateField('email', e.target.value)}
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
+                    placeholder="example@email.com"
+                  />
                 </div>
-              </div>
 
-              <div>
-                <label className="text-xs font-bold text-ink/70 block mb-1.5">電子郵件</label>
-                <input type="email" className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm" placeholder="example@email.com" />
-              </div>
+                <div>
+                  <label className="text-xs font-bold text-ink/70 block mb-1.5">合作內容詳情 <span className="text-orange">*</span></label>
+                  <textarea
+                    rows={4}
+                    value={formData.message}
+                    onChange={(e) => updateField('message', e.target.value)}
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm resize-none disabled:opacity-50"
+                    placeholder={enquiryTypes[activeType].placeholder}
+                  />
+                </div>
 
-              <div>
-                <label className="text-xs font-bold text-ink/70 block mb-1.5">合作內容詳情 <span className="text-orange">*</span></label>
-                <textarea
-                  rows={4}
-                  className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm resize-none"
-                  placeholder={enquiryTypes[activeType].placeholder}
-                />
-              </div>
-
-              <button type="submit" className="w-full bg-orange text-white font-bold py-3.5 rounded shadow-lg shadow-orange/35 hover:bg-orange-600 transition-all">
-                送出合作洽詢表單 →
-              </button>
-              <p className="text-center text-xs text-ink/40">送出即代表您同意本網頁資訊將僅作為商務對接與回覆洽詢使用。</p>
-            </form>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-orange text-white font-bold py-3.5 rounded shadow-lg shadow-orange/35 hover:bg-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? '送出中...' : '送出合作洽詢表單 →'}
+                </button>
+                <p className="text-center text-xs text-ink/40">送出即代表您同意本網頁資訊將僅作為商務對接與回覆洽詢使用。</p>
+              </form>
+            )}
           </div>
         </div>
       </section>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { UserSession } from '@/lib/auth';
@@ -52,15 +53,6 @@ const navigation = [
     ),
   },
   {
-    name: 'FAQ 管理',
-    href: '/admin/faqs',
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-  {
     name: '系統設定',
     href: '/admin/settings',
     icon: (
@@ -75,6 +67,26 @@ const navigation = [
 
 export default function Sidebar({ user }: { user: UserSession }) {
   const pathname = usePathname();
+  const [pendingLeadsCount, setPendingLeadsCount] = useState(0);
+
+  // 取得待處理名單數量
+  useEffect(() => {
+    async function fetchPendingLeads() {
+      try {
+        const res = await fetch('/api/admin/leads');
+        if (res.ok) {
+          const data = await res.json();
+          const pendingCount = (data.data || []).filter(
+            (lead: any) => lead.status === 'new'
+          ).length;
+          setPendingLeadsCount(pendingCount);
+        }
+      } catch (error) {
+        console.error('Failed to fetch pending leads:', error);
+      }
+    }
+    fetchPendingLeads();
+  }, []);
 
   const filteredNav = navigation.filter(
     (item) => !item.adminOnly || user.role === 'admin'
@@ -107,9 +119,9 @@ export default function Sidebar({ user }: { user: UserSession }) {
                 >
                   {item.icon}
                   <span>{item.name}</span>
-                  {item.badge && (
+                  {item.badge && pendingLeadsCount > 0 && (
                     <span className="ml-auto bg-orange text-white text-xs px-2 py-0.5 rounded-full">
-                      3
+                      {pendingLeadsCount}
                     </span>
                   )}
                 </Link>

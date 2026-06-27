@@ -150,34 +150,6 @@ export default function LecturersPage() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
-        <div className="card border border-gray-200 p-4">
-          <div className="text-2xl font-bold text-navy-700">{lecturers.length}</div>
-          <div className="text-sm text-gray-500">總講師數</div>
-        </div>
-        <div className="card border border-gray-200 p-4">
-          <div className="text-2xl font-bold text-orange-600">
-            {lecturers.filter((l) => l.type === 'lkk').length}
-          </div>
-          <div className="text-sm text-gray-500">練健康授權</div>
-        </div>
-        <div className="card border border-gray-200 p-4">
-          <div className="text-2xl font-bold text-blue-600">
-            {lecturers.filter((l) => l.type === 'partner').length}
-          </div>
-          <div className="text-sm text-gray-500">合作講師</div>
-        </div>
-        <div className="card border border-gray-200 p-4">
-          <div className="text-2xl font-bold text-green-600">
-            {lecturers.filter((l) => l.type === 'overseas').length}
-          </div>
-          <div className="text-sm text-gray-500">海外授權</div>
-        </div>
-      </div>
-
-      {/* Results */}
-      <p className="text-sm text-gray-500">共 {filteredLecturers.length} 位講師</p>
 
       {/* Grid */}
       {filteredLecturers.length === 0 ? (

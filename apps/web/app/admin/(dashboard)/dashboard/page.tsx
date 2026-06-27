@@ -1,19 +1,24 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-// 暫用假資料
-const stats = [
-  { name: '本月新名單', value: '47', change: '+12%', href: '/admin/leads' },
-  { name: '待處理名單', value: '8', change: '-3', href: '/admin/leads?status=new' },
-  { name: '本月預約', value: '32', change: '+8%', href: '/admin/leads?type=booking' },
-  { name: '門店數', value: '5', change: '0', href: '/admin/stores' },
-];
+interface DashboardStats {
+  totalLeadsThisMonth: number;
+  pendingLeads: number;
+  bookingsThisMonth: number;
+  storeCount: number;
+}
 
-const recentLeads = [
-  { id: '1', name: '王小明', phone: '0912-XXX-XXX', type: 'booking', store: '台北南京店', status: 'new', createdAt: '2024-01-15 14:30' },
-  { id: '2', name: '李小華', phone: '0923-XXX-XXX', type: 'booking', store: '台北民生店', status: 'contacted', createdAt: '2024-01-15 11:20' },
-  { id: '3', name: '張大偉', phone: '0934-XXX-XXX', type: 'franchise', store: '-', status: 'new', createdAt: '2024-01-14 16:45' },
-  { id: '4', name: '陳美玲', phone: '0945-XXX-XXX', type: 'booking', store: '新竹店', status: 'scheduled', createdAt: '2024-01-14 10:15' },
-];
+interface Lead {
+  id: string;
+  name: string;
+  phone: string;
+  type: string;
+  store: { id: string; name: string } | null;
+  status: string;
+  createdAt: string;
+}
 
 const typeLabels: Record<string, string> = {
   booking: '預約體驗',
@@ -30,6 +35,100 @@ const statusLabels: Record<string, { label: string; class: string }> = {
 };
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats>({
+    totalLeadsThisMonth: 0,
+    pendingLeads: 0,
+    bookingsThisMonth: 0,
+    storeCount: 0,
+  });
+  const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchDashboardData() {
+      try {
+        // Fetch leads and stores in parallel
+        const [leadsRes, storesRes] = await Promise.all([
+          fetch('/api/admin/leads'),
+          fetch('/api/public/stores'),
+        ]);
+
+        if (leadsRes.ok) {
+          const leadsData = await leadsRes.json();
+          const leads = leadsData.data || [];
+
+          // Calculate stats
+          const now = new Date();
+          const thisMonth = now.getMonth();
+          const thisYear = now.getFullYear();
+
+          const leadsThisMonth = leads.filter((lead: any) => {
+            const createdAt = new Date(lead.createdAt);
+            return createdAt.getMonth() === thisMonth && createdAt.getFullYear() === thisYear;
+          });
+
+          const pendingLeads = leads.filter((lead: any) => lead.status === 'new');
+          const bookingsThisMonth = leadsThisMonth.filter((lead: any) => lead.type === 'booking');
+
+          setStats((prev) => ({
+            ...prev,
+            totalLeadsThisMonth: leadsThisMonth.length,
+            pendingLeads: pendingLeads.length,
+            bookingsThisMonth: bookingsThisMonth.length,
+          }));
+
+          // Get recent leads (top 5)
+          setRecentLeads(
+            leads.slice(0, 5).map((lead: any) => ({
+              id: lead.id,
+              name: lead.name,
+              phone: lead.phone ? lead.phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1-XXX-$3') : '',
+              type: lead.type,
+              store: lead.store,
+              status: lead.status,
+              createdAt: new Date(lead.createdAt).toLocaleString('zh-TW', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+              }),
+            }))
+          );
+        }
+
+        if (storesRes.ok) {
+          const storesData = await storesRes.json();
+          setStats((prev) => ({
+            ...prev,
+            storeCount: storesData.data?.length || 0,
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">載入中...</div>
+      </div>
+    );
+  }
+
+  const statsCards = [
+    { name: '本月新名單', value: stats.totalLeadsThisMonth.toString(), href: '/admin/leads' },
+    { name: '待處理名單', value: stats.pendingLeads.toString(), href: '/admin/leads?status=new' },
+    { name: '本月預約', value: stats.bookingsThisMonth.toString(), href: '/admin/leads?type=booking' },
+    { name: '門店數', value: stats.storeCount.toString(), href: '/admin/stores' },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -40,7 +139,7 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => (
+        {statsCards.map((stat) => (
           <Link
             key={stat.name}
             href={stat.href}
@@ -49,17 +148,6 @@ export default function DashboardPage() {
             <p className="text-sm text-gray-500">{stat.name}</p>
             <div className="flex items-end justify-between mt-2">
               <p className="text-3xl font-bold">{stat.value}</p>
-              <span
-                className={`text-sm ${
-                  stat.change.startsWith('+')
-                    ? 'text-green-600'
-                    : stat.change.startsWith('-')
-                    ? 'text-red-600'
-                    : 'text-gray-500'
-                }`}
-              >
-                {stat.change}
-              </span>
             </div>
           </Link>
         ))}
@@ -86,20 +174,28 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {recentLeads.map((lead) => (
-                <tr key={lead.id}>
-                  <td className="font-medium">{lead.name}</td>
-                  <td>{lead.phone}</td>
-                  <td>{typeLabels[lead.type]}</td>
-                  <td>{lead.store}</td>
-                  <td>
-                    <span className={`badge ${statusLabels[lead.status].class}`}>
-                      {statusLabels[lead.status].label}
-                    </span>
+              {recentLeads.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-8 text-gray-500">
+                    目前沒有名單資料
                   </td>
-                  <td className="text-gray-500 text-sm">{lead.createdAt}</td>
                 </tr>
-              ))}
+              ) : (
+                recentLeads.map((lead) => (
+                  <tr key={lead.id}>
+                    <td className="font-medium">{lead.name}</td>
+                    <td>{lead.phone}</td>
+                    <td>{typeLabels[lead.type] || lead.type}</td>
+                    <td>{lead.store?.name || '-'}</td>
+                    <td>
+                      <span className={`badge ${statusLabels[lead.status]?.class || 'badge-gray'}`}>
+                        {statusLabels[lead.status]?.label || lead.status}
+                      </span>
+                    </td>
+                    <td className="text-gray-500 text-sm">{lead.createdAt}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -138,7 +234,7 @@ export default function DashboardPage() {
         </Link>
 
         <Link
-          href="/admin/leads/export"
+          href="/admin/leads"
           className="card border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4"
         >
           <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">

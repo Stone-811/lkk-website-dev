@@ -1,16 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-// 門店資料（對齊分店資訊）
-const stores = [
+// Fallback 門店資料（當 API 失敗時使用）
+const fallbackStores = [
   { id: 'nanjing', name: '南京店', address: '台北市中山區南京東路三段 29 號 B1', phone: '(02) 2507-4196' },
   { id: 'songjiang', name: '松江店', address: '台北市中山區松江路 122 號 B1', phone: '(02) 2537-1055' },
   { id: 'ximending', name: '西門店', address: '台北市中正區寶慶路 39 號', phone: '(02) 2370-3245' },
   { id: 'xindian', name: '新店七張店', address: '新北市新店區北新路二段 252 號 B1-2', phone: '(02) 8914-6428' },
 ];
+
+interface Store {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+}
 
 const timeSlots = [
   '平日上午 (10:00-12:00)',
@@ -74,6 +81,33 @@ export default function BookingForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [stores, setStores] = useState<Store[]>(fallbackStores);
+
+  // 從 API 取得門店資料
+  useEffect(() => {
+    async function fetchStores() {
+      try {
+        const res = await fetch('/api/public/stores');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.data && data.data.length > 0) {
+            setStores(
+              data.data.map((s: any) => ({
+                id: s.id,
+                name: s.name,
+                address: `${s.city || ''}${s.district || ''}${s.address || ''}`,
+                phone: s.phone || '',
+              }))
+            );
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch stores:', error);
+        // Keep using fallback stores
+      }
+    }
+    fetchStores();
+  }, []);
 
   const totalSteps = 4;
 

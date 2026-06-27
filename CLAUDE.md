@@ -579,9 +579,30 @@ GET    /api/admin/leads/export
 
 ### 表單類型
 
-- `booking`：預約體驗
-- `franchise`：加盟洽詢
-- `cooperation`：合作洽詢
+| 類型 | 名稱 | 目標受眾 | 前端頁面 | API 路徑 |
+|------|------|----------|----------|----------|
+| `booking` | 預約體驗 | B2C（一般民眾） | `/booking` | `/api/leads/booking` |
+| `franchise` | 加盟洽詢 | B2B（潛在加盟主） | `/franchise` | `/api/leads/franchise`（待建立） |
+| `cooperation` | 合作洽詢 | B2B（企業/機構） | `/cooperation` | `/api/leads/cooperation` |
+| `recruitment` | 教練徵才 | B2C（求職者） | 待建立 | 待建立 |
+
+#### 表單欄位說明
+
+**booking（預約體驗）**
+- name, phone, email, gender, age, goal
+- storeId（門店）, preferredTime（偏好時段）
+- source, message
+
+**cooperation（合作洽詢）**
+- cooperationType（講座邀約 / 企業健康促進邀請 / 媒體採訪與異業合作）
+- organization（公司/單位名稱）
+- name, phone, lineId, email, message
+
+**franchise（加盟洽詢）**
+- 待定義
+
+**recruitment（教練徵才）**
+- 待定義
 
 ### 表單流程
 
