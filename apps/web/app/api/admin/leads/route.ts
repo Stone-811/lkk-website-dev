@@ -41,7 +41,7 @@ export async function GET(request: Request) {
       leads = leads.filter((lead) => lead.storeId === filterStoreId);
     }
 
-    // Get store info for each lead
+    // Get store info for each lead and convert timestamps
     const leadsWithStore = await Promise.all(
       leads.map(async (lead) => {
         let store = null;
@@ -55,7 +55,15 @@ export async function GET(request: Request) {
             };
           }
         }
-        return { ...lead, store };
+        // Convert Firestore Timestamps to ISO strings
+        const createdAt = lead.createdAt?.toDate?.()
+          ? lead.createdAt.toDate().toISOString()
+          : lead.createdAt;
+        const updatedAt = lead.updatedAt?.toDate?.()
+          ? lead.updatedAt.toDate().toISOString()
+          : lead.updatedAt;
+
+        return { ...lead, store, createdAt, updatedAt };
       })
     );
 

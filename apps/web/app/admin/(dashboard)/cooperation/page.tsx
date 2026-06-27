@@ -2,22 +2,19 @@
 
 import { useState, useEffect } from 'react';
 
-interface Lead {
+interface CooperationLead {
   id: string;
   name: string;
   phone: string;
   email: string;
-  type: string;
-  store: string;
-  storeId: string | null;
+  organization: string;
+  lineId: string;
+  cooperationType: string;
   status: string;
-  source: string;
   message: string;
   internalNote: string;
   createdAt: string;
 }
-
-// 此頁面只顯示預約體驗 (booking) 類型的名單
 
 const statusOptions = [
   { value: '', label: '全部狀態' },
@@ -28,6 +25,13 @@ const statusOptions = [
   { value: 'cancelled', label: '已取消' },
 ];
 
+const typeOptions = [
+  { value: '', label: '全部類型' },
+  { value: '講座邀約', label: '講座邀約' },
+  { value: '企業健康促進邀請', label: '企業健康促進' },
+  { value: '媒體採訪與異業合作', label: '採訪與異業合作' },
+];
+
 const statusLabels: Record<string, { label: string; class: string }> = {
   new: { label: '新名單', class: 'badge-info' },
   contacted: { label: '已聯繫', class: 'badge-warning' },
@@ -36,21 +40,21 @@ const statusLabels: Record<string, { label: string; class: string }> = {
   cancelled: { label: '已取消', class: 'badge-danger' },
 };
 
-
-export default function LeadsPage() {
-  const [leads, setLeads] = useState<Lead[]>([]);
+export default function CooperationPage() {
+  const [leads, setLeads] = useState<CooperationLead[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [selectedLead, setSelectedLead] = useState<CooperationLead | null>(null);
   const [noteText, setNoteText] = useState('');
   const [saving, setSaving] = useState(false);
 
-  // 從 API 取得名單資料（只取 booking 類型）
+  // 從 API 取得名單資料（只取 cooperation 類型）
   useEffect(() => {
     async function fetchLeads() {
       try {
-        const res = await fetch('/api/admin/leads?type=booking');
+        const res = await fetch('/api/admin/leads?type=cooperation');
         if (res.ok) {
           const data = await res.json();
           setLeads(
@@ -59,11 +63,10 @@ export default function LeadsPage() {
               name: lead.name,
               phone: lead.phone,
               email: lead.email || '',
-              type: lead.type,
-              store: lead.store?.name || '-',
-              storeId: lead.store?.slug || null,
+              organization: lead.payload?.organization || '-',
+              lineId: lead.payload?.lineId || '-',
+              cooperationType: lead.payload?.cooperationType || '-',
               status: lead.status,
-              source: lead.sourceChannel || lead.sourcePage || '-',
               message: lead.message || '',
               internalNote: lead.internalNote || '',
               createdAt: new Date(lead.createdAt).toLocaleString('zh-TW'),
@@ -81,12 +84,13 @@ export default function LeadsPage() {
 
   const filteredLeads = leads.filter((lead) => {
     if (statusFilter && lead.status !== statusFilter) return false;
+    if (typeFilter && lead.cooperationType !== typeFilter) return false;
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return (
         lead.name.toLowerCase().includes(query) ||
         lead.phone.includes(query) ||
-        lead.email.toLowerCase().includes(query)
+        lead.organization.toLowerCase().includes(query)
       );
     }
     return true;
@@ -135,27 +139,28 @@ export default function LeadsPage() {
   };
 
   const handleExport = () => {
-    // 產生 CSV
-    const headers = ['姓名', '電話', 'Email', '門店', '狀態', '來源', '備註', '建立時間'];
+    const headers = ['單位', '聯絡人', '電話', 'Line ID', 'Email', '洽詢類型', '狀態', '合作內容', '備註', '建立時間'];
     const rows = filteredLeads.map((lead) => [
+      lead.organization,
       lead.name,
       lead.phone,
+      lead.lineId,
       lead.email,
-      lead.store,
+      lead.cooperationType,
       statusLabels[lead.status]?.label || lead.status,
-      lead.source,
       lead.message,
+      lead.internalNote,
       lead.createdAt,
     ]);
 
     const csvContent =
-      '\uFEFF' + // BOM for UTF-8
+      '\uFEFF' +
       [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `leads_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `cooperation_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
   };
 
@@ -172,8 +177,8 @@ export default function LeadsPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-sans">客戶預約</h1>
-          <p className="text-gray-500 mt-1">管理預約體驗表單</p>
+          <h1 className="text-2xl font-bold font-sans">合作表單</h1>
+          <p className="text-gray-500 mt-1">管理講座邀約、企業健促、採訪與異業合作洽詢</p>
         </div>
         <button onClick={handleExport} className="btn btn-secondary flex items-center gap-2">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,12 +194,23 @@ export default function LeadsPage() {
           <div className="flex-1 min-w-[200px]">
             <input
               type="text"
-              placeholder="搜尋姓名、電話、Email..."
+              placeholder="搜尋單位、姓名、電話..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="input"
             />
           </div>
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="input w-auto"
+          >
+            {typeOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -220,11 +236,10 @@ export default function LeadsPage() {
           <table className="table">
             <thead>
               <tr>
-                <th>姓名</th>
+                <th>單位 / 聯絡人</th>
                 <th>聯絡資訊</th>
-                <th>門店</th>
+                <th>洽詢類型</th>
                 <th>狀態</th>
-                <th>來源</th>
                 <th>建立時間</th>
                 <th>操作</th>
               </tr>
@@ -232,21 +247,28 @@ export default function LeadsPage() {
             <tbody>
               {filteredLeads.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-gray-500">
-                    目前沒有預約資料
+                  <td colSpan={6} className="text-center py-8 text-gray-500">
+                    目前沒有合作洽詢資料
                   </td>
                 </tr>
               ) : (
                 filteredLeads.map((lead) => (
                   <tr key={lead.id}>
-                    <td className="font-medium">{lead.name}</td>
+                    <td>
+                      <div>
+                        <div className="font-medium">{lead.organization}</div>
+                        <div className="text-sm text-gray-500">{lead.name}</div>
+                      </div>
+                    </td>
                     <td>
                       <div className="text-sm">
                         <div>{lead.phone}</div>
-                        <div className="text-gray-500">{lead.email}</div>
+                        <div className="text-gray-500">Line: {lead.lineId}</div>
                       </div>
                     </td>
-                    <td>{lead.store}</td>
+                    <td>
+                      <span className="text-sm">{lead.cooperationType}</span>
+                    </td>
                     <td>
                       <select
                         value={lead.status}
@@ -260,7 +282,6 @@ export default function LeadsPage() {
                         ))}
                       </select>
                     </td>
-                    <td className="text-sm text-gray-500">{lead.source}</td>
                     <td className="text-sm text-gray-500">{lead.createdAt}</td>
                     <td>
                       <button
@@ -286,7 +307,7 @@ export default function LeadsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-lg font-bold font-sans">名單詳情</h2>
+              <h2 className="text-lg font-bold font-sans">合作洽詢詳情</h2>
               <button
                 onClick={() => setSelectedLead(null)}
                 className="text-gray-400 hover:text-gray-600"
@@ -298,8 +319,16 @@ export default function LeadsPage() {
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <p className="text-sm text-gray-500">洽詢類型</p>
+                  <p className="font-medium text-orange">{selectedLead.cooperationType}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-sm text-gray-500">公司 / 單位</p>
+                  <p className="font-medium">{selectedLead.organization}</p>
+                </div>
                 <div>
-                  <p className="text-sm text-gray-500">姓名</p>
+                  <p className="text-sm text-gray-500">聯絡人</p>
                   <p className="font-medium">{selectedLead.name}</p>
                 </div>
                 <div>
@@ -307,26 +336,22 @@ export default function LeadsPage() {
                   <p className="font-medium">{selectedLead.phone}</p>
                 </div>
                 <div>
+                  <p className="text-sm text-gray-500">Line ID</p>
+                  <p className="font-medium">{selectedLead.lineId}</p>
+                </div>
+                <div>
                   <p className="text-sm text-gray-500">Email</p>
                   <p className="font-medium">{selectedLead.email || '-'}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">門店</p>
-                  <p className="font-medium">{selectedLead.store}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">來源</p>
-                  <p className="font-medium">{selectedLead.source}</p>
-                </div>
-                <div>
+                <div className="col-span-2">
                   <p className="text-sm text-gray-500">建立時間</p>
                   <p className="font-medium">{selectedLead.createdAt}</p>
                 </div>
               </div>
               {selectedLead.message && (
                 <div>
-                  <p className="text-sm text-gray-500">客戶備註</p>
-                  <p className="mt-1 p-3 bg-gray-50 rounded-lg">{selectedLead.message}</p>
+                  <p className="text-sm text-gray-500">合作內容詳情</p>
+                  <p className="mt-1 p-3 bg-gray-50 rounded-lg whitespace-pre-wrap">{selectedLead.message}</p>
                 </div>
               )}
               <div>

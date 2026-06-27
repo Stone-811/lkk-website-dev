@@ -72,11 +72,66 @@ export default function CooperationPage() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
+  // 驗證 Email 格式
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  // 驗證電話格式（台灣手機或市話）
+  const isValidPhone = (phone: string) => {
+    // 手機: 09xxxxxxxx 或市話: 02-xxxx-xxxx 等
+    return /^(09\d{8}|0\d{1,2}-?\d{3,4}-?\d{4})$/.test(phone.replace(/\s/g, ''));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus('idle');
     setErrorMessage('');
+
+    // 前端驗證
+    if (!formData.organization.trim()) {
+      setErrorMessage('請填寫公司/單位名稱');
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      return;
+    }
+    if (!formData.name.trim()) {
+      setErrorMessage('請填寫聯絡人姓名');
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      return;
+    }
+    if (!formData.phone.trim()) {
+      setErrorMessage('請填寫聯絡電話');
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      return;
+    }
+    if (!isValidPhone(formData.phone)) {
+      setErrorMessage('電話格式不正確，請輸入有效的手機或市話號碼');
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      return;
+    }
+    if (!formData.email.trim()) {
+      setErrorMessage('請填寫電子郵件');
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      setErrorMessage('電子郵件格式不正確');
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      return;
+    }
+    if (!formData.message.trim()) {
+      setErrorMessage('請填寫合作內容詳情');
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      return;
+    }
 
     try {
       const res = await fetch('/api/leads/cooperation', {
@@ -361,27 +416,27 @@ export default function CooperationPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-ink/70 block mb-1.5">Line ID <span className="text-orange">*</span></label>
+                    <label className="text-xs font-bold text-ink/70 block mb-1.5">電子郵件 <span className="text-orange">*</span></label>
                     <input
-                      type="text"
-                      value={formData.lineId}
-                      onChange={(e) => updateField('lineId', e.target.value)}
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => updateField('email', e.target.value)}
                       disabled={isSubmitting}
                       className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
-                      placeholder="請輸入 Line ID 以利快速聯絡"
+                      placeholder="example@email.com"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-ink/70 block mb-1.5">電子郵件</label>
+                  <label className="text-xs font-bold text-ink/70 block mb-1.5">Line ID <span className="text-ink/40 font-normal">(選填)</span></label>
                   <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => updateField('email', e.target.value)}
+                    type="text"
+                    value={formData.lineId}
+                    onChange={(e) => updateField('lineId', e.target.value)}
                     disabled={isSubmitting}
                     className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
-                    placeholder="example@email.com"
+                    placeholder="請輸入 Line ID 以利快速聯絡"
                   />
                 </div>
 

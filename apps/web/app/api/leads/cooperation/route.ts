@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db, Timestamp } from '@/lib/firebase';
+import { sendLeadNotification } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,10 +17,28 @@ export async function POST(request: NextRequest) {
       sourcePage,
     } = body;
 
-    // Validate required fields
-    if (!organization || !name || !phone || !lineId || !message || !cooperationType) {
+    // Validate required fields (lineId is optional)
+    if (!organization || !name || !phone || !email || !message || !cooperationType) {
       return NextResponse.json(
         { error: '請填寫必要欄位' },
+        { status: 400 }
+      );
+    }
+
+    // Validate phone format (Taiwan mobile or landline)
+    const phoneRegex = /^(09\d{8}|0\d{1,2}-?\d{3,4}-?\d{4})$/;
+    if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+      return NextResponse.json(
+        { error: '電話格式不正確' },
+        { status: 400 }
+      );
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: '電子郵件格式不正確' },
         { status: 400 }
       );
     }
@@ -41,7 +60,7 @@ export async function POST(request: NextRequest) {
       payload: {
         cooperationType,
         organization,
-        lineId,
+        lineId: lineId || null,
       },
       status: 'new',
       internalNote: null,
@@ -57,6 +76,18 @@ export async function POST(request: NextRequest) {
       organization,
       cooperationType,
     });
+
+    // Send email notification (non-blocking)
+    sendLeadNotification({
+      type: 'cooperation',
+      name,
+      phone,
+      email,
+      organization,
+      cooperationType,
+      message,
+      createdAt: now.toDate(),
+    }).catch((err) => console.error('Failed to send notification:', err));
 
     return NextResponse.json({
       success: true,

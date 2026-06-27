@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Settings {
   siteName: string;
@@ -19,37 +19,129 @@ interface Settings {
   };
 }
 
-// 暫用假資料
-const initialSettings: Settings = {
+const defaultSettings: Settings = {
   siteName: '練健康',
   siteDescription: '專業一對一私人教練，科學化訓練，找回你的健康生活。',
   contactEmail: 'service@l-kk.tw',
   contactPhone: '02-2712-3456',
   socialLinks: {
-    facebook: 'https://www.facebook.com/lkkfitness',
-    instagram: 'https://www.instagram.com/lkkfitness',
-    youtube: 'https://www.youtube.com/@lkkfitness',
-    line: '@lkk-fitness',
+    facebook: '',
+    instagram: '',
+    youtube: '',
+    line: '',
   },
   notifications: {
     emailOnNewLead: true,
-    emailRecipients: 'admin@l-kk.tw, sales@l-kk.tw',
+    emailRecipients: '',
   },
 };
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<Settings>(initialSettings);
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'general' | 'social' | 'notifications'>('general');
+  const [testingSend, setTestingSend] = useState(false);
+
+  // Fetch settings on mount
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch('/api/admin/settings');
+        if (res.ok) {
+          const data = await res.json();
+          setSettings({
+            siteName: data.data.siteName || defaultSettings.siteName,
+            siteDescription: data.data.siteDescription || defaultSettings.siteDescription,
+            contactEmail: data.data.contactEmail || defaultSettings.contactEmail,
+            contactPhone: data.data.contactPhone || defaultSettings.contactPhone,
+            socialLinks: data.data.socialLinks || defaultSettings.socialLinks,
+            notifications: data.data.notifications || defaultSettings.notifications,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSettings();
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
-    // TODO: API 呼叫儲存
-    console.log('Saving settings:', settings);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setSaving(false);
-    alert('設定已儲存');
+    try {
+      // Save each section
+      const sections = [
+        {
+          section: 'general',
+          data: {
+            siteName: settings.siteName,
+            siteDescription: settings.siteDescription,
+            contactEmail: settings.contactEmail,
+            contactPhone: settings.contactPhone,
+          },
+        },
+        { section: 'social', data: settings.socialLinks },
+        { section: 'notifications', data: settings.notifications },
+      ];
+
+      for (const { section, data } of sections) {
+        await fetch('/api/admin/settings', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ section, data }),
+        });
+      }
+      alert('設定已儲存');
+    } catch (error) {
+      console.error('Save failed:', error);
+      alert('儲存失敗');
+    } finally {
+      setSaving(false);
+    }
   };
+
+  const handleTestNotification = async () => {
+    if (!settings.notifications.emailRecipients.trim()) {
+      alert('請先填寫通知收件人');
+      return;
+    }
+
+    setTestingSend(true);
+    try {
+      const recipients = settings.notifications.emailRecipients
+        .split(',')
+        .map((e) => e.trim())
+        .filter((e) => e);
+
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'test-notification', recipients }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert('測試通知已發送，請檢查收件匣');
+      } else {
+        alert(data.error || '發送失敗');
+      }
+    } catch (error) {
+      console.error('Test notification failed:', error);
+      alert('發送失敗，請確認 SMTP 設定是否正確');
+    } finally {
+      setTestingSend(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">載入中...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -285,13 +377,31 @@ export default function SettingsPage() {
 
           <div className="border-t pt-6">
             <h3 className="font-medium mb-3">通知測試</h3>
+            <p className="text-sm text-gray-500 mb-3">
+              發送測試郵件以確認 SMTP 設定是否正確。請先儲存設定再測試。
+            </p>
             <button
               type="button"
               className="btn btn-secondary"
-              onClick={() => alert('測試通知已發送')}
+              onClick={handleTestNotification}
+              disabled={testingSend}
             >
-              發送測試通知
+              {testingSend ? '發送中...' : '發送測試通知'}
             </button>
+          </div>
+
+          <div className="border-t pt-6">
+            <h3 className="font-medium mb-3 text-gray-500">SMTP 設定說明</h3>
+            <p className="text-sm text-gray-500">
+              郵件通知需要在環境變數中設定 SMTP 伺服器資訊：
+            </p>
+            <ul className="text-sm text-gray-500 mt-2 space-y-1 list-disc list-inside">
+              <li>SMTP_HOST - SMTP 伺服器位址</li>
+              <li>SMTP_PORT - SMTP 埠號（預設 587）</li>
+              <li>SMTP_USER - SMTP 帳號</li>
+              <li>SMTP_PASS - SMTP 密碼</li>
+              <li>SMTP_FROM - 寄件人地址（選填）</li>
+            </ul>
           </div>
         </div>
       )}

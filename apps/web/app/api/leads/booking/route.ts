@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, Timestamp } from '@/lib/firebase';
+import { db, Timestamp, docToObject, StoreDoc } from '@/lib/firebase';
+import { sendLeadNotification } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,8 +64,26 @@ export async function POST(request: NextRequest) {
 
     await leadRef.set(leadData);
 
-    // TODO: Send notification email
-    // await sendNotificationEmail(leadData);
+    // Get store name for notification
+    let storeName = '';
+    try {
+      const storeDoc = await db.collection('stores').doc(storeId).get();
+      const storeData = docToObject<StoreDoc>(storeDoc);
+      storeName = storeData?.name || '';
+    } catch (e) {
+      console.warn('Could not fetch store name:', e);
+    }
+
+    // Send email notification (non-blocking)
+    sendLeadNotification({
+      type: 'booking',
+      name,
+      phone,
+      email,
+      storeName,
+      message,
+      createdAt: now.toDate(),
+    }).catch((err) => console.error('Failed to send notification:', err));
 
     console.log('New booking lead:', {
       id: leadRef.id,
