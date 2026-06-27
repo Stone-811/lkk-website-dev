@@ -370,45 +370,54 @@ export default function StoreEditPage() {
           <h2 className="font-bold text-lg font-sans border-b pb-2">門店照片</h2>
 
           <div>
-            <label className="block text-sm font-medium mb-2">主圖</label>
-            <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
-              {formData.heroImage ? (
-                <div className="relative">
-                  <img
-                    src={formData.heroImage}
-                    alt="門店主圖"
-                    className="max-h-48 mx-auto rounded"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, heroImage: '' })}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <svg className="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <button type="button" className="btn btn-secondary text-sm">
-                    上傳主圖
-                  </button>
-                  <p className="text-xs text-gray-500 mt-2">建議尺寸 1200x800，JPG 或 PNG</p>
-                </>
+            <label className="block text-sm font-medium mb-2">主圖網址</label>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={formData.heroImage}
+                onChange={(e) => setFormData({ ...formData, heroImage: e.target.value })}
+                className="input flex-1"
+                placeholder="https://images.unsplash.com/... 或其他圖片網址"
+              />
+              {formData.heroImage && (
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, heroImage: '' })}
+                  className="btn btn-ghost text-red-500"
+                >
+                  清除
+                </button>
               )}
             </div>
+            {formData.heroImage && (
+              <div className="mt-3 rounded-lg overflow-hidden border">
+                <img
+                  src={formData.heroImage}
+                  alt="門店主圖預覽"
+                  className="w-full max-h-48 object-cover"
+                  onError={(e) => (e.currentTarget.style.display = 'none')}
+                />
+              </div>
+            )}
+            <p className="text-xs text-gray-500 mt-2">建議使用 Unsplash 等免費圖庫，或 Firebase Storage 上傳的圖片網址</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">相簿照片</label>
-            <div className="grid grid-cols-3 gap-4">
+            <label className="block text-sm font-medium mb-2">相簿照片（環境照片）</label>
+            <div className="space-y-3">
               {formData.galleryImages.map((img, index) => (
-                <div key={index} className="relative aspect-video bg-gray-100 rounded overflow-hidden">
-                  <img src={img} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
+                <div key={index} className="flex gap-2 items-center">
+                  <input
+                    type="url"
+                    value={img}
+                    onChange={(e) => {
+                      const newImages = [...formData.galleryImages];
+                      newImages[index] = e.target.value;
+                      setFormData({ ...formData, galleryImages: newImages });
+                    }}
+                    className="input flex-1"
+                    placeholder="圖片網址"
+                  />
                   <button
                     type="button"
                     onClick={() =>
@@ -417,9 +426,9 @@ export default function StoreEditPage() {
                         galleryImages: formData.galleryImages.filter((_, i) => i !== index),
                       })
                     }
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                    className="btn btn-ghost text-red-500 px-3"
                   >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
@@ -427,13 +436,31 @@ export default function StoreEditPage() {
               ))}
               <button
                 type="button"
-                className="aspect-video border-2 border-dashed border-gray-200 rounded flex items-center justify-center text-gray-400 hover:border-gray-300 hover:text-gray-500"
+                onClick={() => setFormData({ ...formData, galleryImages: [...formData.galleryImages, ''] })}
+                className="btn btn-secondary text-sm w-full"
               >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
+                新增相簿照片
               </button>
             </div>
+
+            {/* Gallery Preview */}
+            {formData.galleryImages.filter(Boolean).length > 0 && (
+              <div className="grid grid-cols-3 gap-2 mt-4">
+                {formData.galleryImages.filter(Boolean).map((img, index) => (
+                  <div key={index} className="aspect-video bg-gray-100 rounded overflow-hidden">
+                    <img
+                      src={img}
+                      alt={`Gallery ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

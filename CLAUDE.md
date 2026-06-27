@@ -295,8 +295,9 @@ lkk-website/                    # 根目錄（Monorepo）
 │       │   ├── admin/          # CMS 後台
 │       │   │   ├── login/page.tsx
 │       │   │   ├── dashboard/page.tsx
-│       │   │   ├── stores/page.tsx
-│       │   │   ├── coaches/page.tsx
+│       │   │   ├── stores/page.tsx       # 門店管理（含照片）
+│       │   │   ├── coaches/page.tsx      # 教練管理
+│       │   │   ├── lecturers/page.tsx    # 講師管理（新增）
 │       │   │   ├── faqs/page.tsx
 │       │   │   ├── leads/page.tsx
 │       │   │   └── settings/page.tsx
@@ -401,6 +402,30 @@ lkk-website/                    # 根目錄（Monorepo）
 }
 ```
 
+### lecturers
+
+```typescript
+{
+  id: string
+  name: string
+  slug: string
+  photo?: string
+  title?: string              // 職稱 (e.g., 首席講師、資深講師)
+  organization?: string       // 所屬機構
+  region?: string             // 地區 (海外講師用)
+  countries?: string[]        // 授權國家 (海外講師用)
+  type: 'lkk' | 'partner' | 'overseas'  // 講師類型
+  description?: string
+  specialties: string[]       // 專長領域
+  courses?: string[]          // 授課項目
+  certifications?: string[]   // 專業認證
+  sortOrder: number
+  isActive: boolean
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+```
+
 ### homePage
 
 ```typescript
@@ -467,6 +492,18 @@ POST   /api/admin/auth/logout
 GET    /api/admin/stores
 POST   /api/admin/stores
 PATCH  /api/admin/stores/:id
+DELETE /api/admin/stores/:id
+GET    /api/admin/coaches
+POST   /api/admin/coaches
+PATCH  /api/admin/coaches/:id
+DELETE /api/admin/coaches/:id
+GET    /api/admin/lecturers
+POST   /api/admin/lecturers
+PATCH  /api/admin/lecturers/:id
+DELETE /api/admin/lecturers/:id
+GET    /api/admin/leads
+PATCH  /api/admin/leads/:id/status
+PATCH  /api/admin/leads/:id/note
 DELETE /api/admin/stores/:id
 GET    /api/admin/coaches
 POST   /api/admin/coaches
