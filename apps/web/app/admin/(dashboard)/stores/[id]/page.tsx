@@ -39,7 +39,9 @@ interface Store {
   googleMapUrl: string;
   businessHours: {
     weekday: string;
-    weekend: string;
+    saturday: string;
+    sunday: string;
+    holiday: string;
   };
   transport: TransportInfo;
   images: StoreImages;
@@ -93,8 +95,10 @@ export default function StoreEditPage() {
     phone: '',
     googleMapUrl: '',
     businessHours: {
-      weekday: '10:00 - 22:00',
-      weekend: '09:00 - 20:00',
+      weekday: '09:00 - 21:00',
+      saturday: '09:00 - 18:00',
+      sunday: '公休',
+      holiday: '依公告，請來電確認',
     },
     transport: { ...defaultTransport },
     images: { ...defaultImages },
@@ -132,16 +136,34 @@ export default function StoreEditPage() {
               const storeData = data.data;
 
               // Parse businessHours if it's a string
-              let businessHours = { weekday: '10:00 - 22:00', weekend: '09:00 - 20:00' };
+              let businessHours = {
+                weekday: '09:00 - 21:00',
+                saturday: '09:00 - 18:00',
+                sunday: '公休',
+                holiday: '依公告，請來電確認',
+              };
               if (storeData.businessHours) {
                 if (typeof storeData.businessHours === 'string') {
                   try {
-                    businessHours = JSON.parse(storeData.businessHours);
+                    const parsed = JSON.parse(storeData.businessHours);
+                    // Handle legacy format with 'weekend' field
+                    businessHours = {
+                      weekday: parsed.weekday || businessHours.weekday,
+                      saturday: parsed.saturday || parsed.weekend || businessHours.saturday,
+                      sunday: parsed.sunday || businessHours.sunday,
+                      holiday: parsed.holiday || businessHours.holiday,
+                    };
                   } catch {
-                    businessHours = { weekday: storeData.businessHours, weekend: '' };
+                    businessHours = { ...businessHours, weekday: storeData.businessHours };
                   }
                 } else {
-                  businessHours = storeData.businessHours;
+                  // Handle legacy format with 'weekend' field
+                  businessHours = {
+                    weekday: storeData.businessHours.weekday || businessHours.weekday,
+                    saturday: storeData.businessHours.saturday || storeData.businessHours.weekend || businessHours.saturday,
+                    sunday: storeData.businessHours.sunday || businessHours.sunday,
+                    holiday: storeData.businessHours.holiday || businessHours.holiday,
+                  };
                 }
               }
 
@@ -566,7 +588,7 @@ export default function StoreEditPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">平日（週一至週五）</label>
+              <label className="block text-sm font-medium mb-1">週一至週五</label>
               <input
                 type="text"
                 value={formData.businessHours.weekday}
@@ -577,23 +599,55 @@ export default function StoreEditPage() {
                   })
                 }
                 className="input"
-                placeholder="10:00 - 22:00"
+                placeholder="09:00 - 21:00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">假日（週六日）</label>
+              <label className="block text-sm font-medium mb-1">週六</label>
               <input
                 type="text"
-                value={formData.businessHours.weekend}
+                value={formData.businessHours.saturday}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    businessHours: { ...formData.businessHours, weekend: e.target.value },
+                    businessHours: { ...formData.businessHours, saturday: e.target.value },
                   })
                 }
                 className="input"
-                placeholder="09:00 - 20:00"
+                placeholder="09:00 - 18:00"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">週日</label>
+              <input
+                type="text"
+                value={formData.businessHours.sunday}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    businessHours: { ...formData.businessHours, sunday: e.target.value },
+                  })
+                }
+                className="input"
+                placeholder="公休"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">國定假日</label>
+              <input
+                type="text"
+                value={formData.businessHours.holiday}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    businessHours: { ...formData.businessHours, holiday: e.target.value },
+                  })
+                }
+                className="input"
+                placeholder="依公告，請來電確認"
               />
             </div>
           </div>

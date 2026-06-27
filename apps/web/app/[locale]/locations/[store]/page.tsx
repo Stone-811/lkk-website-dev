@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import CoachCard from '@/components/CoachCard';
-import { db, CoachDoc, docsToArray } from '@/lib/firebase';
+import CoachCarousel from '@/components/CoachCarousel';
+import { db, CoachDoc, StoreDoc, docsToArray } from '@/lib/firebase';
 import { fallbackCoaches, Coach } from '@/lib/fallback-coaches';
 
 // Force dynamic rendering for next-intl
@@ -58,6 +58,52 @@ async function getCoachesByStoreSlug(storeSlug: string): Promise<Coach[]> {
   }
 }
 
+// 從 Firestore 取得門店資料（含營業時間）
+async function getStoreFromFirestore(storeSlug: string) {
+  try {
+    const storeSnapshot = await db
+      .collection('stores')
+      .where('slug', '==', storeSlug)
+      .limit(1)
+      .get();
+
+    if (storeSnapshot.empty) {
+      return null;
+    }
+
+    const storeData = storeSnapshot.docs[0].data() as StoreDoc;
+
+    // Parse businessHours - stored as JSON string in Firestore
+    let businessHours = null;
+    if (storeData.businessHours) {
+      try {
+        const parsed = JSON.parse(storeData.businessHours);
+        // Handle both new format { weekday, saturday, sunday, holiday }
+        // and legacy format { weekday, weekend }
+        businessHours = {
+          weekday: parsed.weekday || '',
+          saturday: parsed.saturday || parsed.weekend || '',
+          sunday: parsed.sunday || '公休',
+          holiday: parsed.holiday || '依公告，請來電確認',
+        };
+      } catch {
+        // If it's not valid JSON, use as-is
+        businessHours = {
+          weekday: storeData.businessHours,
+          saturday: '',
+          sunday: '公休',
+          holiday: '依公告，請來電確認',
+        };
+      }
+    }
+
+    return { businessHours };
+  } catch (error) {
+    console.error('Error fetching store from Firestore:', error);
+    return null;
+  }
+}
+
 // 門店基本資料（不含教練，教練從 Firestore 取得）
 const storesData: Record<string, any> = {
   'xindian': {
@@ -73,6 +119,7 @@ const storesData: Record<string, any> = {
       weekday: '09:00 – 21:00',
       saturday: '09:00 – 18:00',
       sunday: '公休',
+      holiday: '依公告，請來電確認',
     },
     transport: {
       mrt: { station: '新店七張站 1 號出口', desc: '出站後沿北新路方向直行，約步行 3 分鐘，大樓入口在便利商店旁，下樓梯至 B1-2。' },
@@ -96,6 +143,7 @@ const storesData: Record<string, any> = {
       weekday: '09:00 – 21:00',
       saturday: '09:00 – 18:00',
       sunday: '公休',
+      holiday: '依公告，請來電確認',
     },
     transport: {
       mrt: { station: '南京復興站 2 號出口', desc: '出站後沿南京東路三段方向步行約 3 分鐘。' },
@@ -119,6 +167,7 @@ const storesData: Record<string, any> = {
       weekday: '09:00 – 21:00',
       saturday: '09:00 – 18:00',
       sunday: '公休',
+      holiday: '依公告，請來電確認',
     },
     transport: {
       mrt: { station: '松江南京站 4 號出口', desc: '出站後沿松江路方向步行約 5 分鐘。' },
@@ -142,6 +191,7 @@ const storesData: Record<string, any> = {
       weekday: '09:00 – 21:00',
       saturday: '09:00 – 18:00',
       sunday: '公休',
+      holiday: '依公告，請來電確認',
     },
     transport: {
       mrt: { station: '西門站 6 號出口', desc: '出站後沿寶慶路方向步行約 3 分鐘。' },
@@ -185,110 +235,55 @@ function HeroSection({ store }: { store: any }) {
       </div>
 
       <div className="container mx-auto px-4 relative z-10 py-12 lg:py-20">
-        <div className="grid lg:grid-cols-[1fr_340px] gap-12 items-center">
-          {/* Left content */}
-          <div>
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-1.5 text-xs text-white/35 mb-5">
-              <Link href="/" className="hover:text-white/70 transition-colors">練健康</Link>
-              <span className="text-white/20">›</span>
-              <Link href="/locations" className="hover:text-white/70 transition-colors">門店地點</Link>
-              <span className="text-white/20">›</span>
-              <span>{store.name}</span>
-            </nav>
+        <div className="max-w-2xl">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-1.5 text-xs text-white/35 mb-5">
+            <Link href="/" className="hover:text-white/70 transition-colors">練健康</Link>
+            <span className="text-white/20">›</span>
+            <Link href="/locations" className="hover:text-white/70 transition-colors">門店地點</Link>
+            <span className="text-white/20">›</span>
+            <span>{store.name}</span>
+          </nav>
 
-            {/* District badge */}
-            <div className="inline-flex items-center gap-2 bg-orange/15 border border-orange/30 text-orange text-xs font-medium px-3 py-1 rounded-full mb-4 tracking-wide">
-              <span className="w-1.5 h-1.5 bg-orange rounded-full" />
-              {store.district}
-            </div>
-
-            <h1 className="font-serif text-4xl lg:text-5xl font-black text-white leading-tight mb-4">
-              練健康<span className="text-orange">{store.name}</span><br />
-              中高齡肌力訓練
-            </h1>
-
-            <p className="text-white/65 text-lg font-light leading-relaxed mb-8 max-w-lg">
-              {store.description}
-            </p>
-
-            <div className="flex gap-3 flex-wrap">
-              <Link
-                href="/booking"
-                className="inline-flex items-center gap-2 bg-orange text-white font-bold px-7 py-3 rounded-full shadow-lg shadow-orange/35 hover:bg-orange-400 transition-colors"
-              >
-                立即預約體驗 →
-              </Link>
-              <a
-                href={`tel:${store.phoneRaw}`}
-                className="inline-flex items-center gap-2 bg-white/[0.08] text-white px-6 py-3 rounded-full border border-white/20 hover:bg-white/15 transition-colors"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 011 1.18 2 2 0 013 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/>
-                </svg>
-                直接來電
-              </a>
-            </div>
-
-            <div className="flex items-center gap-2 mt-4 text-sm text-white/45">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              <span><strong className="text-orange">50歲以上完全免費</strong>・一般首次體驗 $500</span>
-            </div>
+          {/* District badge */}
+          <div className="inline-flex items-center gap-2 bg-orange/15 border border-orange/30 text-orange text-xs font-medium px-3 py-1 rounded-full mb-4 tracking-wide">
+            <span className="w-1.5 h-1.5 bg-orange rounded-full" />
+            {store.district}
           </div>
 
-          {/* Right - Info Card */}
-          <aside className="hidden lg:block bg-white/[0.07] backdrop-blur-sm border border-white/12 rounded-2xl p-6">
-            <div className="space-y-4">
-              <div className="flex gap-3 items-start pb-4 border-b border-white/[0.08]">
-                <div className="w-9 h-9 rounded-lg bg-orange/20 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                </div>
-                <div>
-                  <div className="text-[0.7rem] text-white/35 mb-0.5 tracking-wide">地址</div>
-                  <div className="text-sm text-white leading-relaxed">{store.district}<br />{store.address}</div>
-                </div>
-              </div>
+          <h1 className="font-serif text-4xl lg:text-5xl font-black text-white leading-tight mb-4">
+            練健康<span className="text-orange">{store.name}</span><br />
+            中高齡肌力訓練
+          </h1>
 
-              <div className="flex gap-3 items-start pb-4 border-b border-white/[0.08]">
-                <div className="w-9 h-9 rounded-lg bg-orange/20 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                </div>
-                <div>
-                  <div className="text-[0.7rem] text-white/35 mb-0.5 tracking-wide">電話</div>
-                  <a href={`tel:${store.phoneRaw}`} className="text-sm text-orange">{store.phone}</a>
-                </div>
-              </div>
+          <p className="text-white/65 text-lg font-light leading-relaxed mb-8 max-w-lg">
+            {store.description}
+          </p>
 
-              <div className="flex gap-3 items-start pb-4 border-b border-white/[0.08]">
-                <div className="w-9 h-9 rounded-lg bg-orange/20 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-                <div>
-                  <div className="text-[0.7rem] text-white/35 mb-0.5 tracking-wide">營業時間</div>
-                  <div className="text-sm text-white leading-relaxed">
-                    週一至五 {store.businessHours.weekday}<br />
-                    週六 {store.businessHours.saturday}<br />
-                    週日 {store.businessHours.sunday}
-                  </div>
-                </div>
-              </div>
+          <div className="flex gap-3 flex-wrap">
+            <Link
+              href="/booking"
+              className="inline-flex items-center gap-2 bg-orange text-white font-bold px-7 py-3 rounded-full shadow-lg shadow-orange/35 hover:bg-orange-400 transition-colors"
+            >
+              立即預約體驗 →
+            </Link>
+            <a
+              href={`tel:${store.phoneRaw}`}
+              className="inline-flex items-center gap-2 bg-white/[0.08] text-white px-6 py-3 rounded-full border border-white/20 hover:bg-white/15 transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 011 1.18 2 2 0 013 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/>
+              </svg>
+              直接來電
+            </a>
+          </div>
 
-              <div className="flex gap-3 items-start">
-                <div className="w-9 h-9 rounded-lg bg-orange/20 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h8m-8 4h8m-4 8V7m-4 12h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                </div>
-                <div>
-                  <div className="text-[0.7rem] text-white/35 mb-0.5 tracking-wide">捷運</div>
-                  <div className="text-sm text-white leading-relaxed">
-                    {store.transport.mrt.station}<br />
-                    步行約 3 分鐘
-                  </div>
-                </div>
-              </div>
-            </div>
-          </aside>
+          <div className="flex items-center gap-2 mt-4 text-sm text-white/45">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <span><strong className="text-orange">50歲以上完全免費</strong>・一般首次體驗 $500</span>
+          </div>
         </div>
       </div>
     </section>
@@ -382,12 +377,12 @@ function AccessSection({ store }: { store: any }) {
                 <div className="px-4 py-3 text-sm text-ink/70">{store.businessHours.saturday}</div>
               </div>
               <div className="grid grid-cols-2 border-t border-navy-700/15">
-                <div className="px-4 py-3 text-sm font-medium text-ink/50 bg-cream-100">週日</div>
-                <div className="px-4 py-3 text-sm text-ink/50">{store.businessHours.sunday}</div>
+                <div className="px-4 py-3 text-sm font-medium text-navy-700 bg-cream-100">週日</div>
+                <div className="px-4 py-3 text-sm text-ink/70">{store.businessHours.sunday}</div>
               </div>
               <div className="grid grid-cols-2 border-t border-navy-700/15">
-                <div className="px-4 py-3 text-xs text-ink/50 bg-cream-100">國定假日</div>
-                <div className="px-4 py-3 text-xs text-ink/50">依公告，請來電確認</div>
+                <div className="px-4 py-3 text-sm font-medium text-navy-700 bg-cream-100">國定假日</div>
+                <div className="px-4 py-3 text-sm text-ink/70">{store.businessHours.holiday || '依公告，請來電確認'}</div>
               </div>
             </div>
           </div>
@@ -397,7 +392,7 @@ function AccessSection({ store }: { store: any }) {
   );
 }
 
-// Coaches Section with Carousel
+// Coaches Section with Interactive Carousel
 function CoachesSection({ coaches }: { coaches: Coach[] }) {
   if (!coaches || coaches.length === 0) return null;
 
@@ -426,40 +421,8 @@ function CoachesSection({ coaches }: { coaches: Coach[] }) {
           </div>
         </div>
 
-        {/* Carousel container */}
-        <div className="relative -mx-4 px-4">
-          <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {coaches.map((coach: Coach) => (
-              <CoachCard key={coach.id} coach={coach} />
-            ))}
-
-            {/* View all coaches card */}
-            <Link
-              href="/team-intro"
-              className="flex-shrink-0 w-[200px] sm:w-[240px] bg-white/50 border-2 border-dashed border-navy-700/20 rounded-2xl flex flex-col items-center justify-center gap-3 hover:border-orange/50 hover:bg-orange/5 transition-colors snap-start"
-            >
-              <div className="w-12 h-12 rounded-full bg-orange/15 flex items-center justify-center">
-                <svg className="w-6 h-6 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </div>
-              <span className="text-sm font-semibold text-navy-700">查看全體教練</span>
-            </Link>
-          </div>
-
-          {/* Scroll indicators - show first 6 max */}
-          <div className="flex justify-center gap-1.5 mt-4">
-            {coaches.slice(0, 6).map((_: Coach, idx: number) => (
-              <div
-                key={idx}
-                className={`w-2 h-2 rounded-full ${idx === 0 ? 'bg-orange' : 'bg-navy-700/20'}`}
-              />
-            ))}
-            {coaches.length > 6 && (
-              <span className="text-xs text-ink/40 ml-1">+{coaches.length - 6}</span>
-            )}
-          </div>
-        </div>
+        {/* Interactive Carousel */}
+        <CoachCarousel coaches={coaches} />
       </div>
     </section>
   );
@@ -560,14 +523,23 @@ function CTASection({ store }: { store: any }) {
 }
 
 export default async function StorePage({ params }: { params: { store: string } }) {
-  const store = storesData[params.store];
+  const fallbackStore = storesData[params.store];
 
-  if (!store) {
+  if (!fallbackStore) {
     notFound();
   }
 
-  // 從 Firestore 取得教練資料
-  const coaches = await getCoachesByStoreSlug(params.store);
+  // 從 Firestore 取得教練資料和門店資料
+  const [coaches, firestoreStore] = await Promise.all([
+    getCoachesByStoreSlug(params.store),
+    getStoreFromFirestore(params.store),
+  ]);
+
+  // 合併 Firestore 資料與 fallback 資料（Firestore 優先）
+  const store = {
+    ...fallbackStore,
+    businessHours: firestoreStore?.businessHours || fallbackStore.businessHours,
+  };
 
   return (
     <div className="min-h-screen bg-cream-100">

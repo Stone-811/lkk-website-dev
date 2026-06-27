@@ -336,7 +336,7 @@ lkk-website/                    # 根目錄（Monorepo）
   city?: string
   district?: string
   googleMapUrl?: string
-  businessHours?: string | { weekday: string, weekend: string }
+  businessHours?: string | { weekday: string, saturday: string, sunday: string, holiday: string }
   transport?: {
     mrt: { station: string, desc: string }
     bus: { stop: string, desc: string }

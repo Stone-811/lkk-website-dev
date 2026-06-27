@@ -18,7 +18,6 @@ const services = [
       '彈性排課時間',
     ],
     suitable: ['減重減脂', '增肌塑身', '體能提升', '運動新手'],
-    price: '依方案而定',
   },
   {
     id: 'rehab',
@@ -34,8 +33,7 @@ const services = [
       '居家訓練指導',
     ],
     suitable: ['運動傷害', '慢性疼痛', '術後復健', '姿勢矯正'],
-    price: '依方案而定',
-  },
+      },
   {
     id: 'elderly',
     iconType: 'elderly',
@@ -50,8 +48,7 @@ const services = [
       '日常功能提升',
     ],
     suitable: ['50歲以上', '預防肌少症', '提升生活品質', '維持獨立生活'],
-    price: '依方案而定',
-  },
+      },
   {
     id: 'group',
     iconType: 'group',
@@ -66,24 +63,7 @@ const services = [
       '彈性參加',
     ],
     suitable: ['喜歡團體運動', '想認識同好', '預算考量', '多元嘗試'],
-    price: '依方案而定',
-  },
-  {
-    id: 'corporate',
-    iconType: 'corporate',
-    title: '企業健康方案',
-    subtitle: 'B2B',
-    description: '為企業員工提供團體健身課程、健康講座、體適能檢測等服務，提升員工健康與工作效率。',
-    features: [
-      '到府團課',
-      '健康講座',
-      '體適能檢測',
-      '員工健康報告',
-      '客製化方案',
-    ],
-    suitable: ['企業福利', '團隊建立', '員工健康', 'ESG永續'],
-    price: '專案報價',
-  },
+      },
 ];
 
 function ServicePageIcon({ type }: { type: string }) {
@@ -97,8 +77,6 @@ function ServicePageIcon({ type }: { type: string }) {
       return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>;
     case 'group':
       return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>;
-    case 'corporate':
-      return <svg className={iconClass} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>;
     default:
       return null;
   }
@@ -194,12 +172,8 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  {/* Price & CTA */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-4 border-t border-cream-200">
-                    <div>
-                      <p className="text-sm text-ink-500">費用</p>
-                      <p className="text-lg font-bold text-orange">{service.price}</p>
-                    </div>
+                  {/* CTA */}
+                  <div className="pt-4 border-t border-cream-200">
                     <Link href="/booking" className="btn btn-primary">
                       預約體驗
                     </Link>
