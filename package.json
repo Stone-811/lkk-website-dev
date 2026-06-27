@@ -13,6 +13,7 @@
     "lint": "turbo run lint"
   },
   "devDependencies": {
+    "dotenv": "^17.4.2",
     "firebase-tools": "^15.19.0",
     "turbo": "^2.0.0"
   },

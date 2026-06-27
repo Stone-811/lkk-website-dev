@@ -55,10 +55,30 @@ export default function LecturerEditPage() {
   const [countryInput, setCountryInput] = useState('');
 
   useEffect(() => {
-    if (!isNew) {
+    if (isNew) {
+      // 新增模式時，取得目前最大排序值 +1
+      fetchMaxSortOrder();
+    } else {
       fetchLecturer();
     }
   }, [isNew, params.id]);
+
+  async function fetchMaxSortOrder() {
+    try {
+      const res = await fetch('/api/admin/lecturers');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.data && data.data.length > 0) {
+          const maxSortOrder = Math.max(...data.data.map((l: any) => l.sortOrder || 0));
+          setForm(prev => ({ ...prev, sortOrder: maxSortOrder + 1 }));
+        } else {
+          setForm(prev => ({ ...prev, sortOrder: 1 }));
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch max sortOrder:', err);
+    }
+  }
 
   async function fetchLecturer() {
     try {

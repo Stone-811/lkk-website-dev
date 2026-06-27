@@ -336,9 +336,20 @@ lkk-website/                    # 根目錄（Monorepo）
   city?: string
   district?: string
   googleMapUrl?: string
-  businessHours?: string
-  transportation?: string
-  images: string[]
+  businessHours?: string | { weekday: string, weekend: string }
+  transport?: {
+    mrt: { station: string, desc: string }
+    bus: { stop: string, desc: string }
+    car: { desc: string }
+    parking: { desc: string }
+  }
+  images?: {
+    env1?: string  // 環境照片 1
+    env2?: string  // 環境照片 2
+    env3?: string  // 環境照片 3
+    env4?: string  // 環境照片 4
+    env5?: string  // 環境照片 5
+  }
   sortOrder: number
   isActive: boolean
   createdAt: Timestamp
@@ -418,6 +429,25 @@ lkk-website/                    # 根目錄（Monorepo）
   description?: string
   specialties: string[]       // 專長領域
   courses?: string[]          // 授課項目
+  certifications?: string[]   // 專業認證
+  sortOrder: number
+  isActive: boolean
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+```
+
+### team
+
+```typescript
+{
+  id: string
+  name: string
+  slug: string
+  photo?: string
+  title?: string              // 職稱 (e.g., 創辦人、執行長)
+  description?: string
+  specialties: string[]       // 專長領域
   certifications?: string[]   // 專業認證
   sortOrder: number
   isActive: boolean

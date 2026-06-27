@@ -10,7 +10,6 @@ interface Store {
   city: string;
   district: string;
   phone: string;
-  coachCount: number;
   isActive: boolean;
 }
 
@@ -33,7 +32,6 @@ export default function StoresPage() {
               city: store.city,
               district: store.district,
               phone: store.phone || '-',
-              coachCount: store._count?.coaches || 0,
               isActive: store.isActive,
             }))
           );
@@ -113,7 +111,6 @@ export default function StoresPage() {
                 <th>門店名稱</th>
                 <th>地區</th>
                 <th>電話</th>
-                <th>教練數</th>
                 <th>狀態</th>
                 <th>操作</th>
               </tr>
@@ -121,7 +118,7 @@ export default function StoresPage() {
             <tbody>
               {stores.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-gray-500">
+                  <td colSpan={5} className="text-center py-8 text-gray-500">
                     目前沒有門店資料
                   </td>
                 </tr>
@@ -133,7 +130,6 @@ export default function StoresPage() {
                       {store.city} {store.district}
                     </td>
                     <td>{store.phone}</td>
-                    <td>{store.coachCount} 位</td>
                     <td>
                       <button
                         onClick={() => handleToggleActive(store.id, store.isActive)}

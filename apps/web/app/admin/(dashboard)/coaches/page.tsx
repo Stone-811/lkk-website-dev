@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Coach {
   id: string;
@@ -21,10 +21,13 @@ interface Store {
 
 export default function CoachesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialStore = searchParams.get('store') || '';
+
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const [storeOptions, setStoreOptions] = useState<Store[]>([{ value: '', label: '全部門店' }]);
   const [loading, setLoading] = useState(true);
-  const [storeFilter, setStoreFilter] = useState('');
+  const [storeFilter, setStoreFilter] = useState(initialStore);
   const [searchQuery, setSearchQuery] = useState('');
 
   // 從 API 取得教練資料
@@ -44,7 +47,7 @@ export default function CoachesPage() {
               name: c.name,
               title: c.roleTitle || '',
               store: c.store?.name || '',
-              storeId: c.store?.slug || '',
+              storeId: c.storeId || c.store?.id || '',
               specialties: c.specialties || [],
               isActive: c.isActive,
             }))
@@ -55,7 +58,7 @@ export default function CoachesPage() {
           const storesData = await storesRes.json();
           setStoreOptions([
             { value: '', label: '全部門店' },
-            ...storesData.data.map((s: any) => ({ value: s.slug, label: s.name })),
+            ...storesData.data.map((s: any) => ({ value: s.id, label: s.name })),
           ]);
         }
       } catch (error) {

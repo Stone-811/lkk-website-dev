@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, StoreDoc, docsToArray, Timestamp } from '@/lib/firebase';
 import { getSession } from '@/lib/auth';
-import { fallbackCoaches } from '@/lib/fallback-coaches';
 
 // Fallback stores data for development
 const fallbackStores = [
@@ -69,46 +68,22 @@ export async function GET() {
     // If no stores in Firestore, use fallback
     if (stores.length === 0) {
       console.log('No stores in Firestore, using fallback data for admin');
-      const fallbackWithCounts = fallbackStores.map((store) => ({
-        ...store,
-        coachCount: fallbackCoaches[store.slug]?.length || 0,
-      }));
       return NextResponse.json({
         success: true,
-        data: fallbackWithCounts,
+        data: fallbackStores,
       });
     }
 
-    // Get coach counts for each store
-    const storesWithCounts = await Promise.all(
-      stores.map(async (store) => {
-        const coachesSnapshot = await db
-          .collection('coaches')
-          .where('storeId', '==', store.id)
-          .count()
-          .get();
-
-        return {
-          ...store,
-          coachCount: coachesSnapshot.data().count,
-        };
-      })
-    );
-
     return NextResponse.json({
       success: true,
-      data: storesWithCounts,
+      data: stores,
     });
   } catch (error) {
     console.error('Error fetching stores:', error);
     // Use fallback on error
-    const fallbackWithCounts = fallbackStores.map((store) => ({
-      ...store,
-      coachCount: fallbackCoaches[store.slug]?.length || 0,
-    }));
     return NextResponse.json({
       success: true,
-      data: fallbackWithCounts,
+      data: fallbackStores,
     });
   }
 }

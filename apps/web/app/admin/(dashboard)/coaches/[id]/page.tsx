@@ -31,9 +31,10 @@ export default function CoachEditPage() {
   const coachId = params.id as string;
   const isNew = coachId === 'new';
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [storeOptions, setStoreOptions] = useState<StoreOption[]>([]);
+  const [allCoaches, setAllCoaches] = useState<any[]>([]); // 儲存所有教練資料供排序計算
   const [formData, setFormData] = useState<Coach>({
     id: '',
     name: '',
@@ -55,11 +56,12 @@ export default function CoachEditPage() {
   const [newCertification, setNewCertification] = useState('');
   const [newExperience, setNewExperience] = useState('');
 
+  // 取得門店列表 + 教練資料（供排序計算）
   useEffect(() => {
-    async function fetchData() {
+    async function fetchInitialData() {
       try {
-        // 取得門店列表
-        const storesRes = await fetch('/api/admin/stores');
+        // 使用公開 API 取得門店列表（不需驗證）
+        const storesRes = await fetch('/api/public/stores');
         if (storesRes.ok) {
           const storesData = await storesRes.json();
           setStoreOptions(
@@ -67,35 +69,80 @@ export default function CoachEditPage() {
           );
         }
 
-        // 如果是編輯模式，取得教練資料
-        if (!isNew && coachId) {
-          const coachRes = await fetch(`/api/admin/coaches/${coachId}`);
-          if (coachRes.ok) {
-            const coachData = await coachRes.json();
-            if (coachData.success && coachData.data) {
-              const edu = coachData.data.education;
-              setFormData({
-                ...coachData.data,
-                education: Array.isArray(edu) ? edu.join(', ') : (edu || ''),
-              });
-            }
+        // 新增模式時，取得所有教練資料供排序計算
+        if (isNew) {
+          const coachesRes = await fetch('/api/admin/coaches');
+          if (coachesRes.ok) {
+            const coachesData = await coachesRes.json();
+            setAllCoaches(coachesData.data || []);
           }
         }
       } catch (error) {
-        console.error('Failed to fetch data:', error);
+        console.error('Failed to fetch initial data:', error);
+      }
+    }
+    fetchInitialData();
+  }, [isNew]);
+
+  // 當門店變更時，計算該門店的下一個排序值
+  const handleStoreChange = (storeId: string) => {
+    setFormData(prev => ({ ...prev, storeId }));
+
+    if (isNew && storeId) {
+      // 篩選該門店的教練，計算最大排序值
+      const storeCoaches = allCoaches.filter((c: any) => c.storeId === storeId);
+      if (storeCoaches.length > 0) {
+        const maxSortOrder = Math.max(...storeCoaches.map((c: any) => c.sortOrder || 0));
+        setFormData(prev => ({ ...prev, storeId, sortOrder: maxSortOrder + 1 }));
+      } else {
+        setFormData(prev => ({ ...prev, storeId, sortOrder: 1 }));
+      }
+    }
+  };
+
+  // 編輯模式時取得教練資料
+  useEffect(() => {
+    async function fetchCoach() {
+      if (isNew || !coachId) return;
+
+      try {
+        const coachRes = await fetch(`/api/admin/coaches/${coachId}`);
+        if (coachRes.ok) {
+          const coachData = await coachRes.json();
+          if (coachData.success && coachData.data) {
+            const edu = coachData.data.education;
+            setFormData({
+              ...coachData.data,
+              education: Array.isArray(edu) ? edu.join(', ') : (edu || ''),
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch coach:', error);
       } finally {
         setLoading(false);
       }
     }
-    fetchData();
+    fetchCoach();
   }, [coachId, isNew]);
+
+  // 生成 slug - 支援中文名稱
+  const generateSlug = (name: string) => {
+    // 先嘗試用英文字母轉換
+    const englishSlug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    // 如果沒有英文字母，用時間戳生成唯一 ID
+    if (englishSlug.length < 2) {
+      return `coach-${Date.now().toString(36)}`;
+    }
+    return englishSlug;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
     try {
-      const slug = formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-');
+      const slug = formData.slug || generateSlug(formData.name);
       const payload = {
         name: formData.name,
         slug,
@@ -213,7 +260,7 @@ export default function CoachEditPage() {
               </label>
               <select
                 value={formData.storeId}
-                onChange={(e) => setFormData({ ...formData, storeId: e.target.value })}
+                onChange={(e) => handleStoreChange(e.target.value)}
                 className="input"
                 required
               >
