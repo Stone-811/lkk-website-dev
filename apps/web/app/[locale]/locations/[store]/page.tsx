@@ -468,11 +468,31 @@ function CoachesSection({ coaches }: { coaches: Coach[] }) {
 // Photos Section
 function PhotosSection({ store: _store }: { store: { name: string } }) {
   const photos = [
-    { label: '主訓練區', span: true },
-    { label: '一對一訓練空間', span: false },
-    { label: '入口 / 接待區', span: false },
-    { label: '器材區', span: false },
-    { label: '休息與更衣區', span: false },
+    {
+      label: '主訓練區',
+      span: true,
+      image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&h=600&fit=crop&q=80',
+    },
+    {
+      label: '一對一訓練空間',
+      span: false,
+      image: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&h=450&fit=crop&q=80',
+    },
+    {
+      label: '專業器材區',
+      span: false,
+      image: 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=600&h=450&fit=crop&q=80',
+    },
+    {
+      label: '功能性訓練區',
+      span: false,
+      image: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=600&h=450&fit=crop&q=80',
+    },
+    {
+      label: '舒適休息區',
+      span: false,
+      image: 'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=600&h=450&fit=crop&q=80',
+    },
   ];
 
   return (
@@ -486,19 +506,25 @@ function PhotosSection({ store: _store }: { store: { name: string } }) {
           來之前<span className="text-orange">先看看</span>
         </h2>
         <p className="text-ink/60 leading-relaxed mb-8 max-w-xl">
-          B1-2 的訓練空間，安靜、不擁擠，沒有一般健身房的喧鬧。教練和學員的比例讓每個人都能得到充分的關注。
+          專業的訓練空間，安靜、不擁擠，沒有一般健身房的喧鬧。教練和學員的比例讓每個人都能得到充分的關注。
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {photos.map((photo) => (
             <div
               key={photo.label}
-              className={`aspect-[4/3] bg-navy-700 rounded-xl flex items-center justify-center ${
+              className={`aspect-[4/3] rounded-xl overflow-hidden relative group ${
                 photo.span ? 'md:col-span-2 md:aspect-video' : ''
               }`}
             >
-              <span className="text-xs text-white/40 text-center px-4">
-                {photo.label}<br />（實際照片請替換）
+              <img
+                src={photo.image}
+                alt={photo.label}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-700/70 via-transparent to-transparent" />
+              <span className="absolute bottom-4 left-4 text-sm font-medium text-white">
+                {photo.label}
               </span>
             </div>
           ))}

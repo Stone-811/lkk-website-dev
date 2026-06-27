@@ -207,19 +207,17 @@ export default function CooperationPage() {
       {/* Contact Form Section */}
       <section id="work" className="py-20 bg-cream-100">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-end mb-10">
-            <div>
-              <span className="text-orange text-sm font-medium tracking-widest uppercase block mb-4">Contact Form</span>
-              <h2 className="font-serif text-3xl lg:text-4xl font-black text-navy-700 leading-tight">
-                與我們攜手，<br /><span className="text-orange">共創雙贏的健康價值</span>
-              </h2>
-            </div>
-            <p className="text-ink/60 text-sm leading-relaxed">
+          <div className="text-center mb-10">
+            <span className="text-orange text-sm font-medium tracking-widest uppercase block mb-4">Contact Form</span>
+            <h2 className="font-serif text-3xl lg:text-4xl font-black text-navy-700 leading-tight mb-6">
+              與我們攜手，<span className="text-orange">共創雙贏的健康價值</span>
+            </h2>
+            <p className="text-ink/60 text-base leading-relaxed max-w-2xl mx-auto">
               不論您是需要專業授課的醫療學術單位、期望舉辦員工健康促進講座的企業品牌，或是海外地區的訓練營授權洽詢。歡迎填寫下方表單，團隊將於 2 個工作天內由專人主動與您聯繫。
             </p>
           </div>
 
-          <div className="bg-white border border-navy-700/15 rounded-lg p-6 lg:p-8 shadow-sm max-w-3xl">
+          <div className="bg-white border border-navy-700/15 rounded-lg p-6 lg:p-8 shadow-sm max-w-3xl mx-auto">
             <p className="text-xs font-bold text-ink/50 tracking-wide mb-4">請選擇您的洽詢項目：</p>
 
             {/* Type selector */}
