@@ -101,7 +101,7 @@ export default function TeamSection() {
         {/* CTA */}
         <div className="text-center mt-10">
           <Link
-            href="/team"
+            href="/team-intro/coaches"
             className="inline-flex items-center gap-2 text-navy-700 border border-navy-700/15 px-6 py-2.5 rounded-full hover:border-navy-700 transition-colors"
           >
             查看完整教練介紹 →

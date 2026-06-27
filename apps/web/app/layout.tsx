@@ -1,4 +1,4 @@
-import { Noto_Sans_TC } from 'next/font/google';
+import { Noto_Sans_TC, Noto_Serif_TC } from 'next/font/google';
 import { Metadata, Viewport } from 'next';
 import './globals.css';
 
@@ -6,6 +6,12 @@ const notoSans = Noto_Sans_TC({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
   variable: '--font-noto-sans',
+});
+
+const notoSerif = Noto_Serif_TC({
+  subsets: ['latin'],
+  weight: ['400', '700', '900'],
+  variable: '--font-noto-serif',
 });
 
 export const metadata: Metadata = {
@@ -46,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-TW" className={notoSans.variable}>
+    <html lang="zh-TW" className={`${notoSans.variable} ${notoSerif.variable}`}>
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

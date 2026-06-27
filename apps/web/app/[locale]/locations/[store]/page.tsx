@@ -1,10 +1,64 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import CoachCard from '@/components/CoachCard';
+import { db, CoachDoc, docsToArray } from '@/lib/firebase';
+import { fallbackCoaches, Coach } from '@/lib/fallback-coaches';
 
 // Force dynamic rendering for next-intl
 export const dynamic = 'force-dynamic';
 
-// 暫用假資料，後續從 CMS API 取得
+// 從 Firestore 取得門店教練，若失敗則使用 fallback 資料
+async function getCoachesByStoreSlug(storeSlug: string): Promise<Coach[]> {
+  try {
+    // 先找到門店 ID
+    const storeSnapshot = await db
+      .collection('stores')
+      .where('slug', '==', storeSlug)
+      .limit(1)
+      .get();
+
+    if (storeSnapshot.empty) {
+      // Firestore 沒有門店資料，使用 fallback
+      console.log(`Store ${storeSlug} not found in Firestore, using fallback data`);
+      return fallbackCoaches[storeSlug] || [];
+    }
+
+    const storeId = storeSnapshot.docs[0].id;
+
+    // 取得該門店的教練
+    const coachesSnapshot = await db
+      .collection('coaches')
+      .where('storeId', '==', storeId)
+      .where('isActive', '==', true)
+      .orderBy('sortOrder', 'asc')
+      .get();
+
+    const coaches = docsToArray<CoachDoc>(coachesSnapshot);
+
+    // 如果 Firestore 沒有教練資料，使用 fallback
+    if (coaches.length === 0) {
+      console.log(`No coaches found in Firestore for ${storeSlug}, using fallback data`);
+      return fallbackCoaches[storeSlug] || [];
+    }
+
+    return coaches.map((coach) => ({
+      id: coach.id,
+      name: coach.name,
+      roleTitle: coach.roleTitle || '教練',
+      photo: coach.photo,
+      education: coach.education || [],
+      experiences: coach.experiences || [],
+      certifications: coach.certifications || [],
+      specialties: coach.specialties || [],
+    }));
+  } catch (error) {
+    // Firestore 連線失敗，使用 fallback
+    console.error('Error fetching coaches from Firestore, using fallback:', error);
+    return fallbackCoaches[storeSlug] || [];
+  }
+}
+
+// 門店基本資料（不含教練，教練從 Firestore 取得）
 const storesData: Record<string, any> = {
   'xindian': {
     id: 'xindian',
@@ -28,22 +82,6 @@ const storesData: Record<string, any> = {
     },
     googleMapUrl: 'https://maps.google.com/?q=新北市新店區北新路二段252號',
     geo: { lat: 24.9682, lng: 121.5396 },
-    coaches: [
-      {
-        id: '1',
-        name: '鄭宇劭',
-        role: '物理治療師・總教練',
-        bio: '世大運場館經理、競速滑冰世界盃隨隊物理治療師出身，深耕中高齡運動訓練逾十年。擅長從身體結構評估問題根源，課表設計以「安全有感」為核心。',
-        tags: ['物理治療師', '中高齡訓練', '術後復健', '世大運'],
-      },
-      {
-        id: '2',
-        name: '吳貫宇',
-        role: '呼吸治療師',
-        bio: '彰化基督教醫院呼吸治療師背景，將呼吸功能訓練整合進肌力課程，特別擅長服務心肺功能較弱或術後族群，讓學員在安全前提下有效提升體能。',
-        tags: ['呼吸治療師', '心肺訓練', '特殊族群'],
-      },
-    ],
   },
   'nanjing': {
     id: 'nanjing',
@@ -67,7 +105,6 @@ const storesData: Record<string, any> = {
     },
     googleMapUrl: 'https://maps.google.com/?q=台北市中山區南京東路三段29號',
     geo: { lat: 25.0522, lng: 121.5443 },
-    coaches: [],
   },
   'songjiang': {
     id: 'songjiang',
@@ -75,8 +112,8 @@ const storesData: Record<string, any> = {
     district: '台北市中山區',
     address: '松江路 122 號 B1',
     postalCode: '104',
-    phone: '(02) 2542-6898',
-    phoneRaw: '+886225426898',
+    phone: '(02) 2537-1055',
+    phoneRaw: '+886225371055',
     description: '位於台北市松江路商圈，捷運松江南京站步行 5 分鐘。專業物理治療師教練團隊。',
     businessHours: {
       weekday: '09:00 – 21:00',
@@ -91,7 +128,6 @@ const storesData: Record<string, any> = {
     },
     googleMapUrl: 'https://maps.google.com/?q=台北市中山區松江路122號',
     geo: { lat: 25.0531, lng: 121.5332 },
-    coaches: [],
   },
   'ximending': {
     id: 'ximending',
@@ -115,11 +151,8 @@ const storesData: Record<string, any> = {
     },
     googleMapUrl: 'https://maps.google.com/?q=台北市中正區寶慶路39號',
     geo: { lat: 25.0423, lng: 121.5069 },
-    coaches: [],
   },
 };
-
-const allStores = Object.values(storesData);
 
 export async function generateStaticParams() {
   return Object.keys(storesData).map((store) => ({ store }));
@@ -364,56 +397,68 @@ function AccessSection({ store }: { store: any }) {
   );
 }
 
-// Coaches Section
-function CoachesSection({ store }: { store: any }) {
-  if (!store.coaches || store.coaches.length === 0) return null;
+// Coaches Section with Carousel
+function CoachesSection({ coaches }: { coaches: Coach[] }) {
+  if (!coaches || coaches.length === 0) return null;
 
   return (
     <section className="bg-cream-100 py-16 lg:py-20">
       <div className="container mx-auto px-4">
-        <div className="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
-          <span className="w-5 h-0.5 bg-orange" />
-          本店教練
-        </div>
-        <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700 mb-3">
-          認識<span className="text-orange">你的教練</span>
-        </h2>
-        <p className="text-ink/60 leading-relaxed mb-8 max-w-xl">
-          每位教練都有醫療或專業運動科學背景，我們相信讓你在第一次見面前就認識教練，是降低陌生感最好的方式。
-        </p>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {store.coaches.map((coach: any) => (
-            <article key={coach.id} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-navy-700/15 hover:-translate-y-1 transition-transform">
-              {/* Photo placeholder */}
-              <div className="h-56 bg-gradient-to-br from-navy-700 to-navy-700/80 flex items-center justify-center relative">
-                <span className="font-serif text-6xl font-black text-white/25">{coach.name.charAt(0)}</span>
-                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-navy-700/70 to-transparent" />
-              </div>
-
-              <div className="p-5">
-                <div className="font-serif text-lg font-bold text-navy-700 mb-0.5">{coach.name} 教練</div>
-                <div className="text-sm text-orange font-semibold mb-3 tracking-wide">{coach.role}</div>
-                <p className="text-sm text-ink/60 leading-relaxed mb-4">{coach.bio}</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {coach.tags.map((tag: string) => (
-                    <span key={tag} className="text-xs font-medium text-navy-700 bg-navy-700/[0.08] px-2.5 py-0.5 rounded-full">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </article>
-          ))}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <div className="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
+              <span className="w-5 h-0.5 bg-orange" />
+              本店教練
+            </div>
+            <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700 mb-3">
+              認識<span className="text-orange">你的教練</span>
+            </h2>
+            <p className="text-ink/60 leading-relaxed max-w-xl">
+              每位教練都有醫療或專業運動科學背景，我們相信讓你在第一次見面前就認識教練，是降低陌生感最好的方式。
+            </p>
+          </div>
+          {/* Carousel hint for mobile */}
+          <div className="hidden sm:flex items-center gap-1 text-xs text-ink/40">
+            <span>左右滑動</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
         </div>
 
-        <div className="text-center mt-8">
-          <Link
-            href="/team"
-            className="inline-flex items-center gap-2 text-sm text-navy-700 border border-navy-700/15 px-6 py-2.5 rounded-full hover:border-navy-700 transition-colors"
-          >
-            查看全體教練介紹 →
-          </Link>
+        {/* Carousel container */}
+        <div className="relative -mx-4 px-4">
+          <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {coaches.map((coach: Coach) => (
+              <CoachCard key={coach.id} coach={coach} />
+            ))}
+
+            {/* View all coaches card */}
+            <Link
+              href="/team-intro"
+              className="flex-shrink-0 w-[200px] sm:w-[240px] bg-white/50 border-2 border-dashed border-navy-700/20 rounded-2xl flex flex-col items-center justify-center gap-3 hover:border-orange/50 hover:bg-orange/5 transition-colors snap-start"
+            >
+              <div className="w-12 h-12 rounded-full bg-orange/15 flex items-center justify-center">
+                <svg className="w-6 h-6 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-navy-700">查看全體教練</span>
+            </Link>
+          </div>
+
+          {/* Scroll indicators - show first 6 max */}
+          <div className="flex justify-center gap-1.5 mt-4">
+            {coaches.slice(0, 6).map((_: Coach, idx: number) => (
+              <div
+                key={idx}
+                className={`w-2 h-2 rounded-full ${idx === 0 ? 'bg-orange' : 'bg-navy-700/20'}`}
+              />
+            ))}
+            {coaches.length > 6 && (
+              <span className="text-xs text-ink/40 ml-1">+{coaches.length - 6}</span>
+            )}
+          </div>
         </div>
       </div>
     </section>
@@ -421,7 +466,7 @@ function CoachesSection({ store }: { store: any }) {
 }
 
 // Photos Section
-function PhotosSection({ store }: { store: any }) {
+function PhotosSection({ store: _store }: { store: { name: string } }) {
   const photos = [
     { label: '主訓練區', span: true },
     { label: '一對一訓練空間', span: false },
@@ -445,7 +490,7 @@ function PhotosSection({ store }: { store: any }) {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {photos.map((photo, idx) => (
+          {photos.map((photo) => (
             <div
               key={photo.label}
               className={`aspect-[4/3] bg-navy-700 rounded-xl flex items-center justify-center ${
@@ -456,89 +501,6 @@ function PhotosSection({ store }: { store: any }) {
                 {photo.label}<br />（實際照片請替換）
               </span>
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// Cases Teaser Section
-function CasesTeaser() {
-  return (
-    <section className="bg-cream-100 py-16 lg:py-20">
-      <div className="container mx-auto px-4">
-        <div className="bg-white rounded-3xl p-8 lg:p-10 border border-navy-700/15 shadow-lg">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div>
-              <div className="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
-                <span className="w-5 h-0.5 bg-orange" />
-                學員案例
-              </div>
-              <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700 mb-3">
-                真實改變<span className="text-orange">不是口號</span>
-              </h2>
-              <p className="text-ink/60 leading-relaxed mb-6 max-w-md">
-                70歲的阿嬤、中風後的復健、術後重建體力——超過千位學員的故事，都在這裡。看看和你有相同起點的人，是怎麼開始改變的。
-              </p>
-              <Link
-                href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/"
-                className="inline-flex items-center gap-2 bg-orange text-white font-bold px-6 py-3 rounded-full shadow-lg shadow-orange/35 hover:bg-orange-400 transition-colors"
-              >
-                看所有學員案例 →
-              </Link>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              {[
-                { num: '1,000+', label: '服務學員人次' },
-                { num: '50+', label: '歲以上佔多數' },
-                { num: '5 年+', label: '深耕中高齡訓練' },
-              ].map((stat) => (
-                <div key={stat.label} className="flex-1 p-5 bg-cream-100 rounded-xl border border-navy-700/10">
-                  <div className="font-serif text-3xl font-black text-orange leading-none">{stat.num}</div>
-                  <div className="text-sm text-ink/50 mt-1">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// Other Stores Section
-function OtherStoresSection({ currentStoreId }: { currentStoreId: string }) {
-  const otherStores = allStores.filter((s) => s.id !== currentStoreId);
-
-  return (
-    <section className="bg-navy-700 py-16 lg:py-20">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center gap-2 text-sm font-bold text-orange/80 tracking-widest uppercase mb-2">
-          <span className="w-5 h-0.5 bg-orange/80" />
-          其他門店
-        </div>
-        <h2 className="font-serif text-2xl lg:text-3xl font-black text-white mb-8">
-          這裡不方便？<span className="text-orange">還有其他分店</span>
-        </h2>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {otherStores.map((store, idx) => (
-            <Link
-              key={store.id}
-              href={`/locations/${store.id}`}
-              className="bg-white/[0.06] border border-white/10 rounded-2xl p-5 hover:bg-white/10 hover:border-white/20 transition-all"
-            >
-              <div className="w-7 h-7 rounded-full bg-orange/25 flex items-center justify-center text-xs font-bold text-orange mb-3">
-                {idx + 1}
-              </div>
-              <div className="font-serif text-base font-bold text-white mb-1">{store.name}</div>
-              <div className="text-xs text-white/45 leading-relaxed mb-2">
-                {store.district}<br />{store.address}
-              </div>
-              <div className="text-xs text-orange">{store.phone} →</div>
-            </Link>
           ))}
         </div>
       </div>
@@ -571,21 +533,22 @@ function CTASection({ store }: { store: any }) {
   );
 }
 
-export default function StorePage({ params }: { params: { store: string } }) {
+export default async function StorePage({ params }: { params: { store: string } }) {
   const store = storesData[params.store];
 
   if (!store) {
     notFound();
   }
 
+  // 從 Firestore 取得教練資料
+  const coaches = await getCoachesByStoreSlug(params.store);
+
   return (
     <div className="min-h-screen bg-cream-100">
       <HeroSection store={store} />
       <AccessSection store={store} />
-      <CoachesSection store={store} />
+      <CoachesSection coaches={coaches} />
       <PhotosSection store={store} />
-      <CasesTeaser />
-      <OtherStoresSection currentStoreId={store.id} />
       <CTASection store={store} />
     </div>
   );

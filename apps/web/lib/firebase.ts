@@ -203,6 +203,23 @@ export interface UserDoc extends FirestoreDoc {
   isActive: boolean;
 }
 
+export interface LecturerDoc extends FirestoreDoc {
+  name: string;
+  slug: string;
+  photo?: string;
+  title?: string;              // 職稱 (e.g., 首席講師、資深講師)
+  organization?: string;       // 所屬機構
+  region?: string;             // 地區 (海外講師用)
+  countries?: string[];        // 授權國家 (海外講師用)
+  type: 'lkk' | 'partner' | 'overseas';  // 講師類型
+  description?: string;
+  specialties: string[];       // 專長領域
+  courses?: string[];          // 授課項目
+  certifications?: string[];   // 專業認證
+  sortOrder: number;
+  isActive: boolean;
+}
+
 // Helper function to convert Firestore doc to plain object
 export function docToObject<T extends FirestoreDoc>(
   doc: FirebaseFirestore.DocumentSnapshot

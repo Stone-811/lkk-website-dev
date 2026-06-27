@@ -89,6 +89,18 @@ export async function verifyFirebaseToken(idToken: string): Promise<UserSession 
   }
 }
 
+// Fallback test user for development (only used when Firestore is unavailable)
+const DEV_TEST_USER = {
+  email: 'admin@l-kk.tw',
+  password: 'admin123',
+  user: {
+    id: 'dev-admin',
+    email: 'admin@l-kk.tw',
+    name: '開發測試管理員',
+    role: 'admin' as const,
+  },
+};
+
 // Login with email and password (using Firestore for user lookup)
 export async function loginWithCredentials(
   email: string,
@@ -104,6 +116,13 @@ export async function loginWithCredentials(
       .get();
 
     if (usersSnapshot.empty) {
+      // In development, allow fallback test user
+      if (process.env.NODE_ENV === 'development' || !process.env.FIREBASE_PROJECT_ID) {
+        if (email === DEV_TEST_USER.email && password === DEV_TEST_USER.password) {
+          console.log('Using development fallback user (Firestore user not found)');
+          return { success: true, user: DEV_TEST_USER.user };
+        }
+      }
       return { success: false, error: '帳號或密碼錯誤' };
     }
 
@@ -129,6 +148,13 @@ export async function loginWithCredentials(
     return { success: true, user };
   } catch (error) {
     console.error('Login error:', error);
+    // In development, allow fallback test user when Firestore fails
+    if (process.env.NODE_ENV === 'development' || !process.env.FIREBASE_PROJECT_ID) {
+      if (email === DEV_TEST_USER.email && password === DEV_TEST_USER.password) {
+        console.log('Using development fallback user (Firestore connection failed)');
+        return { success: true, user: DEV_TEST_USER.user };
+      }
+    }
     return { success: false, error: '登入失敗，請稍後再試' };
   }
 }

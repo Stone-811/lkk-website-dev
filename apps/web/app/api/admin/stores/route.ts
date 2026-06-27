@@ -1,6 +1,55 @@
 import { NextResponse } from 'next/server';
 import { db, StoreDoc, docsToArray, Timestamp } from '@/lib/firebase';
 import { getSession } from '@/lib/auth';
+import { fallbackCoaches } from '@/lib/fallback-coaches';
+
+// Fallback stores data for development
+const fallbackStores = [
+  {
+    id: 'xindian',
+    slug: 'xindian',
+    name: '新店七張店',
+    city: '新北市',
+    district: '新店區',
+    address: '北新路二段 252 號 B1-2',
+    phone: '(02) 8914-6428',
+    sortOrder: 1,
+    isActive: true,
+  },
+  {
+    id: 'nanjing',
+    slug: 'nanjing',
+    name: '南京店',
+    city: '台北市',
+    district: '中山區',
+    address: '南京東路三段 29 號 B1',
+    phone: '(02) 2507-4196',
+    sortOrder: 2,
+    isActive: true,
+  },
+  {
+    id: 'songjiang',
+    slug: 'songjiang',
+    name: '松江店',
+    city: '台北市',
+    district: '中山區',
+    address: '松江路 122 號 B1',
+    phone: '(02) 2537-1055',
+    sortOrder: 3,
+    isActive: true,
+  },
+  {
+    id: 'ximending',
+    slug: 'ximending',
+    name: '西門店',
+    city: '台北市',
+    district: '中正區',
+    address: '寶慶路 39 號',
+    phone: '(02) 2370-3245',
+    sortOrder: 4,
+    isActive: true,
+  },
+];
 
 // GET - List all stores (admin)
 export async function GET() {
@@ -16,6 +65,19 @@ export async function GET() {
       .get();
 
     const stores = docsToArray<StoreDoc>(storesSnapshot);
+
+    // If no stores in Firestore, use fallback
+    if (stores.length === 0) {
+      console.log('No stores in Firestore, using fallback data for admin');
+      const fallbackWithCounts = fallbackStores.map((store) => ({
+        ...store,
+        coachCount: fallbackCoaches[store.slug]?.length || 0,
+      }));
+      return NextResponse.json({
+        success: true,
+        data: fallbackWithCounts,
+      });
+    }
 
     // Get coach counts for each store
     const storesWithCounts = await Promise.all(
@@ -39,10 +101,15 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error fetching stores:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch stores' },
-      { status: 500 }
-    );
+    // Use fallback on error
+    const fallbackWithCounts = fallbackStores.map((store) => ({
+      ...store,
+      coachCount: fallbackCoaches[store.slug]?.length || 0,
+    }));
+    return NextResponse.json({
+      success: true,
+      data: fallbackWithCounts,
+    });
   }
 }
 

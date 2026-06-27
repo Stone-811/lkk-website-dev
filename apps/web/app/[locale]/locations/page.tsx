@@ -22,7 +22,7 @@ const fallbackStores = [
     name: '松江店',
     district: '台北市中山區',
     address: '台北市中山區松江路 122 號 B1',
-    phone: '請來電詢問',
+    phone: '(02) 2537-1055',
     mrt: '捷運松江南京站 步行2分鐘',
     features: ['一對一訓練'],
     coachCount: 2,
@@ -415,9 +415,7 @@ export default async function LocationsPage() {
   return (
     <div className="min-h-screen bg-cream-100">
       <HeroSection storeCount={stores.length} />
-      <StatsBar storeCount={stores.length} />
       <StoresGrid stores={stores} />
-      <MapSection stores={stores} />
       <WhyChooseSection />
       <CTASection />
     </div>

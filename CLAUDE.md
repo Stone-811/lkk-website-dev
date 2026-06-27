@@ -51,6 +51,11 @@ GoDaddy DNS
         │   ├─ /                    → 首頁              │
         │   ├─ /booking             → 預約體驗          │
         │   ├─ /locations           → 門店總覽          │
+        │   ├─ /team-intro          → 團隊介紹          │
+        │   ├─ /team-intro/coaches  → 全體教練          │
+        │   ├─ /lkk-lecturer        → 練健康授權講師    │
+        │   ├─ /co-lecturer         → 合作講師          │
+        │   ├─ /oversea-lecturer    → 海外授權講師      │
         │   ├─ /franchise           → 加盟說明          │
         │   ├─ /lkk4                → LKK4 賽事         │
         │   ├─ /cooperation         → 合作洽詢          │
@@ -91,6 +96,11 @@ GoDaddy DNS
 | `l-kk.tw` | Next.js | 新官網主站 |
 | `l-kk.tw/booking` | Next.js | 預約體驗 |
 | `l-kk.tw/locations` | Next.js | 門店總覽 |
+| `l-kk.tw/team-intro` | Next.js | 團隊介紹（經營團隊） |
+| `l-kk.tw/team-intro/coaches` | Next.js | 全體教練 |
+| `l-kk.tw/lkk-lecturer` | Next.js | 練健康授權講師 |
+| `l-kk.tw/co-lecturer` | Next.js | 合作講師 |
+| `l-kk.tw/oversea-lecturer` | Next.js | 海外授權講師 |
 | `l-kk.tw/admin/*` | Next.js | 自建 CMS 後台 |
 | `l-kk.tw/api/*` | Next.js | API Routes |
 | `l-kk.tw/知識分享/*` | Next.js → WordPress | 代理到 WordPress |
@@ -271,6 +281,12 @@ lkk-website/                    # 根目錄（Monorepo）
 │       │   │   ├── page.tsx              # 首頁
 │       │   │   ├── booking/page.tsx      # 預約體驗
 │       │   │   ├── locations/page.tsx    # 門店總覽
+│       │   │   ├── team-intro/           # 團隊介紹
+│       │   │   │   ├── page.tsx          # 經營團隊
+│       │   │   │   └── coaches/page.tsx  # 全體教練
+│       │   │   ├── lkk-lecturer/page.tsx # 練健康授權講師
+│       │   │   ├── co-lecturer/page.tsx  # 合作講師
+│       │   │   ├── oversea-lecturer/page.tsx # 海外授權講師
 │       │   │   ├── franchise/page.tsx    # 加盟說明
 │       │   │   ├── lkk4/page.tsx         # LKK4 賽事
 │       │   │   ├── cooperation/page.tsx  # 合作洽詢

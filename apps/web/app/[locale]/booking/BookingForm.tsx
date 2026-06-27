@@ -4,13 +4,12 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-// 暫用假資料，後續從 CMS API 取得
+// 門店資料（對齊分店資訊）
 const stores = [
-  { id: 'taipei-nanjing', name: '台北南京店' },
-  { id: 'taipei-minsheng', name: '台北民生店' },
-  { id: 'hsinchu', name: '新竹店' },
-  { id: 'taichung', name: '台中店' },
-  { id: 'kaohsiung', name: '高雄店' },
+  { id: 'nanjing', name: '南京店', address: '台北市中山區南京東路三段 29 號 B1', phone: '(02) 2507-4196' },
+  { id: 'songjiang', name: '松江店', address: '台北市中山區松江路 122 號 B1', phone: '(02) 2537-1055' },
+  { id: 'ximending', name: '西門店', address: '台北市中正區寶慶路 39 號', phone: '(02) 2370-3245' },
+  { id: 'xindian', name: '新店七張店', address: '新北市新店區北新路二段 252 號 B1-2', phone: '(02) 8914-6428' },
 ];
 
 const timeSlots = [
@@ -97,6 +96,8 @@ export default function BookingForm() {
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
         newErrors.email = '請輸入有效的 Email';
       }
+      if (!formData.gender) newErrors.gender = '請選擇性別';
+      if (!formData.age) newErrors.age = '請選擇年齡';
     }
 
     if (currentStep === 2) {
@@ -178,17 +179,17 @@ export default function BookingForm() {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-navy-700 font-serif">{t('title')}</h1>
-        <p className="text-ink-600">{t('subtitle')}</p>
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-navy-700 font-serif">{t('title')}</h1>
+        <p className="text-ink-600 text-sm sm:text-base">{t('subtitle')}</p>
       </div>
 
       {/* Progress Steps */}
-      <div className="flex items-center justify-center mb-8">
+      <div className="flex items-center justify-center mb-6 sm:mb-8">
         {[1, 2, 3, 4].map((s) => (
           <div key={s} className="flex items-center">
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-medium transition-colors ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-medium text-sm sm:text-base transition-colors ${
                 s === step
                   ? 'bg-orange text-white'
                   : s < step
@@ -197,20 +198,20 @@ export default function BookingForm() {
               }`}
             >
               {s < step ? (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               ) : (
                 s
               )}
             </div>
-            {s < 4 && <div className={`w-12 h-1 mx-2 ${s < step ? 'bg-orange/30' : 'bg-cream-200'}`} />}
+            {s < 4 && <div className={`w-6 sm:w-12 h-1 mx-1 sm:mx-2 ${s < step ? 'bg-orange/30' : 'bg-cream-200'}`} />}
           </div>
         ))}
       </div>
 
       {/* Form Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
         {/* Step 1: Basic Info */}
         {step === 1 && (
           <div className="space-y-6">
@@ -266,23 +267,32 @@ export default function BookingForm() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2 text-navy-700">{t('form.gender')}</label>
+                <label className="block text-sm font-medium mb-2 text-navy-700">
+                  {t('form.gender')} <span className="text-red-500">*</span>
+                </label>
                 <select
                   value={formData.gender}
                   onChange={(e) => updateFormData('gender', e.target.value)}
-                  className="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
+                    errors.gender ? 'border-red-500' : 'border-cream-200'
+                  }`}
                 >
                   <option value="">請選擇</option>
                   <option value="male">{t('form.male')}</option>
                   <option value="female">{t('form.female')}</option>
                 </select>
+                {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2 text-navy-700">{t('form.age')}</label>
+                <label className="block text-sm font-medium mb-2 text-navy-700">
+                  {t('form.age')} <span className="text-red-500">*</span>
+                </label>
                 <select
                   value={formData.age}
                   onChange={(e) => updateFormData('age', e.target.value)}
-                  className="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
+                    errors.age ? 'border-red-500' : 'border-cream-200'
+                  }`}
                 >
                   <option value="">請選擇</option>
                   <option value="18-25">18-25 歲</option>
@@ -292,6 +302,7 @@ export default function BookingForm() {
                   <option value="56-65">56-65 歲</option>
                   <option value="65+">65 歲以上</option>
                 </select>
+                {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
               </div>
             </div>
 
@@ -326,19 +337,21 @@ export default function BookingForm() {
               <label className="block text-sm font-medium mb-2 text-navy-700">
                 {t('form.store')} <span className="text-red-500">*</span>
               </label>
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {stores.map((store) => (
                   <button
                     key={store.id}
                     type="button"
                     onClick={() => updateFormData('storeId', store.id)}
-                    className={`p-4 rounded-lg border text-left transition-all ${
+                    className={`p-3 sm:p-4 rounded-lg border text-left transition-all ${
                       formData.storeId === store.id
                         ? 'border-orange bg-orange/10 ring-2 ring-orange'
                         : 'border-cream-200 hover:border-orange/50'
                     }`}
                   >
-                    <span className="font-medium">{store.name}</span>
+                    <div className="font-semibold text-navy-700 text-sm sm:text-base">{store.name}</div>
+                    <div className="text-xs sm:text-sm text-ink/60 mt-0.5">{store.address}</div>
+                    <div className="text-xs sm:text-sm text-navy-700 mt-0.5">{store.phone}</div>
                   </button>
                 ))}
               </div>
@@ -357,32 +370,32 @@ export default function BookingForm() {
                 {t('form.preferredTime')} <span className="text-red-500">*</span>
                 <span className="text-ink-500 font-normal">（可複選）</span>
               </label>
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 {timeSlots.map((time) => (
                   <button
                     key={time}
                     type="button"
                     onClick={() => togglePreferredTime(time)}
-                    className={`p-4 rounded-lg border text-left transition-all flex items-center gap-3 ${
+                    className={`p-3 sm:p-4 rounded-lg border text-left transition-all flex items-center gap-2 sm:gap-3 ${
                       formData.preferredTime.includes(time)
                         ? 'border-orange bg-orange/10'
                         : 'border-cream-200 hover:border-orange/50'
                     }`}
                   >
                     <div
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                      className={`w-4 h-4 sm:w-5 sm:h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                         formData.preferredTime.includes(time)
                           ? 'border-orange bg-orange'
                           : 'border-ink-300'
                       }`}
                     >
                       {formData.preferredTime.includes(time) && (
-                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       )}
                     </div>
-                    <span>{time}</span>
+                    <span className="text-sm sm:text-base">{time}</span>
                   </button>
                 ))}
               </div>

@@ -13,7 +13,7 @@ const stores = [
     num: 2,
     name: '松江店',
     address: '台北市中山區松江路 122 號 B1',
-    phone: '請來電詢問',
+    phone: '(02) 2537-1055',
   },
   {
     id: 'ximending',

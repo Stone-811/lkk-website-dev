@@ -30,6 +30,12 @@ service firebase.storage {
       allow write: if isAuthenticated() && isValidImage();
     }
 
+    // Lecturer photos (練健康講師、合作講師、海外授權講師)
+    match /lecturers/{lecturerId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isValidImage();
+    }
+
     // Home page assets
     match /home/{allPaths=**} {
       allow read: if true;
