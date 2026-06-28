@@ -11,68 +11,78 @@ export const metadata = {
 const courses = [
   {
     id: 'training-camp',
-    level: '入門',
-    levelColor: 'bg-green-500',
-    title: '訓練營',
-    subtitle: '系統化培訓，助你轉職成為專業教練',
-    description: '針對想轉職或入門者的系統性培訓課程，從基礎解剖學到實務操作，建立完整的訓練知識體系。',
+    level: 'Lv1 初階',
+    levelColor: 'bg-green-600',
+    category: '學術',
+    categoryColor: 'bg-navy-700',
+    title: '練健康訓練營',
+    subtitle: '熟練六大基礎動作，安全有效地帶領教學',
+    description: '熟練六大基礎動作，並能以安全、有效、邏輯清楚的方式教學。培養立即上線授課能力，並與客戶應對的軟實力。',
     duration: '40 小時',
-    targetAudience: ['想轉職的健身愛好者', '運動相關科系學生', '物理治療師/職能治療師'],
-    highlights: ['完整系統化課程', '實務操作演練', '結業取得認證'],
+    targetAudience: ['想成為全方位教練者', '跨領域轉職教練者', '健身愛好者'],
+    highlights: ['六大基礎動作', '系統化教學', '軟實力培養'],
     image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=500&fit=crop&q=80',
-    registrationUrl: 'https://www.surveycake.com/s/練健康訓練營',
+    registrationUrl: 'https://www.surveycake.com/s/W2y4Z',
   },
   {
     id: 'coaching-language',
-    level: '實戰',
-    levelColor: 'bg-blue-500',
+    level: 'Lv1 初階',
+    levelColor: 'bg-green-600',
+    category: '學術',
+    categoryColor: 'bg-navy-700',
     title: '高效指導語與動作拆解實戰課',
-    subtitle: '提升教學溝通技巧，讓學員秒懂動作要領',
-    description: '教練最重要的能力之一就是溝通。本課程教你如何用精準的指導語，讓學員快速理解動作要領，提升教學效率。',
+    subtitle: '讓任何人快速學會動作教學，與教會親朋好友',
+    description: '讓任何人快速學會動作教學，有能力帶領團體課程與教會親朋好友。掌握六大基礎動作的自由重量操作、原理、變化式。',
     duration: '8 小時',
-    targetAudience: ['在職教練', '想提升教學技巧者', '團體課程講師'],
-    highlights: ['指導語模板', '動作拆解技巧', '現場實作演練'],
+    targetAudience: ['新手教練', '想提升教學指導語者'],
+    highlights: ['指導語技巧', '動作拆解', '團體課程帶領'],
     image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=500&fit=crop&q=80',
-    registrationUrl: 'https://www.surveycake.com/s/指導語課程',
-  },
-  {
-    id: 'senior-training',
-    level: '實戰',
-    levelColor: 'bg-blue-500',
-    title: '中高齡訓練研習',
-    subtitle: '醫療與實務結合的四天深度研習',
-    description: '結合物理治療與運動訓練的專業課程，學習如何安全有效地為中高齡族群設計訓練計畫。',
-    duration: '32 小時（4天）',
-    targetAudience: ['物理治療師', '職能治療師', '在職教練'],
-    highlights: ['醫療專業背景', '中高齡專項技術', '案例分析討論'],
-    image: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=800&h=500&fit=crop&q=80',
-    registrationUrl: 'https://www.surveycake.com/s/中高齡研習',
-  },
-  {
-    id: 'eagle-eye',
-    level: '進階',
-    levelColor: 'bg-purple-500',
-    title: '鷹眼大師',
-    subtitle: '進階動作評估與問題解決能力',
-    description: '培養教練的「鷹眼」能力，學習如何快速辨識學員動作問題，並提供精準的矯正策略。',
-    duration: '16 小時',
-    targetAudience: ['資深教練', '物理治療師', '想提升評估能力者'],
-    highlights: ['動作評估系統', '問題解決框架', '進階矯正技巧'],
-    image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=500&fit=crop&q=80',
-    registrationUrl: 'https://www.surveycake.com/s/鷹眼大師',
+    registrationUrl: 'https://www.surveycake.com/s/W2y4Z',
   },
   {
     id: 'biomechanics',
-    level: '基礎',
-    levelColor: 'bg-orange-500',
+    level: 'Lv2 中階',
+    levelColor: 'bg-blue-500',
+    category: '學術',
+    categoryColor: 'bg-navy-700',
     title: '解剖生物力學',
-    subtitle: '深化基礎科學知識，打穩專業根基',
-    description: '從解剖學與生物力學的角度理解人體動作，為教練生涯打下堅實的科學基礎。',
+    subtitle: '建立人體運作原理的底層知識',
+    description: '建立人體運作原理的底層知識，透過理解槓桿如何發揮功能，可獨立推演肌肉與骨骼發力的路徑。',
     duration: '24 小時',
-    targetAudience: ['所有教練', '運動愛好者', '想打好基礎者'],
+    targetAudience: ['想全面了解肌動學及解剖學的教練', '人體工作者', '肌動、解剖、運動科學愛好者'],
     highlights: ['解剖學基礎', '生物力學原理', '動作分析應用'],
     image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&h=500&fit=crop&q=80',
-    registrationUrl: 'https://www.surveycake.com/s/解剖生物力學',
+    registrationUrl: 'https://www.surveycake.com/s/W2y4Z',
+  },
+  {
+    id: 'senior-training',
+    level: 'Lv3 高階',
+    levelColor: 'bg-purple-500',
+    category: '學術',
+    categoryColor: 'bg-navy-700',
+    title: '中高齡訓練研習營',
+    subtitle: '學會身體能力評估與解法，安全有效帶領特殊病友',
+    description: '學會身體能力評估與解法，解決基本活動度問題。學會安全考量與生理限制下的訓練進退階邏輯。了解常見疾病病理，建立醫療轉介共通語言。能夠安全有效帶領特殊病友進步。',
+    duration: '32 小時（4天）',
+    targetAudience: ['教練、醫療人員、照護員', '需要面對中高齡、特殊族群者'],
+    highlights: ['身體能力評估', '疾病病理了解', '醫療轉介溝通'],
+    image: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=800&h=500&fit=crop&q=80',
+    registrationUrl: 'https://www.surveycake.com/s/DraAb',
+  },
+  {
+    id: 'eagle-eye',
+    level: 'Lv3 高階',
+    levelColor: 'bg-purple-500',
+    category: '學術',
+    categoryColor: 'bg-navy-700',
+    title: '鷹眼大師',
+    subtitle: '常見功能障礙與對策、精準動作解析與判斷點',
+    description: '系統性排除肩頸、脊椎（含胸椎、腰椎）、髖部和膝蓋等部位的常見動作障礙與功能受限。理解並應用不同平面動作組合，學習多面向的動作篩檢與分析，建立快速的判斷點。掌握身體運作的核心運動原則，設計相對應解決方法以優化動作。',
+    duration: '16 小時',
+    targetAudience: ['擁有一定教學經驗之教練', '健康促進人士', '醫療人員'],
+    highlights: ['功能障礙對策', '動作篩檢分析', '訓練課表設計'],
+    image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=500&fit=crop&q=80',
+    registrationUrl: 'https://www.surveycake.com/s/W2y4Z',
   },
 ];
 
@@ -156,46 +166,164 @@ function HeroSection() {
   );
 }
 
-// Learning Path Section
-function LearningPathSection() {
-  const levels = [
-    { name: '入門', color: 'bg-green-500', courses: ['訓練營'] },
-    { name: '基礎', color: 'bg-orange-500', courses: ['解剖生物力學'] },
-    { name: '實戰', color: 'bg-blue-500', courses: ['高效指導語', '中高齡研習'] },
-    { name: '進階', color: 'bg-purple-500', courses: ['鷹眼大師'] },
+// Course Overview Section - Why we created the academy
+function WhyAcademySection() {
+  return (
+    <section className="py-16 bg-cream-100">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="flex items-center justify-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-3">
+              <span className="w-5 h-0.5 bg-orange" />
+              學院理念
+            </div>
+            <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700 mb-6">
+              為什麼我們想成立<span className="text-orange">練健康學院</span>？
+            </h2>
+          </div>
+
+          <div className="bg-white rounded-2xl p-8 border border-navy-700/10 shadow-sm">
+            <p className="text-ink/80 leading-relaxed mb-6">
+              練健康自成立以來，累積服務超過 <strong className="text-navy-700">6,000 位學員</strong>，其中近 50% 為中高齡及特殊族群個案。在實務現場，我們看見了許多教練（與想成為教練的人）面臨的共同困境：
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-cream-100 rounded-xl p-5 border-l-4 border-orange">
+                <h3 className="font-bold text-navy-700 mb-2">學用落差</h3>
+                <p className="text-sm text-ink/70">缺乏系統化管道，難以將書本上的「基礎理論」轉化為現場的「有效教學」。</p>
+              </div>
+              <div className="bg-cream-100 rounded-xl p-5 border-l-4 border-orange">
+                <h3 className="font-bold text-navy-700 mb-2">特殊族群缺口</h3>
+                <p className="text-sm text-ink/70">傳統肌力訓練教學多針對年輕族群，面對身體有較多限制的長輩，缺乏相對應的訓練知識及合適的指導技巧。</p>
+              </div>
+            </div>
+
+            <p className="text-ink/80 leading-relaxed mb-4">
+              為了回應這些需求，我們設立了<strong className="text-orange">練健康學院</strong>，整合學科與術科的專業，設計出循序漸進的研習課程。不論你是剛入門、想補強基礎的教練，還是希望在職涯中持續精進、拓展專業的人，都能在練健康學院所開的課表中，找到實用且符合現場需求的學習資源。
+            </p>
+
+            <p className="text-navy-700 font-medium leading-relaxed">
+              我們相信，專業教練的養成不只需要知識，更需要能落地的解法。練健康學院整合學科與術科，為你搭建一座從「正確練」到「好會教」的橋樑。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Course Overview Section
+function CourseOverviewSection() {
+  const coursesByLevel = [
+    {
+      level: 'Lv 1. 初階',
+      levelColor: 'bg-green-600',
+      description: '教學經驗及現場掌控',
+      courses: [
+        {
+          title: '高效指導語與動作拆解實戰課',
+          category: '學術',
+          objectives: ['讓任何人快速學會動作教學，有能力帶領團體課程與教會親朋好友。', '掌握六大基礎動作的自由重量操作、原理、變化式。'],
+          target: '新手教練：想瞭解更多有效動作教學指導語以提升教學能力。',
+        },
+        {
+          title: '練健康訓練營',
+          category: '學術',
+          objectives: ['熟練六大基礎動作，並能以安全、有效、邏輯清楚的方式教學。', '培養立即上線授課能力，並與客戶應對的軟實力。'],
+          target: '教練：想成為全方位教練。跨領域轉職教練者：有訓練經驗，想培養教學能力。健身愛好者：有訓練經驗，對訓練知識感興趣。',
+        },
+      ],
+    },
+    {
+      level: 'Lv 2. 中階',
+      levelColor: 'bg-blue-500',
+      description: '身體理解及應用層面',
+      courses: [
+        {
+          title: '解剖生物力學',
+          category: '學術',
+          objectives: ['建立人體運作原理的底層知識，透過理解槓桿如何發揮功能，可獨立推演肌肉與骨骼發力的路徑。'],
+          target: '教練：想全面了解並應用肌動學及解剖學。人體工作者。肌動、人體解剖、運動科學愛好者。',
+        },
+      ],
+    },
+    {
+      level: 'Lv 3. 高階',
+      levelColor: 'bg-purple-500',
+      description: '中高齡與特殊族群',
+      courses: [
+        {
+          title: '中高齡訓練研習營',
+          category: '學術',
+          objectives: ['學會身體能力評估與解法，解決基本活動度問題。', '學會安全考量與生理限制下的訓練進退階邏輯。', '了解常見疾病病理，建立醫療轉介共通語言。', '能夠安全有效帶領特殊病友進步。'],
+          target: '教練、醫療人員、照護員：需要面對中高齡、特殊族群者。',
+        },
+        {
+          title: '鷹眼大師',
+          category: '學術',
+          objectives: ['常見功能障礙與對策：系統性排除肩頸、脊椎、髖部和膝蓋等部位的常見動作障礙與功能受限。', '精準動作解析與判斷點：理解並應用不同平面動作組合，學習多面向的動作篩檢與分析。', '上／下肢運動解法：掌握身體運作的核心運動原則，設計相對應解決方法以優化動作。', '建立訓練課表：根據動作分析結果，設計針對功能障礙的訓練路徑，有效解決訓練中出現的動作問題。'],
+          target: '擁有一定教學經驗之教練：想增進評估能力、解決訓練問題。健康促進人士：想透過運動固化按摩放鬆的效果。醫療人員：針對服務個案的需求，提升解決問題的能力。',
+        },
+      ],
+    },
   ];
 
   return (
-    <section className="py-16 bg-cream-100">
+    <section className="py-16 bg-navy-700">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-3">
             <span className="w-5 h-0.5 bg-orange" />
-            學習路徑
+            課程總覽
           </div>
-          <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700">
-            教練<span className="text-orange">學習地圖</span>
+          <h2 className="font-serif text-2xl lg:text-3xl font-black text-white mb-4">
+            練健康<span className="text-orange">課程總覽</span>
           </h2>
+          <div className="flex items-center justify-center gap-4 text-sm text-white/60">
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded bg-navy-600 border border-white/30"></span>
+              學術課程
+            </span>
+          </div>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between relative">
-            {/* Progress Line */}
-            <div className="absolute top-6 left-0 right-0 h-1 bg-navy-700/10" />
-            <div className="absolute top-6 left-0 w-3/4 h-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500" />
-
-            {levels.map((level, idx) => (
-              <div key={level.name} className="relative flex flex-col items-center z-10">
-                <div className={`w-12 h-12 ${level.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}>
-                  {idx + 1}
-                </div>
-                <div className="mt-3 text-sm font-bold text-navy-700">{level.name}</div>
-                <div className="mt-1 text-xs text-ink/50 text-center max-w-[100px]">
-                  {level.courses.join('、')}
-                </div>
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-6">
+          {coursesByLevel.map((levelData) => (
+            <div key={levelData.level} className="space-y-4">
+              {/* Level Header */}
+              <div className={`${levelData.levelColor} rounded-xl p-4 text-center`}>
+                <div className="text-white font-bold text-lg">{levelData.level}</div>
+                <div className="text-white/80 text-sm">{levelData.description}</div>
               </div>
-            ))}
-          </div>
+
+              {/* Courses */}
+              {levelData.courses.map((course) => (
+                <div key={course.title} className="bg-cream-100 rounded-xl p-5 border-2 border-cream-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="font-bold text-navy-700 text-sm leading-tight">{course.title}</h3>
+                    <span className="text-[10px] bg-navy-700 text-white px-2 py-0.5 rounded">{course.category}</span>
+                  </div>
+
+                  <div className="mb-3">
+                    <p className="text-[10px] font-bold text-orange mb-1">課程目標</p>
+                    <ul className="text-xs text-ink/70 space-y-1">
+                      {course.objectives.map((obj, idx) => (
+                        <li key={idx} className="flex gap-1.5">
+                          <span className="text-orange">•</span>
+                          <span>{obj}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="pt-2 border-t border-cream-200">
+                    <p className="text-[10px] font-bold text-orange mb-1">對象</p>
+                    <p className="text-xs text-ink/70">{course.target}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -233,9 +361,14 @@ function CoursesSection() {
                   alt={course.title}
                   className="w-full h-full object-cover"
                 />
-                <span className={`absolute top-4 left-4 ${course.levelColor} text-white text-xs font-bold px-3 py-1 rounded-full`}>
-                  {course.level}
-                </span>
+                <div className="absolute top-4 left-4 flex gap-2">
+                  <span className={`${course.levelColor} text-white text-xs font-bold px-3 py-1 rounded-full`}>
+                    {course.level}
+                  </span>
+                  <span className="bg-navy-700 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    {course.category}
+                  </span>
+                </div>
               </div>
 
               {/* Content */}
@@ -360,7 +493,8 @@ export default function LkkAcademyPage() {
   return (
     <div className="min-h-screen bg-cream-100">
       <HeroSection />
-      <LearningPathSection />
+      <WhyAcademySection />
+      <CourseOverviewSection />
       <CoursesSection />
       <PartnersSection />
       <CTASection />
