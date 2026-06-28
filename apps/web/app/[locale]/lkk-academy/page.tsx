@@ -51,7 +51,7 @@ const courses = [
     duration: '24 小時',
     targetAudience: ['想全面了解肌動學及解剖學的教練', '人體工作者', '肌動、解剖、運動科學愛好者'],
     highlights: ['解剖學基礎', '生物力學原理', '動作分析應用'],
-    image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&h=500&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=800&h=500&fit=crop&q=80',
     registrationUrl: 'https://www.surveycake.com/s/W2y4Z',
   },
   {
