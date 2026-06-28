@@ -93,12 +93,6 @@ const stats = [
   { num: '95%', label: '學員滿意度' },
 ];
 
-const partners = [
-  '國家衛生研究院',
-  '嘉義慈濟醫院',
-  '衛福部草屯療養院',
-  '馬來西亞 PhysioGym',
-];
 
 // Hero Section
 function HeroSection() {
@@ -141,7 +135,7 @@ function HeroSection() {
                 查看課程 →
               </a>
               <a
-                href="https://l-kk.tw/課程報名/"
+                href="https://www.surveycake.com/s/W2y4Z"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white font-medium px-6 py-3 rounded-full hover:bg-white/20 transition-colors"
@@ -427,36 +421,6 @@ function CoursesSection() {
   );
 }
 
-// Partners Section
-function PartnersSection() {
-  return (
-    <section className="py-16 bg-cream-100">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-3">
-            <span className="w-5 h-0.5 bg-orange" />
-            合作機構
-          </div>
-          <h2 className="font-serif text-2xl lg:text-3xl font-black text-navy-700">
-            深度研究與<span className="text-orange">指標合作</span>單位
-          </h2>
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
-          {partners.map((partner) => (
-            <div
-              key={partner}
-              className="bg-white border border-navy-700/10 rounded-lg px-6 py-4 text-navy-700 font-medium shadow-sm"
-            >
-              {partner}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // CTA Section
 function CTASection() {
   return (
@@ -470,7 +434,7 @@ function CTASection() {
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <a
-            href="https://l-kk.tw/課程報名/"
+            href="https://www.surveycake.com/s/W2y4Z"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-white text-orange font-bold px-8 py-3.5 rounded-full shadow-lg hover:-translate-y-0.5 transition-transform"
@@ -496,7 +460,6 @@ export default function LkkAcademyPage() {
       <WhyAcademySection />
       <CourseOverviewSection />
       <CoursesSection />
-      <PartnersSection />
       <CTASection />
     </div>
   );
