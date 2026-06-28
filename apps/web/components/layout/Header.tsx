@@ -176,6 +176,16 @@ export default function Header() {
               )}
             </div>
 
+            {/* 練健康學院 */}
+            <Link
+              href="/lkk-academy"
+              className={`text-sm xl:text-base transition-colors ${
+                isActive('/lkk-academy') ? 'text-orange font-medium' : 'text-cream-100 hover:text-orange'
+              }`}
+            >
+              練健康學院
+            </Link>
+
             {/* 知識分享 */}
             <a
               href="https://l-kk.tw/category/knowledge"
@@ -341,6 +351,15 @@ export default function Header() {
                   </div>
                 )}
               </div>
+
+              {/* 練健康學院 */}
+              <Link
+                href="/lkk-academy"
+                className={`py-3 px-2 rounded ${isActive('/lkk-academy') ? 'text-orange font-medium bg-navy-600/50' : 'text-cream-100'}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                練健康學院
+              </Link>
 
               {/* 知識分享 */}
               <a
