@@ -69,9 +69,8 @@ function HeroSection() {
           <span>海外授權講師</span>
         </nav>
 
-        <div className="inline-flex items-center gap-2 bg-orange/20 border border-orange/40 text-orange text-sm font-medium px-4 py-1.5 rounded-full mb-5">
-          <span className="w-2 h-2 bg-orange rounded-full" />
-          國際授權網絡
+        <div className="inline-flex items-center bg-orange/20 border border-orange/40 text-orange text-sm font-medium px-4 py-1.5 rounded-full mb-5">
+          國際專業授權
         </div>
 
         <h1 className="font-serif text-4xl lg:text-5xl font-black text-white leading-tight mb-4">

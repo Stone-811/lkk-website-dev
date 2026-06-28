@@ -83,8 +83,7 @@ export default function LKK4Section() {
             </div>
 
             {/* Season badge */}
-            <div className="inline-flex items-center gap-2 bg-orange/12 border border-orange/25 rounded-full px-4 py-1.5 text-sm text-orange font-medium mb-5">
-              <span className="w-2 h-2 bg-orange rounded-full animate-pulse" />
+            <div className="inline-flex items-center bg-orange/12 border border-orange/25 rounded-full px-4 py-1.5 text-sm text-orange font-medium mb-5">
               第六屆・2026 年 12 月・籌備中
             </div>
 

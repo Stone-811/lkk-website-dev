@@ -29,14 +29,14 @@ const methodPoints = [
 ];
 
 const pressCases = [
-  { badge: '學術專案', org: '國家衛生研究院', title: '「中高齡訓練者訓練頻率與肌肉增長關係」共同研究', quote: '練健康引進專業級 InBody 770 與 Body Go 體適能檢測系統，協助學員透過數據精準掌握身體組成狀態，並透過博覽會展出為長輩進行科學化動作檢測。' },
-  { badge: '跨國培訓', org: '馬來西亞 PhysioGym', title: '輸出成熟「銀髮動作基礎訓練營」培訓海外在機種子師資', quote: '跨國聯手將台灣成熟的銀髮訓練系統帶向國際。透過輸出系統化教學與實戰經驗，協助馬來西亞當地教練提升專業技術，讓正確的肌力訓練觀念跨越國界。' },
-  { badge: '醫療教育訓練', org: '衛生福利部草屯療養院', title: '院內治療師內部培訓與病友團體訓練', quote: '合作包含團體訓練與內部教育訓練。除了親自接觸個案了解狀況外，更透過授課讓院內治療師帶回肌力訓練的專業知識，讓院內的運動訓練日後能夠持之以恆。' },
-  { badge: '跨界講座與運動推廣', org: '慈濟醫院 ＆ 包大人', title: '肌力訓練課程、內容行銷分享與團體健康促進項目', quote: '應嘉義慈濟邀請開設12堂肌力課程與社群經營行銷講座；並應「包大人」邀請，為長輩量身打造團體可以進行的趣味運動課程，協助長輩順利踏出運動第一步。' },
+  { badge: '學術專案', org: '國家衛生研究院', title: '「中高齡訓練者訓練頻率與肌肉增長關係」共同研究', quote: '練健康引進專業級 InBody 770 與 Body Go 體適能檢測系統，協助學員透過數據精準掌握身體組成狀態，並透過博覽會展出為長輩進行科學化動作檢測。', image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&h=400&fit=crop&q=80' },
+  { badge: '跨國培訓', org: '馬來西亞 PhysioGym', title: '輸出成熟「銀髮動作基礎訓練營」培訓海外在機種子師資', quote: '跨國聯手將台灣成熟的銀髮訓練系統帶向國際。透過輸出系統化教學與實戰經驗，協助馬來西亞當地教練提升專業技術，讓正確的肌力訓練觀念跨越國界。', image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=400&fit=crop&q=80' },
+  { badge: '醫療教育訓練', org: '衛生福利部草屯療養院', title: '院內治療師內部培訓與病友團體訓練', quote: '合作包含團體訓練與內部教育訓練。除了親自接觸個案了解狀況外，更透過授課讓院內治療師帶回肌力訓練的專業知識，讓院內的運動訓練日後能夠持之以恆。', image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=400&fit=crop&q=80' },
+  { badge: '跨界講座與運動推廣', org: '慈濟醫院教育訓練 & 包大人推廣', title: '肌力訓練課程、內容行銷分享與團體健康促進項目', quote: '應嘉義慈濟邀請開設科學化肌力課程與社群經營行銷講座；並應「包大人」邀請，為長輩量身打造團體可以進行的趣味運動課程，協助長輩順利踏出運動第一步。', image: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&h=400&fit=crop&q=80' },
 ];
 
 const pressStats = [
-  { num: '12 堂', label: '慈濟醫院專屬肌力與行銷授課' },
+  { num: '科學化', label: '慈濟醫院專屬肌力與行銷授課' },
   { num: '跨國', label: '馬來西亞PhysioGym海外教練培訓' },
   { num: '大數據', label: '攜手國衛院推動中高齡肌肉研究' },
 ];
@@ -177,7 +177,7 @@ export default function CooperationPage() {
             <div>
               <div className="flex items-center gap-3 text-orange text-sm font-medium tracking-widest uppercase mb-8">
                 <span className="w-5 h-px bg-orange" />
-                大台北中高齡肌力訓練專家
+                中高齡肌力訓練專家
                 <span className="w-5 h-px bg-orange" />
               </div>
 
@@ -302,9 +302,14 @@ export default function CooperationPage() {
           <div className="grid md:grid-cols-2 gap-4">
             {pressCases.map((c) => (
               <article key={c.org} className="border border-navy-700/15 rounded overflow-hidden bg-white hover:shadow-lg transition-shadow">
-                <div className="h-40 bg-navy-700 relative flex items-end">
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-700 via-navy-700/70 to-transparent" />
-                  <span className="absolute top-3 left-3 text-xs font-medium bg-orange/90 text-white px-3 py-1 rounded-full tracking-wide">
+                <div className="h-40 bg-navy-700 relative flex items-end overflow-hidden">
+                  <img
+                    src={c.image}
+                    alt={c.org}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-700 via-navy-700/60 to-transparent" />
+                  <span className="absolute top-3 left-3 text-xs font-medium bg-orange/90 text-white px-3 py-1 rounded-full tracking-wide z-10">
                     {c.badge}
                   </span>
                   <span className="relative z-10 font-serif text-xl font-bold text-white px-4 pb-3">{c.org}</span>

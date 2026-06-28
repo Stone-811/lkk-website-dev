@@ -95,8 +95,7 @@ export default function LKK4Page() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(251,114,10,0.15)_0%,transparent_60%)]" />
         <div className="container mx-auto px-4 relative z-10">
           {/* Status pill */}
-          <div className="inline-flex items-center gap-2 bg-orange/15 border border-orange/30 rounded-full px-4 py-1.5 mb-6">
-            <span className="w-2 h-2 bg-orange rounded-full animate-pulse" />
+          <div className="inline-flex items-center bg-orange/15 border border-orange/30 rounded-full px-4 py-1.5 mb-6">
             <span className="text-orange text-sm font-medium">第六屆賽事・2026 年 12 月・籌備中</span>
           </div>
 
