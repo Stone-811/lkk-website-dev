@@ -194,6 +194,14 @@ export default function Header() {
               {t('articles')}
             </a>
 
+            {/* 學員案例 */}
+            <a
+              href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/"
+              className="text-sm xl:text-base text-cream-100 hover:text-orange transition-colors"
+            >
+              學員案例
+            </a>
+
             {/* LKK4 */}
             <Link
               href="/lkk4"
@@ -368,6 +376,15 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('articles')}
+              </a>
+
+              {/* 學員案例 */}
+              <a
+                href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/"
+                className="py-3 px-2 text-cream-100 rounded"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                學員案例
               </a>
 
               {/* LKK4 */}

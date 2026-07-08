@@ -105,9 +105,19 @@ export default function LKK4Page() {
           <div className="text-xl lg:text-2xl text-white/70 font-light tracking-widest mb-6">
             中高齡四項體能挑戰賽
           </div>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-white/60 text-lg max-w-2xl mx-auto leading-relaxed font-light mb-8">
             台灣唯一專為 50 歲以上設計的年度競技賽事。擺脫被動老化，我們在安全無虞的運動醫學基礎上，號召全台銀髮強者用成績證明：年齡不是終點。
           </p>
+
+          <Link
+            href="/personal-record"
+            className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white font-semibold px-6 py-3 rounded-full hover:bg-white/20 hover:border-white/30 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            參賽成績查詢
+          </Link>
         </div>
       </section>
 
