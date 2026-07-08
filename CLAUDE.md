@@ -103,6 +103,8 @@ GoDaddy DNS
 | `l-kk.tw/co-lecturer` | Next.js | 合作講師 |
 | `l-kk.tw/oversea-lecturer` | Next.js | 海外授權講師 |
 | `l-kk.tw/lkk-academy` | Next.js | 練健康學院（課程培訓） |
+| `l-kk.tw/lkk4` | Next.js | LKK4 中高齡四項體能挑戰賽 |
+| `l-kk.tw/personal-record` | Next.js | LKK4 參賽成績查詢 |
 | `l-kk.tw/admin/*` | Next.js | 自建 CMS 後台 |
 | `l-kk.tw/api/*` | Next.js | API Routes |
 | `l-kk.tw/知識分享/*` | Next.js → WordPress | 代理到 WordPress |
@@ -292,6 +294,7 @@ lkk-website/                    # 根目錄（Monorepo）
 │       │   │   ├── lkk-academy/page.tsx  # 練健康學院
 │       │   │   ├── franchise/page.tsx    # 加盟說明
 │       │   │   ├── lkk4/page.tsx         # LKK4 賽事
+│       │   │   ├── personal-record/page.tsx # LKK4 參賽成績查詢
 │       │   │   ├── cooperation/page.tsx  # 合作洽詢
 │       │   │   └── shop/page.tsx         # 商品導購
 │       │   │
