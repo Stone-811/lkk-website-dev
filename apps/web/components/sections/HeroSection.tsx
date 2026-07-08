@@ -157,26 +157,27 @@ function DataStrip() {
 
 function PressStrip() {
   const pressOutlets = [
-    '大愛新聞',
-    '吳淡如人生實用商學院',
-    '動思學院 MoveThink',
-    '高年級不打烊',
-    '強者我朋友',
+    { name: '大愛新聞', url: 'https://l-kk.tw/%e3%80%90%e5%a4%a7%e6%84%9b%e6%96%b0%e8%81%9edaainews%e3%80%91%e9%8a%80%e9%ab%ae%e6%97%8f%e4%b9%9f%e8%83%bd%e9%87%8d%e8%a8%93-%e5%bc%b7%e5%81%a5%e8%82%8c%e5%8a%9b%e4%b8%8d%e8%b7%8c%e8%b7%a4/' },
+    { name: '吳淡如人生實用商學院', url: 'https://l-kk.tw/%e5%90%b3%e6%b7%a1%e5%a6%82%e4%ba%ba%e7%94%9f%e5%af%a6%e7%94%a8%e5%95%86%e5%ad%b8%e9%99%a2%ef%bc%88official%e5%ae%98%e6%96%b9%e5%94%af%e4%b8%80%e9%a0%bb%e9%81%93%ef%bc%89%f0%9f%9a%a9%e3%80%90%e5%90%b3/' },
+    { name: '動思學院 MoveThink', url: 'https://l-kk.tw/%e3%80%90%e5%8b%95%e6%80%9d%e5%ad%b8%e9%99%a2-movethink%e3%80%91%e6%af%8f%e5%80%8b%e7%88%b8%e5%aa%bd%e9%83%bd%e8%a9%b2%e9%87%8d%e8%a8%93%ef%bc%81%e9%95%b7%e8%bc%a9%e4%b9%9f%e5%8f%af%e4%bb%a5%e5%be%88/' },
+    { name: '高年級不打烊', url: 'https://l-kk.tw/%e3%80%90%e9%ab%98%e5%b9%b4%e7%b4%9a%e4%b8%8d%e6%89%93%e7%83%8a-x-%e7%94%a8-ai-%e9%bb%9e%e4%ba%ae%e7%ac%ac%e4%ba%8c%e4%ba%ba%e7%94%9f%e3%80%91ep146-%e9%bb%83%e5%85%83%e6%9d%b0%ef%bc%8d%e7%b7%b4/' },
+    { name: '強者我朋友', url: 'https://l-kk.tw/90%e6%ad%b2%e9%98%bf%e5%ac%a4%e4%b9%9f%e8%83%bd%e7%a1%ac%e8%88%89%ef%bc%81%e8%a6%81%e6%80%8e%e9%ba%bc%e8%aa%aa%e6%9c%8d%e7%88%b8%e5%aa%bd%e5%8e%bb%e9%81%8b%e5%8b%95%ef%bc%9f%e9%87%8d%e8%a8%93%e6%9c%80/' },
   ];
 
   return (
-    <section className="bg-cream py-8 lg:py-10">
+    <section className="bg-white py-8 lg:py-10">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-12">
           <span className="text-ink/60 text-sm font-medium whitespace-nowrap">曾受報導</span>
           <div className="flex flex-wrap items-center justify-center gap-x-8 lg:gap-x-12 gap-y-4">
             {pressOutlets.map((outlet) => (
-              <span
-                key={outlet}
+              <a
+                key={outlet.name}
+                href={outlet.url}
                 className="text-ink/50 text-sm lg:text-base font-medium hover:text-ink/70 transition-colors"
               >
-                {outlet}
-              </span>
+                {outlet.name}
+              </a>
             ))}
           </div>
         </div>
