@@ -558,7 +558,7 @@ GET    /api/admin/leads/export
 |------|------|------|
 | 預約體驗 | `/booking` | 預約表單、門店選擇、FAQ、門店通知 |
 | 門店 | `/locations` | 門店總覽、門店資訊、交通、照片、教練連結 |
-| 首頁 | `/` | Hero、服務內容、案例導流、FAQ、CTA、Footer |
+| 首頁 | `/` | Hero、數據條（DataStrip）、曾受報導（PressStrip）、服務內容、案例導流、FAQ、CTA、Footer |
 
 ### Phase 2：次高優先（預估 30 天）
 

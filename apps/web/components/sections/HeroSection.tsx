@@ -129,21 +129,56 @@ function DataStrip() {
   ];
 
   return (
-    <section className="bg-navy-800 py-12 lg:py-16">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/[0.08] rounded-2xl overflow-hidden">
-          {stats.map((stat) => (
-            <div key={stat.num} className="bg-navy-800 p-6 lg:p-8 hover:bg-white/[0.04] transition-colors">
-              <div className="font-serif text-3xl lg:text-5xl font-black text-orange leading-none mb-2">
-                {stat.num}
+    <>
+      <section className="bg-navy-800 py-10 lg:py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/[0.08] rounded-2xl overflow-hidden">
+            {stats.map((stat) => (
+              <div key={stat.num} className="bg-navy-800 p-6 lg:p-8 hover:bg-white/[0.04] transition-colors">
+                <div className="font-serif text-3xl lg:text-5xl font-black text-orange leading-none mb-2">
+                  {stat.num}
+                </div>
+                <p className="text-white/65 text-sm leading-relaxed">
+                  <strong className="text-white">{stat.text[0]}</strong>
+                  <br />
+                  {stat.text[1]}
+                </p>
               </div>
-              <p className="text-white/65 text-sm leading-relaxed">
-                <strong className="text-white">{stat.text[0]}</strong>
-                <br />
-                {stat.text[1]}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Press Coverage */}
+      <PressStrip />
+    </>
+  );
+}
+
+function PressStrip() {
+  const pressOutlets = [
+    '大愛新聞',
+    '吳淡如人生實用商學院',
+    '動思學院 MoveThink',
+    '高年級不打烊',
+    '強者我朋友',
+  ];
+
+  return (
+    <section className="bg-cream py-8 lg:py-10">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-12">
+          <span className="text-ink/60 text-sm font-medium whitespace-nowrap">曾受報導</span>
+          <div className="flex flex-wrap items-center justify-center gap-x-8 lg:gap-x-12 gap-y-4">
+            {pressOutlets.map((outlet) => (
+              <span
+                key={outlet}
+                className="text-ink/50 text-sm lg:text-base font-medium hover:text-ink/70 transition-colors"
+              >
+                {outlet}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </section>
