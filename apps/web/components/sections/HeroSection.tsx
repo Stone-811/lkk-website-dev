@@ -130,7 +130,7 @@ function DataStrip() {
 
   return (
     <>
-      <section className="bg-navy-800 py-10 lg:py-12">
+      <section className="bg-navy-800 py-8 lg:py-10">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/[0.08] rounded-2xl overflow-hidden">
             {stats.map((stat) => (
