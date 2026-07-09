@@ -258,6 +258,25 @@ function ServiceIcon({ type }: { type: string }) {
 }
 ```
 
+### Logo 與 Favicon
+
+| 項目 | 檔案位置 | 說明 |
+|------|---------|------|
+| Header Logo | `/public/lkklogo.png` | 響應式大小（h-8 / h-10 / h-12） |
+| Favicon | `/public/lkklogo.png` | 瀏覽器分頁圖示 |
+| PWA Icons | `/public/icons/` | 192x192、512x512 等尺寸 |
+
+### 手機版固定按鈕
+
+手機版底部有固定的「立即預約體驗」按鈕：
+
+| 項目 | 說明 |
+|------|------|
+| 元件 | `components/layout/MobileBookingButton.tsx` |
+| 顯示條件 | 僅手機版（`md:hidden`） |
+| 隱藏頁面 | `/booking` 頁面自動隱藏 |
+| 連結 | `/booking#form` |
+
 ---
 
 ## 專案結構
@@ -831,6 +850,8 @@ import Script from 'next/script';
 
 低維運成本不使用 GCP Secret Manager，改以 Firebase 環境變數管理。
 
+### 本地開發（.env.local）
+
 ```env
 NEXT_PUBLIC_SITE_URL=https://l-kk.tw
 WORDPRESS_BACKEND_URL=https://wp-backend.l-kk.tw
@@ -838,11 +859,42 @@ WORDPRESS_API_URL=https://wp-backend.l-kk.tw/wp-json/wp/v2
 FIREBASE_PROJECT_ID=xxx
 FIREBASE_CLIENT_EMAIL=xxx
 FIREBASE_PRIVATE_KEY=xxx
-SMTP_HOST=xxx
-SMTP_USER=xxx
-SMTP_PASS=xxx
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=xxx@gmail.com
+SMTP_PASS=xxx              # Gmail App Password
+SMTP_FROM=xxx@gmail.com
 RECAPTCHA_SECRET=xxx
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=xxx
+```
+
+### Firebase App Hosting（apphosting.yaml）
+
+生產環境的環境變數設定在 `apps/web/apphosting.yaml`：
+
+```yaml
+env:
+  - variable: NEXT_PUBLIC_SITE_URL
+    value: https://lkk-website-dev.web.app
+  - variable: FIREBASE_PROJECT_ID
+    value: lkk-website-dev
+  - variable: SMTP_HOST
+    value: smtp.gmail.com
+  - variable: SMTP_PORT
+    value: "465"
+  - variable: SMTP_USER
+    value: xxx@gmail.com
+  - variable: SMTP_FROM
+    value: xxx@gmail.com
+  # 機密資料使用 Firebase Secret
+  - variable: SMTP_PASS
+    secret: smtp-pass
+```
+
+**設定 Firebase Secret：**
+```bash
+# 建立 SMTP 密碼 secret
+firebase apphosting:secrets:set smtp-pass --project lkk-website-dev
 ```
 
 ---
