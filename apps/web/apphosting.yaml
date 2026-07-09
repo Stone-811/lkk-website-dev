@@ -19,11 +19,11 @@ env:
   - variable: SMTP_PORT
     value: "465"
   - variable: SMTP_USER
-    value: tingo8320@gmail.com
+    value: lkkwellness@gmail.com
   - variable: SMTP_FROM
-    value: tingo8320@gmail.com
+    value: lkkwellness@gmail.com
   - variable: NOTIFICATION_EMAIL
-    value: tingo8320@gmail.com
+    value: lkkwellness@gmail.com
   # SMTP Password - use Firebase Secret
   - variable: SMTP_PASS
     secret: smtp-pass
