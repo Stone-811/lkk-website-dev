@@ -19,12 +19,14 @@ interface Store {
   phone: string;
 }
 
-// 方便聯繫時段選項（單選）
+// 方便聯繫時段選項（多選）
 const contactTimeOptions = [
   '不限',
   '平日白天 (10:00-17:00)',
   '平日晚上 (18:00-21:00)',
-  '假日',
+  '假日白天',
+  '假日晚上',
+  '其他',
 ];
 
 // 從哪裡得知選項（多選）
@@ -56,10 +58,9 @@ type FormData = {
   name: string;
   phone: string;
   gender: string;
-  birthYear: string;
-  birthMonth: string;
-  birthDay: string;
+  birthDate: string;
   email: string;
+  line: string;
   // 填寫者資料
   filledBySelf: string;
   relationship: string;
@@ -70,7 +71,8 @@ type FormData = {
   medicalConditionNote: string;
   // 預約資訊
   storeId: string;
-  preferredTime: string;
+  preferredTimes: string[];
+  preferredTimeOther: string;
   sources: string[];
   sourceOther: string;
   // 付款方式
@@ -83,10 +85,9 @@ const initialFormData: FormData = {
   name: '',
   phone: '',
   gender: '',
-  birthYear: '',
-  birthMonth: '',
-  birthDay: '',
+  birthDate: '',
   email: '',
+  line: '',
   filledBySelf: '本人填寫',
   relationship: '',
   bookerName: '',
@@ -94,18 +95,13 @@ const initialFormData: FormData = {
   hasMedicalCondition: '',
   medicalConditionNote: '',
   storeId: '',
-  preferredTime: '',
+  preferredTimes: [],
+  preferredTimeOther: '',
   sources: [],
   sourceOther: '',
   paymentMethod: '',
   message: '',
 };
-
-// 生成年份選項 (1920-今年)
-const currentYear = new Date().getFullYear();
-const yearOptions = Array.from({ length: currentYear - 1920 + 1 }, (_, i) => currentYear - i);
-const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
-const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
 
 export default function BookingForm() {
   const t = useTranslations('booking');
@@ -156,6 +152,14 @@ export default function BookingForm() {
     updateFormData('sources', updated);
   };
 
+  const togglePreferredTime = (time: string) => {
+    const current = formData.preferredTimes;
+    const updated = current.includes(time)
+      ? current.filter((t) => t !== time)
+      : [...current, time];
+    updateFormData('preferredTimes', updated);
+  };
+
   const validateStep = (currentStep: number): boolean => {
     const newErrors: Partial<Record<keyof FormData, string>> = {};
 
@@ -166,9 +170,7 @@ export default function BookingForm() {
         newErrors.phone = '請輸入有效的手機號碼';
       }
       if (!formData.gender) newErrors.gender = '請選擇性別';
-      if (!formData.birthYear || !formData.birthMonth || !formData.birthDay) {
-        newErrors.birthYear = '請選擇出生年月日';
-      }
+      if (!formData.birthDate) newErrors.birthDate = '請選擇出生年月日';
       if (!formData.email.trim()) {
         newErrors.email = '請輸入 Email';
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -190,7 +192,7 @@ export default function BookingForm() {
 
     if (currentStep === 3) {
       if (!formData.storeId) newErrors.storeId = '請選擇門店';
-      if (!formData.preferredTime) newErrors.preferredTime = '請選擇方便聯繫時段';
+      if (formData.preferredTimes.length === 0) newErrors.preferredTimes = '請至少選擇一個時段';
       if (!formData.paymentMethod) newErrors.paymentMethod = '請選擇付款方式';
     }
 
@@ -214,14 +216,18 @@ export default function BookingForm() {
     setIsSubmitting(true);
 
     try {
-      // 組合出生日期
-      const birthDate = `${formData.birthYear}-${formData.birthMonth.padStart(2, '0')}-${formData.birthDay.padStart(2, '0')}`;
-
       // 組合來源
       let finalSources = [...formData.sources];
       if (formData.sources.includes('其他') && formData.sourceOther.trim()) {
         finalSources = finalSources.filter(s => s !== '其他');
         finalSources.push(`其他: ${formData.sourceOther}`);
+      }
+
+      // 組合聯繫時段
+      let finalPreferredTimes = [...formData.preferredTimes];
+      if (formData.preferredTimes.includes('其他') && formData.preferredTimeOther.trim()) {
+        finalPreferredTimes = finalPreferredTimes.filter(t => t !== '其他');
+        finalPreferredTimes.push(`其他: ${formData.preferredTimeOther}`);
       }
 
       const response = await fetch('/api/leads/booking', {
@@ -233,7 +239,8 @@ export default function BookingForm() {
           phone: formData.phone,
           email: formData.email,
           gender: formData.gender,
-          birthDate,
+          birthDate: formData.birthDate,
+          line: formData.line || null,
           // 填寫者資料
           filledBySelf: formData.filledBySelf === '本人填寫',
           relationship: formData.filledBySelf === '親友代填' ? formData.relationship : null,
@@ -244,7 +251,7 @@ export default function BookingForm() {
           medicalConditionNote: formData.hasMedicalCondition === '是' ? formData.medicalConditionNote : null,
           // 預約資訊
           storeId: formData.storeId,
-          preferredTime: formData.preferredTime,
+          preferredTime: finalPreferredTimes,
           sources: finalSources,
           paymentMethod: formData.paymentMethod,
           message: formData.message,
@@ -319,123 +326,109 @@ export default function BookingForm() {
       <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
         {/* Step 1: 學員基本資料 */}
         {step === 1 && (
-          <div className="space-y-6">
+          <div className="space-y-5">
             <h2 className="text-xl font-bold mb-4 text-navy-700">學員基本資料</h2>
 
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                學員姓名 <span className="text-ink-500 font-normal">（要來上課的人）</span> <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => updateFormData('name', e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
-                  errors.name ? 'border-red-500' : 'border-cream-200'
-                }`}
-                placeholder="請輸入學員姓名"
-              />
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                學員手機 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => updateFormData('phone', e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
-                  errors.phone ? 'border-red-500' : 'border-cream-200'
-                }`}
-                placeholder="0912345678"
-              />
-              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                性別 <span className="text-red-500">*</span>
-              </label>
-              <div className="flex gap-4">
-                {['男', '女'].map((g) => (
-                  <button
-                    key={g}
-                    type="button"
-                    onClick={() => updateFormData('gender', g)}
-                    className={`flex-1 py-3 rounded-lg border text-center transition-all ${
-                      formData.gender === g
-                        ? 'border-orange bg-orange/10 text-orange font-medium'
-                        : 'border-cream-200 hover:border-orange/50'
-                    }`}
-                  >
-                    {g}
-                  </button>
-                ))}
+            {/* Row 1: 學員姓名 | 學員手機 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-navy-700">
+                  學員姓名 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => updateFormData('name', e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
+                    errors.name ? 'border-red-500' : 'border-cream-200'
+                  }`}
+                  placeholder="要來上課的人"
+                />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
-              {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                出生年月日 <span className="text-red-500">*</span>
-              </label>
-              <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <select
-                  value={formData.birthYear}
-                  onChange={(e) => updateFormData('birthYear', e.target.value)}
-                  className={`px-3 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
-                    errors.birthYear ? 'border-red-500' : 'border-cream-200'
+              <div>
+                <label className="block text-sm font-medium mb-2 text-navy-700">
+                  學員手機 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => updateFormData('phone', e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
+                    errors.phone ? 'border-red-500' : 'border-cream-200'
                   }`}
-                >
-                  <option value="">年</option>
-                  {yearOptions.map((y) => (
-                    <option key={y} value={y}>{y}</option>
-                  ))}
-                </select>
-                <select
-                  value={formData.birthMonth}
-                  onChange={(e) => updateFormData('birthMonth', e.target.value)}
-                  className={`px-3 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
-                    errors.birthYear ? 'border-red-500' : 'border-cream-200'
-                  }`}
-                >
-                  <option value="">月</option>
-                  {monthOptions.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-                <select
-                  value={formData.birthDay}
-                  onChange={(e) => updateFormData('birthDay', e.target.value)}
-                  className={`px-3 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
-                    errors.birthYear ? 'border-red-500' : 'border-cream-200'
-                  }`}
-                >
-                  <option value="">日</option>
-                  {dayOptions.map((d) => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
+                  placeholder="0912345678"
+                />
+                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </div>
-              {errors.birthYear && <p className="text-red-500 text-sm mt-1">{errors.birthYear}</p>}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                Email <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => updateFormData('email', e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
-                  errors.email ? 'border-red-500' : 'border-cream-200'
-                }`}
-                placeholder="your@email.com"
-              />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            {/* Row 2: 性別（下拉） | 出生年月日（日曆） */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-navy-700">
+                  性別 <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={formData.gender}
+                  onChange={(e) => updateFormData('gender', e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
+                    errors.gender ? 'border-red-500' : 'border-cream-200'
+                  }`}
+                >
+                  <option value="">請選擇</option>
+                  <option value="男">男</option>
+                  <option value="女">女</option>
+                </select>
+                {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-navy-700">
+                  出生年月日 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={formData.birthDate}
+                  onChange={(e) => updateFormData('birthDate', e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
+                    errors.birthDate ? 'border-red-500' : 'border-cream-200'
+                  }`}
+                  max={new Date().toISOString().split('T')[0]}
+                  min="1920-01-01"
+                />
+                {errors.birthDate && <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>}
+              </div>
+            </div>
+
+            {/* Row 3: Email | Line */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-navy-700">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => updateFormData('email', e.target.value)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
+                    errors.email ? 'border-red-500' : 'border-cream-200'
+                  }`}
+                  placeholder="your@email.com"
+                />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-navy-700">
+                  Line ID <span className="text-ink-500 font-normal">（選填）</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.line}
+                  onChange={(e) => updateFormData('line', e.target.value)}
+                  className="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange focus:border-orange"
+                  placeholder="方便我們聯繫您"
+                />
+              </div>
             </div>
           </div>
         )}
@@ -599,24 +592,47 @@ export default function BookingForm() {
             <div>
               <label className="block text-sm font-medium mb-2 text-navy-700">
                 方便聯繫時段 <span className="text-red-500">*</span>
+                <span className="text-ink-500 font-normal ml-1">（可複選）</span>
               </label>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {contactTimeOptions.map((time) => (
                   <button
                     key={time}
                     type="button"
-                    onClick={() => updateFormData('preferredTime', time)}
-                    className={`p-3 rounded-lg border text-center transition-all ${
-                      formData.preferredTime === time
-                        ? 'border-orange bg-orange/10 text-orange font-medium'
+                    onClick={() => togglePreferredTime(time)}
+                    className={`p-2.5 rounded-lg border text-sm text-center transition-all flex items-center justify-center gap-2 ${
+                      formData.preferredTimes.includes(time)
+                        ? 'border-orange bg-orange/10 text-orange'
                         : 'border-cream-200 hover:border-orange/50'
                     }`}
                   >
+                    <div
+                      className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                        formData.preferredTimes.includes(time)
+                          ? 'border-orange bg-orange'
+                          : 'border-ink-300'
+                      }`}
+                    >
+                      {formData.preferredTimes.includes(time) && (
+                        <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
                     {time}
                   </button>
                 ))}
               </div>
-              {errors.preferredTime && <p className="text-red-500 text-sm mt-2">{errors.preferredTime}</p>}
+              {formData.preferredTimes.includes('其他') && (
+                <input
+                  type="text"
+                  value={formData.preferredTimeOther}
+                  onChange={(e) => updateFormData('preferredTimeOther', e.target.value)}
+                  className="w-full mt-2 px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                  placeholder="請說明其他方便時段"
+                />
+              )}
+              {errors.preferredTimes && <p className="text-red-500 text-sm mt-2">{errors.preferredTimes}</p>}
             </div>
 
             <div>
@@ -755,12 +771,18 @@ export default function BookingForm() {
                 </div>
                 <div className="flex justify-between mt-1">
                   <span className="text-ink-600">出生日期</span>
-                  <span className="font-medium">{formData.birthYear}/{formData.birthMonth}/{formData.birthDay}</span>
+                  <span className="font-medium">{formData.birthDate}</span>
                 </div>
                 <div className="flex justify-between mt-1">
                   <span className="text-ink-600">Email</span>
                   <span className="font-medium text-sm">{formData.email}</span>
                 </div>
+                {formData.line && (
+                  <div className="flex justify-between mt-1">
+                    <span className="text-ink-600">Line</span>
+                    <span className="font-medium">{formData.line}</span>
+                  </div>
+                )}
               </div>
 
               {formData.filledBySelf === '親友代填' && (
@@ -785,7 +807,7 @@ export default function BookingForm() {
                 </div>
                 <div className="flex justify-between mt-1">
                   <span className="text-ink-600">方便時段</span>
-                  <span className="font-medium">{formData.preferredTime}</span>
+                  <span className="font-medium text-right">{formData.preferredTimes.join('、')}</span>
                 </div>
                 <div className="flex justify-between mt-1">
                   <span className="text-ink-600">付款方式</span>

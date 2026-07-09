@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
       email,
       gender,
       birthDate,
+      line,
       // 填寫者資料
       filledBySelf,
       relationship,
@@ -31,7 +32,9 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!name || !phone || !storeId || !preferredTime) {
+    // preferredTime is now an array
+    const hasPreferredTime = Array.isArray(preferredTime) ? preferredTime.length > 0 : !!preferredTime;
+    if (!name || !phone || !storeId || !hasPreferredTime) {
       return NextResponse.json(
         { error: '請填寫必要欄位' },
         { status: 400 }
@@ -56,6 +59,9 @@ export async function POST(request: NextRequest) {
 
     // TODO: Add reCAPTCHA / Turnstile verification
 
+    // Normalize preferredTime to array
+    const preferredTimeArray = Array.isArray(preferredTime) ? preferredTime : [preferredTime];
+
     // Create lead in Firestore
     const now = Timestamp.now();
     const leadRef = db.collection('leads').doc();
@@ -72,6 +78,7 @@ export async function POST(request: NextRequest) {
         // 學員資料
         gender,
         birthDate,
+        line: line || null,
         // 填寫者資料
         filledBySelf,
         relationship: relationship || null,
@@ -81,7 +88,7 @@ export async function POST(request: NextRequest) {
         hasMedicalCondition,
         medicalConditionNote: medicalConditionNote || null,
         // 預約資訊
-        preferredTime,
+        preferredTime: preferredTimeArray,
         paymentMethod,
         sources: sources || [],
       },
@@ -107,6 +114,7 @@ export async function POST(request: NextRequest) {
     const additionalInfo: string[] = [];
     if (gender) additionalInfo.push(`性別: ${gender}`);
     if (birthDate) additionalInfo.push(`出生日期: ${birthDate}`);
+    if (line) additionalInfo.push(`Line: ${line}`);
     if (!filledBySelf && bookerName) {
       additionalInfo.push(`預約者: ${bookerName} (${relationship})`);
       additionalInfo.push(`聯繫電話: ${contactPhone}`);
@@ -115,7 +123,7 @@ export async function POST(request: NextRequest) {
       additionalInfo.push(`健康狀況: 有疾病或近期手術/住院史`);
       if (medicalConditionNote) additionalInfo.push(`  → ${medicalConditionNote}`);
     }
-    additionalInfo.push(`方便時段: ${preferredTime}`);
+    additionalInfo.push(`方便時段: ${preferredTimeArray.join(', ')}`);
     additionalInfo.push(`付款方式: ${paymentMethod}`);
     if (sources && sources.length > 0) {
       additionalInfo.push(`得知管道: ${sources.join(', ')}`);
@@ -138,7 +146,7 @@ export async function POST(request: NextRequest) {
         name,
         email,
         storeName,
-        preferredTime: [preferredTime],
+        preferredTime: preferredTimeArray,
         paymentMethod,
       }).catch((err) => console.error('Failed to send confirmation:', err));
     }
@@ -149,6 +157,7 @@ export async function POST(request: NextRequest) {
       phone,
       email,
       storeId,
+      line,
       paymentMethod,
     });
 
