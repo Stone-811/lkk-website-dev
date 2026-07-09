@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/i18n';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import MobileBookingButton from '@/components/layout/MobileBookingButton';
 
 // Force dynamic rendering for next-intl
 export const dynamic = 'force-dynamic';
@@ -46,8 +47,9 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-20 md:pb-0">{children}</main>
         <Footer />
+        <MobileBookingButton />
       </div>
     </NextIntlClientProvider>
   );
