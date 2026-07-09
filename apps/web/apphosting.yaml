@@ -13,3 +13,17 @@ env:
     value: https://lkk-website-dev.web.app
   - variable: FIREBASE_PROJECT_ID
     value: lkk-website-dev
+  # SMTP Settings
+  - variable: SMTP_HOST
+    value: smtp.gmail.com
+  - variable: SMTP_PORT
+    value: "465"
+  - variable: SMTP_USER
+    value: tingo8320@gmail.com
+  - variable: SMTP_FROM
+    value: tingo8320@gmail.com
+  - variable: NOTIFICATION_EMAIL
+    value: tingo8320@gmail.com
+  # SMTP Password - use Firebase Secret
+  - variable: SMTP_PASS
+    secret: smtp-pass
