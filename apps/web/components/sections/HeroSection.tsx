@@ -38,7 +38,7 @@ export default function HeroSection() {
 
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                 <Link
-                  href="/booking"
+                  href="/booking#form"
                   className="inline-flex items-center gap-2 bg-orange text-white font-bold px-8 py-3.5 rounded-full shadow-lg shadow-orange/35 hover:bg-orange-400 transition-all hover:-translate-y-0.5"
                 >
                   立即預約體驗課 →

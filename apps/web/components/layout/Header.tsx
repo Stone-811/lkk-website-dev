@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -64,8 +65,15 @@ export default function Header() {
       <nav className="container mx-auto px-4" ref={dropdownRef}>
         <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl sm:text-2xl font-bold text-white font-serif">練健康</span>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/lkklogo.png"
+              alt="練健康"
+              width={120}
+              height={40}
+              className="h-8 sm:h-10 lg:h-12 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation */}
