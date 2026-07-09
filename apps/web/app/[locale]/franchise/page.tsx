@@ -1,7 +1,6 @@
-import Link from 'next/link';
+'use client';
 
-// Force dynamic rendering for next-intl
-export const dynamic = 'force-dynamic';
+import { useState } from 'react';
 
 const stats = [
   { num: '5.4億', label: '亞太地區 60 歲以上人口', src: '來源：WHO, 2024' },
@@ -93,12 +92,60 @@ function SupportIcon({ type }: { type: string }) {
   }
 }
 
-export const metadata = {
-  title: '練健康加盟說明會 | LKK Wellness Franchise',
-  description: '亞洲正在老去，而這個市場幾乎還沒有人在認真做。練健康花了七年建立這套體系，現在我們正在選擇合適的夥伴，一起把它帶出去。',
-};
-
 export default function FranchisePage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    organization: '',
+    email: '',
+    phone: '',
+    region: '',
+    cooperationType: '',
+    message: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/leads/franchise', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          sourcePage: '/franchise',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || '提交失敗，請稍後再試');
+      }
+
+      setSubmitStatus('success');
+      setFormData({
+        name: '',
+        organization: '',
+        email: '',
+        phone: '',
+        region: '',
+        cooperationType: '',
+        message: '',
+      });
+    } catch (error) {
+      setSubmitStatus('error');
+      setErrorMessage(error instanceof Error ? error.message : '系統錯誤，請稍後再試');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-cream-100">
       {/* Hero */}
@@ -364,64 +411,129 @@ export default function FranchisePage() {
                 我們會在 3 個工作天內以您偏好的方式聯繫，安排說明會時間
               </p>
 
-              <form className="space-y-5">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-medium text-ink/70 block mb-1.5">姓名 <span className="text-orange">*</span></label>
-                    <input type="text" className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm" placeholder="您的姓名" />
+              {submitStatus === 'success' ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
-                  <div>
-                    <label className="text-xs font-medium text-ink/70 block mb-1.5">公司／機構名稱</label>
-                    <input type="text" className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm" placeholder="如適用" />
-                  </div>
+                  <h3 className="font-serif text-xl font-bold text-navy-700 mb-2">感謝您的洽詢！</h3>
+                  <p className="text-ink/60 text-sm mb-4">我們將於 3 個工作天內與您聯繫，安排說明會時間。</p>
+                  <p className="text-ink/40 text-xs">確認信已寄送至您的信箱</p>
                 </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {submitStatus === 'error' && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+                      {errorMessage}
+                    </div>
+                  )}
 
-                <div>
-                  <label className="text-xs font-medium text-ink/70 block mb-1.5">電子郵件 <span className="text-orange">*</span></label>
-                  <input type="email" className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm" placeholder="主要聯繫信箱" />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-medium text-ink/70 block mb-1.5">聯繫電話</label>
-                    <input type="tel" className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm" placeholder="+886 或當地號碼" />
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-medium text-ink/70 block mb-1.5">姓名 <span className="text-orange">*</span></label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm"
+                        placeholder="您的姓名"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-ink/70 block mb-1.5">公司／機構名稱</label>
+                      <input
+                        type="text"
+                        value={formData.organization}
+                        onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm"
+                        placeholder="如適用"
+                      />
+                    </div>
                   </div>
+
                   <div>
-                    <label className="text-xs font-medium text-ink/70 block mb-1.5">所在地區 <span className="text-orange">*</span></label>
-                    <select className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm bg-white">
+                    <label className="text-xs font-medium text-ink/70 block mb-1.5">電子郵件 <span className="text-orange">*</span></label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm"
+                      placeholder="主要聯繫信箱"
+                    />
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-medium text-ink/70 block mb-1.5">聯繫電話</label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm"
+                        placeholder="+886 或當地號碼"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-ink/70 block mb-1.5">所在地區 <span className="text-orange">*</span></label>
+                      <select
+                        required
+                        value={formData.region}
+                        onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm bg-white"
+                      >
+                        <option value="">請選擇</option>
+                        <option value="台灣">台灣</option>
+                        <option value="新加坡">新加坡</option>
+                        <option value="馬來西亞">馬來西亞</option>
+                        <option value="香港">香港</option>
+                        <option value="中國大陸">中國大陸</option>
+                        <option value="其他">其他</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-medium text-ink/70 block mb-1.5">您對哪種合作方式最感興趣？ <span className="text-orange">*</span></label>
+                    <select
+                      required
+                      value={formData.cooperationType}
+                      onChange={(e) => setFormData({ ...formData, cooperationType: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm bg-white"
+                    >
                       <option value="">請選擇</option>
-                      <option>台灣</option>
-                      <option>新加坡</option>
-                      <option>馬來西亞</option>
-                      <option>香港</option>
-                      <option>中國大陸</option>
-                      <option>其他</option>
+                      <option value="實體加盟門店">實體加盟門店</option>
+                      <option value="區域代理">區域代理／主加盟</option>
+                      <option value="教練認證授權">教練認證授權</option>
+                      <option value="LKK4賽事授權">LKK4 賽事授權</option>
+                      <option value="尚在評估中">尚在評估中，想先了解</option>
                     </select>
                   </div>
-                </div>
 
-                <div>
-                  <label className="text-xs font-medium text-ink/70 block mb-1.5">您對哪種合作方式最感興趣？ <span className="text-orange">*</span></label>
-                  <select className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm bg-white">
-                    <option value="">請選擇</option>
-                    <option>實體加盟門店</option>
-                    <option>區域代理／主加盟</option>
-                    <option>教練認證授權</option>
-                    <option>LKK4 賽事授權</option>
-                    <option>尚在評估中，想先了解</option>
-                  </select>
-                </div>
+                  <div>
+                    <label className="text-xs font-medium text-ink/70 block mb-1.5">想讓我們事先了解的事（選填）</label>
+                    <textarea
+                      rows={3}
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm resize-none"
+                      placeholder="您的背景、目前的想法、或任何想提前說明的事項..."
+                    />
+                  </div>
 
-                <div>
-                  <label className="text-xs font-medium text-ink/70 block mb-1.5">想讓我們事先了解的事（選填）</label>
-                  <textarea rows={3} className="w-full px-4 py-2.5 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm resize-none" placeholder="您的背景、目前的想法、或任何想提前說明的事項..." />
-                </div>
-
-                <button type="submit" className="w-full bg-orange text-white font-medium py-3.5 rounded shadow-lg shadow-orange/35 hover:bg-orange-600 transition-all">
-                  送出預約申請 →
-                </button>
-                <p className="text-center text-xs text-ink/40">您的資料保密處理，僅用於說明會安排，不作其他用途</p>
-              </form>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-orange text-white font-medium py-3.5 rounded shadow-lg shadow-orange/35 hover:bg-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? '送出中...' : '送出預約申請 →'}
+                  </button>
+                  <p className="text-center text-xs text-ink/40">您的資料保密處理，僅用於說明會安排，不作其他用途</p>
+                </form>
+              )}
             </div>
           </div>
         </div>

@@ -188,6 +188,177 @@ export async function sendLeadNotification(data: LeadNotificationData) {
   }
 }
 
+// ==========================================
+// 模組化表單確認信系統
+// ==========================================
+
+// 表單類型設定
+const formConfirmationConfig: Record<string, {
+  subject: string;
+  title: string;
+  greeting: string;
+  message: string;
+  closing: string;
+}> = {
+  booking: {
+    subject: '【練健康】感謝您的預約',
+    title: '預約確認',
+    greeting: '感謝您預約練健康的體驗課程！',
+    message: '我們已收到您的預約申請，將盡快與您聯繫確認時間。',
+    closing: '如有任何問題，歡迎直接回覆此信或致電門店。<br>我們期待與您見面！',
+  },
+  cooperation: {
+    subject: '【練健康】感謝您的合作洽詢',
+    title: '洽詢確認',
+    greeting: '感謝您對練健康的關注與洽詢！',
+    message: '我們已收到您的合作洽詢，專人將於 2 個工作天內與您聯繫。',
+    closing: '如有緊急需求，歡迎直接來電洽詢。<br>期待與您的合作！',
+  },
+  franchise: {
+    subject: '【練健康】感謝您的加盟洽詢',
+    title: '加盟洽詢確認',
+    greeting: '感謝您對練健康加盟的興趣！',
+    message: '我們已收到您的加盟洽詢，加盟專員將於 3 個工作天內與您聯繫，提供詳細的加盟說明。',
+    closing: '如有任何問題，歡迎直接回覆此信。<br>期待與您攜手共創健康事業！',
+  },
+};
+
+// 通用表單確認信介面
+interface FormConfirmationData {
+  type: 'booking' | 'cooperation' | 'franchise';
+  name: string;
+  email: string;
+  details?: Array<{ label: string; value: string }>;
+}
+
+// 發送表單確認信給填單人（通用模組）
+export async function sendFormConfirmation(data: FormConfirmationData) {
+  const transporter = createTransporter();
+  if (!transporter) {
+    console.log('Email transporter not configured, skipping confirmation');
+    return false;
+  }
+
+  const config = formConfirmationConfig[data.type];
+  if (!config) {
+    console.error(`Unknown form type: ${data.type}`);
+    return false;
+  }
+
+  // 建立詳細資訊區塊
+  let detailsHtml = '';
+  if (data.details && data.details.length > 0) {
+    detailsHtml = `
+    <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border: 1px solid #ddd;">
+      ${data.details.map(d => `<p style="margin: 0 0 10px 0; color: #666;"><strong>${d.label}：</strong>${d.value}</p>`).join('')}
+    </div>`;
+  }
+
+  const content = `
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+  <div style="background: #2A5269; color: white; padding: 20px; text-align: center;">
+    <h1 style="margin: 0; font-size: 24px;">${config.title}</h1>
+  </div>
+
+  <div style="padding: 30px; background: #f9f9f9;">
+    <p style="color: #333; font-size: 16px; margin-bottom: 20px;">
+      ${data.name} 您好，
+    </p>
+    <p style="color: #333; font-size: 16px; line-height: 1.8;">
+      ${config.greeting}<br>
+      ${config.message}
+    </p>
+    ${detailsHtml}
+    <p style="color: #666; font-size: 14px; line-height: 1.6;">
+      ${config.closing}
+    </p>
+  </div>
+
+  <div style="padding: 20px; background: #2A5269; color: white; text-align: center;">
+    <p style="margin: 0; font-size: 14px;">
+      練健康｜中高齡肌力訓練專家
+    </p>
+    <p style="margin: 10px 0 0 0;">
+      <a href="https://l-kk.tw" style="color: #FB720A; text-decoration: none;">
+        l-kk.tw
+      </a>
+    </p>
+  </div>
+</div>
+`;
+
+  try {
+    await transporter.sendMail({
+      from: `"練健康" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      to: data.email,
+      subject: config.subject,
+      html: content,
+    });
+    console.log(`[${data.type}] Confirmation sent to: ${data.email}`);
+    return true;
+  } catch (error) {
+    console.error(`Failed to send ${data.type} confirmation:`, error);
+    return false;
+  }
+}
+
+// ==========================================
+// 舊版相容：預約確認信（呼叫通用模組）
+// ==========================================
+export async function sendBookingConfirmation(data: {
+  name: string;
+  email: string;
+  storeName: string;
+  preferredTime: string[];
+}) {
+  return sendFormConfirmation({
+    type: 'booking',
+    name: data.name,
+    email: data.email,
+    details: [
+      { label: '預約門店', value: data.storeName },
+      { label: '偏好時段', value: data.preferredTime.join('、') },
+    ],
+  });
+}
+
+// 合作洽詢確認信
+export async function sendCooperationConfirmation(data: {
+  name: string;
+  email: string;
+  organization: string;
+  cooperationType: string;
+}) {
+  return sendFormConfirmation({
+    type: 'cooperation',
+    name: data.name,
+    email: data.email,
+    details: [
+      { label: '公司/單位', value: data.organization },
+      { label: '洽詢類型', value: data.cooperationType },
+    ],
+  });
+}
+
+// 加盟洽詢確認信
+export async function sendFranchiseConfirmation(data: {
+  name: string;
+  email: string;
+  region?: string;
+  investmentBudget?: string;
+}) {
+  const details: Array<{ label: string; value: string }> = [];
+  if (data.region) details.push({ label: '有興趣地區', value: data.region });
+  if (data.investmentBudget) details.push({ label: '投資預算', value: data.investmentBudget });
+
+  return sendFormConfirmation({
+    type: 'franchise',
+    name: data.name,
+    email: data.email,
+    details: details.length > 0 ? details : undefined,
+  });
+}
+
 // Send test notification email
 export async function sendTestNotification(recipients: string[]) {
   const transporter = createTransporter();

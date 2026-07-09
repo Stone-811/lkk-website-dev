@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db, Timestamp } from '@/lib/firebase';
-import { sendLeadNotification } from '@/lib/email';
+import { sendLeadNotification, sendCooperationConfirmation } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       cooperationType,
     });
 
-    // Send email notification (non-blocking)
+    // Send email notification to admin (non-blocking)
     sendLeadNotification({
       type: 'cooperation',
       name,
@@ -88,6 +88,14 @@ export async function POST(request: NextRequest) {
       message,
       createdAt: now.toDate(),
     }).catch((err) => console.error('Failed to send notification:', err));
+
+    // Send confirmation email to customer (non-blocking)
+    sendCooperationConfirmation({
+      name,
+      email,
+      organization,
+      cooperationType,
+    }).catch((err) => console.error('Failed to send confirmation:', err));
 
     return NextResponse.json({
       success: true,

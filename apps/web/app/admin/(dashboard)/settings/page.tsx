@@ -11,7 +11,9 @@ interface Settings {
     facebook: string;
     instagram: string;
     youtube: string;
+    podcast: string;
     line: string;
+    email: string;
   };
   notifications: {
     emailOnNewLead: boolean;
@@ -22,13 +24,15 @@ interface Settings {
 const defaultSettings: Settings = {
   siteName: '練健康',
   siteDescription: '專業一對一私人教練，科學化訓練，找回你的健康生活。',
-  contactEmail: 'service@l-kk.tw',
+  contactEmail: 'lkk@l-kk.tw',
   contactPhone: '02-2712-3456',
   socialLinks: {
-    facebook: '',
-    instagram: '',
-    youtube: '',
-    line: '',
+    facebook: 'https://www.facebook.com/LKKWellnessCenter/',
+    instagram: 'https://www.instagram.com/lkk_wellness/',
+    youtube: 'https://www.youtube.com/c/LKKWellness',
+    podcast: 'https://podcasts.apple.com/tw/podcast/%E5%88%9D%E4%B8%80%E5%8D%81%E4%BA%94%E7%B7%B4%E5%81%A5%E5%BA%B7/id1779024584',
+    line: 'https://line.me/R/ti/p/%40201fzruh',
+    email: 'lkk@l-kk.tw',
   },
   notifications: {
     emailOnNewLead: true,
@@ -55,7 +59,14 @@ export default function SettingsPage() {
             siteDescription: data.data.siteDescription || defaultSettings.siteDescription,
             contactEmail: data.data.contactEmail || defaultSettings.contactEmail,
             contactPhone: data.data.contactPhone || defaultSettings.contactPhone,
-            socialLinks: data.data.socialLinks || defaultSettings.socialLinks,
+            socialLinks: {
+              facebook: data.data.socialLinks?.facebook || defaultSettings.socialLinks.facebook,
+              instagram: data.data.socialLinks?.instagram || defaultSettings.socialLinks.instagram,
+              youtube: data.data.socialLinks?.youtube || defaultSettings.socialLinks.youtube,
+              podcast: data.data.socialLinks?.podcast || defaultSettings.socialLinks.podcast,
+              line: data.data.socialLinks?.line || defaultSettings.socialLinks.line,
+              email: data.data.socialLinks?.email || defaultSettings.socialLinks.email,
+            },
             notifications: data.data.notifications || defaultSettings.notifications,
           });
         }
@@ -310,6 +321,29 @@ export default function SettingsPage() {
           <div>
             <label className="block text-sm font-medium mb-1">
               <span className="inline-flex items-center gap-2">
+                <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 3.6c4.636 0 8.4 3.764 8.4 8.4 0 2.807-1.38 5.29-3.498 6.81-.174-.584-.416-1.162-.732-1.716a6.799 6.799 0 002.63-5.094c0-3.754-3.046-6.8-6.8-6.8S5.2 8.246 5.2 12c0 2.027.892 3.848 2.302 5.094-.316.554-.558 1.132-.732 1.716A8.376 8.376 0 013.6 12c0-4.636 3.764-8.4 8.4-8.4zm0 3.6a4.8 4.8 0 00-4.8 4.8c0 1.564.75 2.952 1.91 3.826.17-.486.39-.956.66-1.396A3.195 3.195 0 018.8 12c0-1.767 1.433-3.2 3.2-3.2s3.2 1.433 3.2 3.2c0 .964-.428 1.828-1.104 2.416.27.44.49.91.66 1.396A4.785 4.785 0 0016.8 12a4.8 4.8 0 00-4.8-4.8zm0 6c-.884 0-1.6.716-1.6 1.6 0 .273.07.53.192.754l-.992 4.77c-.09.434.255.876.7.876h3.4c.445 0 .79-.442.7-.876l-.992-4.77c.122-.224.192-.481.192-.754 0-.884-.716-1.6-1.6-1.6z" />
+                </svg>
+                Podcast
+              </span>
+            </label>
+            <input
+              type="url"
+              value={settings.socialLinks.podcast}
+              onChange={(e) =>
+                setSettings({
+                  ...settings,
+                  socialLinks: { ...settings.socialLinks, podcast: e.target.value },
+                })
+              }
+              className="input max-w-xl"
+              placeholder="https://podcasts.apple.com/..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              <span className="inline-flex items-center gap-2">
                 <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.193 0-.378-.09-.503-.234l-1.749-2.028v1.635c0 .349-.282.63-.63.63-.345 0-.627-.281-.627-.63V8.108c0-.27.174-.51.432-.596.064-.021.133-.031.199-.031.193 0 .378.09.503.234l1.749 2.028V8.108c0-.349.282-.63.63-.63.345 0 .627.281.627.63v4.771zm-5.741 0c0 .349-.282.63-.631.63-.345 0-.627-.281-.627-.63V8.108c0-.349.282-.63.63-.63.346 0 .628.281.628.63v4.771zm-2.466.63H4.917c-.345 0-.63-.281-.63-.63V8.108c0-.349.285-.63.63-.63.348 0 .63.281.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
                 </svg>
@@ -317,7 +351,7 @@ export default function SettingsPage() {
               </span>
             </label>
             <input
-              type="text"
+              type="url"
               value={settings.socialLinks.line}
               onChange={(e) =>
                 setSettings({
@@ -326,7 +360,30 @@ export default function SettingsPage() {
                 })
               }
               className="input max-w-xl"
-              placeholder="@your-line-id"
+              placeholder="https://line.me/R/ti/p/..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              <span className="inline-flex items-center gap-2">
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Email
+              </span>
+            </label>
+            <input
+              type="email"
+              value={settings.socialLinks.email}
+              onChange={(e) =>
+                setSettings({
+                  ...settings,
+                  socialLinks: { ...settings.socialLinks, email: e.target.value },
+                })
+              }
+              className="input max-w-xl"
+              placeholder="lkk@l-kk.tw"
             />
           </div>
         </div>
@@ -335,6 +392,17 @@ export default function SettingsPage() {
       {/* Notifications Tab */}
       {activeTab === 'notifications' && (
         <div className="card border border-gray-200 p-6 space-y-6">
+          {/* 功能說明 */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="font-medium text-blue-800 mb-2">通知功能說明</h3>
+            <p className="text-sm text-blue-700">
+              當網站有新的表單提交（預約體驗、加盟洽詢、合作洽詢）時，系統會自動發送郵件通知。
+            </p>
+            <p className="text-sm text-blue-700 mt-2">
+              您可以在下方設定需要收到通知的管理者信箱（如業務、客服等），讓相關同仁即時收到新名單通知。
+            </p>
+          </div>
+
           <div className="flex items-start gap-3">
             <input
               type="checkbox"
@@ -350,15 +418,15 @@ export default function SettingsPage() {
             />
             <div>
               <label htmlFor="emailOnNewLead" className="font-medium">
-                新名單 Email 通知
+                啟用新名單 Email 通知
               </label>
-              <p className="text-sm text-gray-500">當有新的預約、加盟或合作洽詢時，發送 Email 通知</p>
+              <p className="text-sm text-gray-500">開啟後，新表單提交時會發送通知信</p>
             </div>
           </div>
 
           {settings.notifications.emailOnNewLead && (
             <div className="ml-7">
-              <label className="block text-sm font-medium mb-1">通知收件人</label>
+              <label className="block text-sm font-medium mb-1">管理者信箱</label>
               <input
                 type="text"
                 value={settings.notifications.emailRecipients}
@@ -369,16 +437,16 @@ export default function SettingsPage() {
                   })
                 }
                 className="input max-w-xl"
-                placeholder="email1@example.com, email2@example.com"
+                placeholder="service@l-kk.tw, manager@l-kk.tw"
               />
-              <p className="text-xs text-gray-500 mt-1">多個收件人請用逗號分隔</p>
+              <p className="text-xs text-gray-500 mt-1">多個收件人請用逗號分隔。新表單通知會寄送到這些信箱。</p>
             </div>
           )}
 
           <div className="border-t pt-6">
             <h3 className="font-medium mb-3">通知測試</h3>
             <p className="text-sm text-gray-500 mb-3">
-              發送測試郵件以確認 SMTP 設定是否正確。請先儲存設定再測試。
+              發送測試郵件到上方設定的管理者信箱，確認通知功能正常。請先儲存設定後再測試。
             </p>
             <button
               type="button"
@@ -388,20 +456,6 @@ export default function SettingsPage() {
             >
               {testingSend ? '發送中...' : '發送測試通知'}
             </button>
-          </div>
-
-          <div className="border-t pt-6">
-            <h3 className="font-medium mb-3 text-gray-500">SMTP 設定說明</h3>
-            <p className="text-sm text-gray-500">
-              郵件通知需要在環境變數中設定 SMTP 伺服器資訊：
-            </p>
-            <ul className="text-sm text-gray-500 mt-2 space-y-1 list-disc list-inside">
-              <li>SMTP_HOST - SMTP 伺服器位址</li>
-              <li>SMTP_PORT - SMTP 埠號（預設 587）</li>
-              <li>SMTP_USER - SMTP 帳號</li>
-              <li>SMTP_PASS - SMTP 密碼</li>
-              <li>SMTP_FROM - 寄件人地址（選填）</li>
-            </ul>
           </div>
         </div>
       )}
