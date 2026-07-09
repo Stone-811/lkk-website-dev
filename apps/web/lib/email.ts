@@ -303,22 +303,32 @@ export async function sendFormConfirmation(data: FormConfirmationData) {
 }
 
 // ==========================================
-// 舊版相容：預約確認信（呼叫通用模組）
+// 預約確認信
 // ==========================================
 export async function sendBookingConfirmation(data: {
   name: string;
   email: string;
   storeName: string;
   preferredTime: string[];
+  paymentMethod?: string;
 }) {
+  const details = [
+    { label: '預約門店', value: data.storeName },
+    { label: '方便聯繫時段', value: data.preferredTime.join('、') },
+  ];
+
+  if (data.paymentMethod) {
+    details.push({
+      label: '付款方式',
+      value: data.paymentMethod === '50歲以上免費' ? '50 歲以上免費體驗' : '臨櫃付款 $500',
+    });
+  }
+
   return sendFormConfirmation({
     type: 'booking',
     name: data.name,
     email: data.email,
-    details: [
-      { label: '預約門店', value: data.storeName },
-      { label: '偏好時段', value: data.preferredTime.join('、') },
-    ],
+    details,
   });
 }
 

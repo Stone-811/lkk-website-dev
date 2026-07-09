@@ -7,21 +7,31 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     const {
+      // 學員資料
       name,
       phone,
       email,
       gender,
-      age,
-      goal,
+      birthDate,
+      // 填寫者資料
+      filledBySelf,
+      relationship,
+      bookerName,
+      contactPhone,
+      // 健康狀況
+      hasMedicalCondition,
+      medicalConditionNote,
+      // 預約資訊
       storeId,
       preferredTime,
-      source,
+      sources,
+      paymentMethod,
       message,
       sourcePage,
     } = body;
 
     // Validate required fields
-    if (!name || !phone || !storeId || !preferredTime?.length) {
+    if (!name || !phone || !storeId || !preferredTime) {
       return NextResponse.json(
         { error: '請填寫必要欄位' },
         { status: 400 }
@@ -32,6 +42,14 @@ export async function POST(request: NextRequest) {
     if (!/^09\d{8}$/.test(phone)) {
       return NextResponse.json(
         { error: '手機號碼格式不正確' },
+        { status: 400 }
+      );
+    }
+
+    // Validate email if provided
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json(
+        { error: 'Email 格式不正確' },
         { status: 400 }
       );
     }
@@ -48,13 +66,24 @@ export async function POST(request: NextRequest) {
       email: email || null,
       storeId,
       sourcePage: sourcePage || '/booking',
-      sourceChannel: source || null,
+      sourceChannel: Array.isArray(sources) ? sources.join(', ') : sources || null,
       message: message || null,
       payload: {
+        // 學員資料
         gender,
-        age,
-        goal,
+        birthDate,
+        // 填寫者資料
+        filledBySelf,
+        relationship: relationship || null,
+        bookerName: bookerName || null,
+        contactPhone: contactPhone || phone,
+        // 健康狀況
+        hasMedicalCondition,
+        medicalConditionNote: medicalConditionNote || null,
+        // 預約資訊
         preferredTime,
+        paymentMethod,
+        sources: sources || [],
       },
       status: 'new',
       internalNote: null,
@@ -74,6 +103,24 @@ export async function POST(request: NextRequest) {
       console.warn('Could not fetch store name:', e);
     }
 
+    // Build additional info for email notification
+    const additionalInfo: string[] = [];
+    if (gender) additionalInfo.push(`性別: ${gender}`);
+    if (birthDate) additionalInfo.push(`出生日期: ${birthDate}`);
+    if (!filledBySelf && bookerName) {
+      additionalInfo.push(`預約者: ${bookerName} (${relationship})`);
+      additionalInfo.push(`聯繫電話: ${contactPhone}`);
+    }
+    if (hasMedicalCondition) {
+      additionalInfo.push(`健康狀況: 有疾病或近期手術/住院史`);
+      if (medicalConditionNote) additionalInfo.push(`  → ${medicalConditionNote}`);
+    }
+    additionalInfo.push(`方便時段: ${preferredTime}`);
+    additionalInfo.push(`付款方式: ${paymentMethod}`);
+    if (sources && sources.length > 0) {
+      additionalInfo.push(`得知管道: ${sources.join(', ')}`);
+    }
+
     // Send email notification to admin (non-blocking)
     sendLeadNotification({
       type: 'booking',
@@ -81,7 +128,7 @@ export async function POST(request: NextRequest) {
       phone,
       email,
       storeName,
-      message,
+      message: additionalInfo.join('\n') + (message ? `\n\n留言: ${message}` : ''),
       createdAt: now.toDate(),
     }).catch((err) => console.error('Failed to send notification:', err));
 
@@ -91,7 +138,8 @@ export async function POST(request: NextRequest) {
         name,
         email,
         storeName,
-        preferredTime,
+        preferredTime: [preferredTime],
+        paymentMethod,
       }).catch((err) => console.error('Failed to send confirmation:', err));
     }
 
@@ -101,6 +149,7 @@ export async function POST(request: NextRequest) {
       phone,
       email,
       storeId,
+      paymentMethod,
     });
 
     return NextResponse.json({
