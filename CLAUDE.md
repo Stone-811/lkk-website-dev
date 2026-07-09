@@ -588,7 +588,7 @@ GET    /api/admin/leads/export
 | 類型 | 名稱 | 目標受眾 | 前端頁面 | API 路徑 |
 |------|------|----------|----------|----------|
 | `booking` | 預約體驗 | B2C（一般民眾） | `/booking` | `/api/leads/booking` |
-| `franchise` | 加盟洽詢 | B2B（潛在加盟主） | `/franchise` | `/api/leads/franchise`（待建立） |
+| `franchise` | 加盟洽詢 | B2B（潛在加盟主） | `/franchise` | `/api/leads/franchise` |
 | `cooperation` | 合作洽詢 | B2B（企業/機構） | `/cooperation` | `/api/leads/cooperation` |
 | `recruitment` | 教練徵才 | B2C（求職者） | 待建立 | 待建立 |
 
@@ -605,7 +605,9 @@ GET    /api/admin/leads/export
 - name, phone, lineId, email, message
 
 **franchise（加盟洽詢）**
-- 待定義
+- name, organization, email, phone
+- region（目標區域）, cooperationType（合作類型）
+- message
 
 **recruitment（教練徵才）**
 - 待定義
@@ -637,6 +639,99 @@ CMS 後台查詢與處理名單
 | scheduled | 已預約 |
 | completed | 已完成 |
 | cancelled | 已取消 |
+
+---
+
+## 郵件通知系統
+
+### 架構概述
+
+表單提交後會觸發兩種郵件通知：
+
+1. **管理者通知信** - 通知相關管理者有新的表單提交
+2. **客戶確認信** - 向填表者發送收到確認信
+
+### 設定分離原則
+
+| 設定層面 | 設定位置 | 說明 |
+|---------|---------|------|
+| **SMTP 設定**（如何寄信） | `.env.local` | 寄件帳號、密碼、SMTP 伺服器 |
+| **收件人設定**（誰收到通知） | 後台系統設定 | 管理者信箱列表 |
+
+**SMTP 環境變數（.env.local）**
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_USER=tingo8320@gmail.com    # 寄件人信箱
+SMTP_PASS=your-app-password      # Gmail App Password
+```
+
+**後台管理者信箱設定**
+- 位置：`/admin/settings`（系統設定 → 通知設定）
+- 用途：設定需要收到表單通知的管理者信箱
+- 可設定多個信箱（逗號分隔）
+
+### 支援的表單類型
+
+| 表單類型 | API 路徑 | 管理者通知 | 客戶確認 |
+|---------|---------|-----------|---------|
+| `booking` | `/api/leads/booking` | ✅ | ✅ |
+| `cooperation` | `/api/leads/cooperation` | ✅ | ✅ |
+| `franchise` | `/api/leads/franchise` | ✅ | ✅ |
+
+### 郵件模組架構
+
+郵件功能集中於 `apps/web/lib/email.ts`：
+
+```typescript
+// 核心函式
+sendLeadNotification(lead)           // 管理者通知信
+sendFormConfirmation(type, data)     // 客戶確認信（模組化）
+
+// 便利包裝函式
+sendBookingConfirmation(data)        // 預約體驗確認信
+sendCooperationConfirmation(data)    // 合作洽詢確認信
+sendFranchiseConfirmation(data)      // 加盟洽詢確認信
+```
+
+### 郵件流程
+
+```
+使用者提交表單
+    ↓
+API Route 驗證資料
+    ↓
+寫入 Firestore leads collection
+    ↓
+sendLeadNotification() → 寄給後台設定的管理者信箱
+    ↓
+sendXxxConfirmation() → 寄給填表者信箱
+    ↓
+回傳成功回應
+```
+
+### 新增表單類型
+
+若需新增表單類型，需：
+
+1. 在 `email.ts` 的 `formTypeConfigs` 新增設定：
+```typescript
+formTypeConfigs['new_type'] = {
+  subject: '主旨',
+  title: '標題',
+  description: '描述',
+  ctaText: 'CTA 文字',
+  ctaUrl: '連結',
+};
+```
+
+2. 新增便利包裝函式：
+```typescript
+export async function sendNewTypeConfirmation(data: { name: string; email: string }) {
+  return sendFormConfirmation('new_type', data);
+}
+```
+
+3. 在對應的 API Route 呼叫通知函式
 
 ---
 
