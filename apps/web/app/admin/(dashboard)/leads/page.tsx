@@ -2,6 +2,23 @@
 
 import { useState, useEffect } from 'react';
 
+interface LeadPayload {
+  gender?: string;
+  birthDate?: string;
+  line?: string;
+  filledBySelf?: boolean;
+  relationship?: string;
+  bookerName?: string;
+  contactPhone?: string;
+  hasMedicalCondition?: boolean;
+  medicalConditionNote?: string;
+  preferredTime?: string | string[];
+  paymentMethod?: string;
+  sources?: string[];
+  goal?: string;
+  age?: string;
+}
+
 interface Lead {
   id: string;
   name: string;
@@ -15,6 +32,7 @@ interface Lead {
   message: string;
   internalNote: string;
   createdAt: string;
+  payload?: LeadPayload;
 }
 
 // 此頁面只顯示預約體驗 (booking) 類型的名單
@@ -67,6 +85,7 @@ export default function LeadsPage() {
               message: lead.message || '',
               internalNote: lead.internalNote || '',
               createdAt: new Date(lead.createdAt).toLocaleString('zh-TW'),
+              payload: lead.payload || {},
             }))
           );
         }
@@ -157,6 +176,15 @@ export default function LeadsPage() {
     link.href = URL.createObjectURL(blob);
     link.download = `leads_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
+  };
+
+  // 格式化 preferredTime 顯示
+  const formatPreferredTime = (preferredTime: string | string[] | undefined) => {
+    if (!preferredTime) return '-';
+    if (Array.isArray(preferredTime)) {
+      return preferredTime.join('、');
+    }
+    return preferredTime;
   };
 
   if (loading) {
@@ -284,8 +312,8 @@ export default function LeadsPage() {
       {/* Detail Modal */}
       {selectedLead && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
               <h2 className="text-lg font-bold font-sans">名單詳情</h2>
               <button
                 onClick={() => setSelectedLead(null)}
@@ -296,41 +324,130 @@ export default function LeadsPage() {
                 </svg>
               </button>
             </div>
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">姓名</p>
-                  <p className="font-medium">{selectedLead.name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">電話</p>
-                  <p className="font-medium">{selectedLead.phone}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="font-medium">{selectedLead.email || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">門店</p>
-                  <p className="font-medium">{selectedLead.store}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">來源</p>
-                  <p className="font-medium">{selectedLead.source}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">建立時間</p>
-                  <p className="font-medium">{selectedLead.createdAt}</p>
+            <div className="p-6 space-y-6">
+              {/* 學員基本資料 */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">學員基本資料</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-500">姓名</p>
+                    <p className="font-medium">{selectedLead.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">電話</p>
+                    <p className="font-medium">{selectedLead.phone}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Email</p>
+                    <p className="font-medium">{selectedLead.email || '-'}</p>
+                  </div>
+                  {selectedLead.payload?.line && (
+                    <div>
+                      <p className="text-xs text-gray-500">Line ID</p>
+                      <p className="font-medium">{selectedLead.payload.line}</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-xs text-gray-500">性別</p>
+                    <p className="font-medium">{selectedLead.payload?.gender || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">出生日期</p>
+                    <p className="font-medium">{selectedLead.payload?.birthDate || '-'}</p>
+                  </div>
                 </div>
               </div>
-              {selectedLead.message && (
+
+              {/* 填寫者資料（如果是親友代填） */}
+              {selectedLead.payload?.filledBySelf === false && (
                 <div>
-                  <p className="text-sm text-gray-500">客戶備註</p>
-                  <p className="mt-1 p-3 bg-gray-50 rounded-lg">{selectedLead.message}</p>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">預約者資料（親友代填）</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-gray-500">預約者姓名</p>
+                      <p className="font-medium">{selectedLead.payload?.bookerName || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">與學員關係</p>
+                      <p className="font-medium">{selectedLead.payload?.relationship || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">聯繫電話</p>
+                      <p className="font-medium">{selectedLead.payload?.contactPhone || '-'}</p>
+                    </div>
+                  </div>
                 </div>
               )}
+
+              {/* 健康狀況 */}
+              {selectedLead.payload?.hasMedicalCondition !== undefined && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">健康狀況</h3>
+                  <div>
+                    <p className="text-xs text-gray-500">是否有疾病或近期手術/住院</p>
+                    <p className={`font-medium ${selectedLead.payload.hasMedicalCondition ? 'text-orange-600' : ''}`}>
+                      {selectedLead.payload.hasMedicalCondition ? '是' : '否'}
+                    </p>
+                    {selectedLead.payload.hasMedicalCondition && selectedLead.payload.medicalConditionNote && (
+                      <p className="mt-1 text-sm text-gray-600 bg-orange-50 p-2 rounded">
+                        {selectedLead.payload.medicalConditionNote}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 預約資訊 */}
               <div>
-                <p className="text-sm text-gray-500 mb-2">內部備註</p>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">預約資訊</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-500">門店</p>
+                    <p className="font-medium">{selectedLead.store}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">方便聯繫時段</p>
+                    <p className="font-medium">{formatPreferredTime(selectedLead.payload?.preferredTime)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">付款方式</p>
+                    <p className={`font-medium ${selectedLead.payload?.paymentMethod === '50歲以上免費' ? 'text-green-600' : ''}`}>
+                      {selectedLead.payload?.paymentMethod || '-'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">建立時間</p>
+                    <p className="font-medium">{selectedLead.createdAt}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 來源 */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">來源資訊</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-500">從哪裡得知</p>
+                    <p className="font-medium">
+                      {selectedLead.payload?.sources?.length
+                        ? selectedLead.payload.sources.join('、')
+                        : selectedLead.source || '-'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 客戶留言 */}
+              {selectedLead.message && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">客戶留言</h3>
+                  <p className="p-3 bg-gray-50 rounded-lg text-sm">{selectedLead.message}</p>
+                </div>
+              )}
+
+              {/* 內部備註 */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 pb-2 border-b">內部備註</h3>
                 <textarea
                   rows={3}
                   placeholder="新增內部備註..."
@@ -340,7 +457,7 @@ export default function LeadsPage() {
                 />
               </div>
             </div>
-            <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+            <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white">
               <button onClick={() => setSelectedLead(null)} className="btn btn-secondary">
                 關閉
               </button>
