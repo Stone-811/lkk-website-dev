@@ -105,7 +105,6 @@ const initialFormData: FormData = {
 
 export default function BookingForm() {
   const t = useTranslations('booking');
-  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -137,8 +136,6 @@ export default function BookingForm() {
     fetchStores();
   }, []);
 
-  const totalSteps = 4;
-
   const updateFormData = (field: keyof FormData, value: string | string[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
@@ -160,58 +157,56 @@ export default function BookingForm() {
     updateFormData('preferredTimes', updated);
   };
 
-  const validateStep = (currentStep: number): boolean => {
+  const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof FormData, string>> = {};
 
-    if (currentStep === 1) {
-      if (!formData.name.trim()) newErrors.name = '請輸入學員姓名';
-      if (!formData.phone.trim()) newErrors.phone = '請輸入手機號碼';
-      if (formData.phone && !/^09\d{8}$/.test(formData.phone)) {
-        newErrors.phone = '請輸入有效的手機號碼';
-      }
-      if (!formData.gender) newErrors.gender = '請選擇性別';
-      if (!formData.birthDate) newErrors.birthDate = '請選擇出生年月日';
-      if (!formData.email.trim()) {
-        newErrors.email = '請輸入 Email';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = '請輸入有效的 Email';
+    // 學員基本資料驗證
+    if (!formData.name.trim()) newErrors.name = '請輸入學員姓名';
+    if (!formData.phone.trim()) newErrors.phone = '請輸入手機號碼';
+    if (formData.phone && !/^09\d{8}$/.test(formData.phone)) {
+      newErrors.phone = '請輸入有效的手機號碼';
+    }
+    if (!formData.gender) newErrors.gender = '請選擇性別';
+    if (!formData.birthDate) newErrors.birthDate = '請選擇出生年月日';
+    if (!formData.email.trim()) {
+      newErrors.email = '請輸入 Email';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = '請輸入有效的 Email';
+    }
+
+    // 填寫者資料驗證
+    if (formData.filledBySelf === '親友代填') {
+      if (!formData.relationship) newErrors.relationship = '請選擇與學員的關係';
+      if (!formData.bookerName.trim()) newErrors.bookerName = '請輸入預約者姓名';
+      if (!formData.contactPhone.trim()) newErrors.contactPhone = '請輸入方便聯繫的電話';
+      if (formData.contactPhone && !/^09\d{8}$/.test(formData.contactPhone)) {
+        newErrors.contactPhone = '請輸入有效的手機號碼';
       }
     }
 
-    if (currentStep === 2) {
-      if (formData.filledBySelf === '親友代填') {
-        if (!formData.relationship) newErrors.relationship = '請選擇與學員的關係';
-        if (!formData.bookerName.trim()) newErrors.bookerName = '請輸入預約者姓名';
-        if (!formData.contactPhone.trim()) newErrors.contactPhone = '請輸入方便聯繫的電話';
-        if (formData.contactPhone && !/^09\d{8}$/.test(formData.contactPhone)) {
-          newErrors.contactPhone = '請輸入有效的手機號碼';
-        }
-      }
-      if (!formData.hasMedicalCondition) newErrors.hasMedicalCondition = '請選擇健康狀況';
-    }
+    // 健康狀況驗證
+    if (!formData.hasMedicalCondition) newErrors.hasMedicalCondition = '請選擇健康狀況';
 
-    if (currentStep === 3) {
-      if (!formData.storeId) newErrors.storeId = '請選擇門店';
-      if (formData.preferredTimes.length === 0) newErrors.preferredTimes = '請至少選擇一個時段';
-      if (!formData.paymentMethod) newErrors.paymentMethod = '請選擇付款方式';
-    }
+    // 預約資訊驗證
+    if (!formData.storeId) newErrors.storeId = '請選擇門店';
+    if (formData.preferredTimes.length === 0) newErrors.preferredTimes = '請至少選擇一個時段';
+    if (!formData.paymentMethod) newErrors.paymentMethod = '請選擇付款方式';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => {
-    if (validateStep(step)) {
-      setStep((prev) => Math.min(prev + 1, totalSteps));
-    }
-  };
-
-  const handlePrev = () => {
-    setStep((prev) => Math.max(prev - 1, 1));
-  };
-
   const handleSubmit = async () => {
-    if (!validateStep(step)) return;
+    if (!validateForm()) {
+      // 滾動到第一個錯誤欄位
+      const firstErrorKey = Object.keys(errors)[0];
+      if (firstErrorKey) {
+        const element = document.querySelector(`[name="${firstErrorKey}"]`) ||
+                       document.getElementById(firstErrorKey);
+        element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -296,197 +291,186 @@ export default function BookingForm() {
         <p className="text-ink-600 text-sm sm:text-base">{t('subtitle')}</p>
       </div>
 
-      {/* Progress Steps */}
-      <div className="flex items-center justify-center mb-6 sm:mb-8">
-        {[1, 2, 3, 4].map((s) => (
-          <div key={s} className="flex items-center">
-            <div
-              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-medium text-sm sm:text-base transition-colors ${
-                s === step
-                  ? 'bg-orange text-white'
-                  : s < step
-                  ? 'bg-orange/20 text-orange'
-                  : 'bg-cream-200 text-ink-400'
-              }`}
-            >
-              {s < step ? (
-                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              ) : (
-                s
-              )}
-            </div>
-            {s < 4 && <div className={`w-6 sm:w-12 h-1 mx-1 sm:mx-2 ${s < step ? 'bg-orange/30' : 'bg-cream-200'}`} />}
-          </div>
-        ))}
-      </div>
-
       {/* Form Card */}
       <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
-        {/* Step 1: 學員基本資料 */}
-        {step === 1 && (
-          <div className="space-y-5">
-            <h2 className="text-xl font-bold mb-4 text-navy-700">學員基本資料</h2>
+        {/* Section 1: 學員基本資料 */}
+        <div className="space-y-5">
+          <h2 className="text-xl font-bold text-navy-700 flex items-center gap-2">
+            <span className="w-7 h-7 rounded-full bg-orange text-white text-sm flex items-center justify-center">1</span>
+            學員基本資料
+          </h2>
 
-            {/* Row 1: 學員姓名 | 學員手機 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2 text-navy-700">
-                  學員姓名 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => updateFormData('name', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
-                    errors.name ? 'border-red-500' : 'border-cream-200'
-                  }`}
-                  placeholder="要來上課的人"
-                />
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2 text-navy-700">
-                  學員手機 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => updateFormData('phone', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
-                    errors.phone ? 'border-red-500' : 'border-cream-200'
-                  }`}
-                  placeholder="0912345678"
-                />
-                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-              </div>
+          {/* Row 1: 學員姓名 | 學員手機 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-navy-700">
+                學員姓名 <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={(e) => updateFormData('name', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
+                  errors.name ? 'border-red-500' : 'border-cream-200'
+                }`}
+                placeholder="要來上課的人"
+              />
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-navy-700">
+                學員手機 <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={(e) => updateFormData('phone', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
+                  errors.phone ? 'border-red-500' : 'border-cream-200'
+                }`}
+                placeholder="0912345678"
+              />
+              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+            </div>
+          </div>
 
-            {/* Row 2: 性別（下拉） | 出生年月日（日曆） */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Row 2: 性別（下拉） | 出生年月日（日曆） */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-navy-700">
+                性別 <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={(e) => updateFormData('gender', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
+                  errors.gender ? 'border-red-500' : 'border-cream-200'
+                }`}
+              >
+                <option value="">請選擇</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+              </select>
+              {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-navy-700">
+                出生年月日 <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                name="birthDate"
+                value={formData.birthDate}
+                onChange={(e) => updateFormData('birthDate', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
+                  errors.birthDate ? 'border-red-500' : 'border-cream-200'
+                }`}
+                max={new Date().toISOString().split('T')[0]}
+                min="1920-01-01"
+              />
+              {errors.birthDate && <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>}
+            </div>
+          </div>
+
+          {/* Row 3: Email | Line */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-navy-700">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={(e) => updateFormData('email', e.target.value)}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
+                  errors.email ? 'border-red-500' : 'border-cream-200'
+                }`}
+                placeholder="your@email.com"
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-navy-700">
+                Line ID <span className="text-ink-500 font-normal">（選填）</span>
+              </label>
+              <input
+                type="text"
+                name="line"
+                value={formData.line}
+                onChange={(e) => updateFormData('line', e.target.value)}
+                className="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange focus:border-orange"
+                placeholder="方便我們聯繫您"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="my-8 border-t border-cream-200" />
+
+        {/* Section 2: 填寫者資料 & 健康狀況 */}
+        <div className="space-y-5">
+          <h2 className="text-xl font-bold text-navy-700 flex items-center gap-2">
+            <span className="w-7 h-7 rounded-full bg-orange text-white text-sm flex items-center justify-center">2</span>
+            填寫者資料 & 健康狀況
+          </h2>
+
+          <div>
+            <label className="block text-sm font-medium mb-2 text-navy-700">
+              是否為本人填寫 <span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-4">
+              {['本人填寫', '親友代填'].map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => updateFormData('filledBySelf', opt)}
+                  className={`flex-1 py-3 rounded-lg border text-center transition-all ${
+                    formData.filledBySelf === opt
+                      ? 'border-orange bg-orange/10 text-orange font-medium'
+                      : 'border-cream-200 hover:border-orange/50'
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {formData.filledBySelf === '親友代填' && (
+            <div className="bg-cream-50 rounded-lg p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2 text-navy-700">
-                  性別 <span className="text-red-500">*</span>
+                  與學員的關係 <span className="text-red-500">*</span>
                 </label>
                 <select
-                  value={formData.gender}
-                  onChange={(e) => updateFormData('gender', e.target.value)}
+                  name="relationship"
+                  value={formData.relationship}
+                  onChange={(e) => updateFormData('relationship', e.target.value)}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
-                    errors.gender ? 'border-red-500' : 'border-cream-200'
+                    errors.relationship ? 'border-red-500' : 'border-cream-200'
                   }`}
                 >
                   <option value="">請選擇</option>
-                  <option value="男">男</option>
-                  <option value="女">女</option>
+                  {relationshipOptions.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
                 </select>
-                {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+                {errors.relationship && <p className="text-red-500 text-sm mt-1">{errors.relationship}</p>}
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-2 text-navy-700">
-                  出生年月日 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  value={formData.birthDate}
-                  onChange={(e) => updateFormData('birthDate', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
-                    errors.birthDate ? 'border-red-500' : 'border-cream-200'
-                  }`}
-                  max={new Date().toISOString().split('T')[0]}
-                  min="1920-01-01"
-                />
-                {errors.birthDate && <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>}
-              </div>
-            </div>
 
-            {/* Row 3: Email | Line */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2 text-navy-700">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => updateFormData('email', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
-                    errors.email ? 'border-red-500' : 'border-cream-200'
-                  }`}
-                  placeholder="your@email.com"
-                />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2 text-navy-700">
-                  Line ID <span className="text-ink-500 font-normal">（選填）</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.line}
-                  onChange={(e) => updateFormData('line', e.target.value)}
-                  className="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange focus:border-orange"
-                  placeholder="方便我們聯繫您"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 2: 填寫者資料 & 健康狀況 */}
-        {step === 2 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold mb-4 text-navy-700">填寫者資料</h2>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                是否為本人填寫 <span className="text-red-500">*</span>
-              </label>
-              <div className="flex gap-4">
-                {['本人填寫', '親友代填'].map((opt) => (
-                  <button
-                    key={opt}
-                    type="button"
-                    onClick={() => updateFormData('filledBySelf', opt)}
-                    className={`flex-1 py-3 rounded-lg border text-center transition-all ${
-                      formData.filledBySelf === opt
-                        ? 'border-orange bg-orange/10 text-orange font-medium'
-                        : 'border-cream-200 hover:border-orange/50'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {formData.filledBySelf === '親友代填' && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-navy-700">
-                    與學員的關係 <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.relationship}
-                    onChange={(e) => updateFormData('relationship', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange ${
-                      errors.relationship ? 'border-red-500' : 'border-cream-200'
-                    }`}
-                  >
-                    <option value="">請選擇</option>
-                    {relationshipOptions.map((r) => (
-                      <option key={r} value={r}>{r}</option>
-                    ))}
-                  </select>
-                  {errors.relationship && <p className="text-red-500 text-sm mt-1">{errors.relationship}</p>}
-                </div>
-
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2 text-navy-700">
                     預約者姓名 <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
+                    name="bookerName"
                     value={formData.bookerName}
                     onChange={(e) => updateFormData('bookerName', e.target.value)}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
@@ -503,6 +487,7 @@ export default function BookingForm() {
                   </label>
                   <input
                     type="tel"
+                    name="contactPhone"
                     value={formData.contactPhone}
                     onChange={(e) => updateFormData('contactPhone', e.target.value)}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange ${
@@ -512,366 +497,258 @@ export default function BookingForm() {
                   />
                   {errors.contactPhone && <p className="text-red-500 text-sm mt-1">{errors.contactPhone}</p>}
                 </div>
-              </>
-            )}
-
-            <div className="pt-4 border-t border-cream-200">
-              <h3 className="text-lg font-bold mb-4 text-navy-700">健康狀況</h3>
-
-              <div>
-                <label className="block text-sm font-medium mb-2 text-navy-700">
-                  是否有疾病，或 3 年內曾開過刀或住院？ <span className="text-red-500">*</span>
-                </label>
-                <div className="flex gap-4">
-                  {['是', '否'].map((opt) => (
-                    <button
-                      key={opt}
-                      type="button"
-                      onClick={() => updateFormData('hasMedicalCondition', opt)}
-                      className={`flex-1 py-3 rounded-lg border text-center transition-all ${
-                        formData.hasMedicalCondition === opt
-                          ? 'border-orange bg-orange/10 text-orange font-medium'
-                          : 'border-cream-200 hover:border-orange/50'
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
-                </div>
-                {errors.hasMedicalCondition && <p className="text-red-500 text-sm mt-1">{errors.hasMedicalCondition}</p>}
               </div>
-
-              {formData.hasMedicalCondition === '是' && (
-                <div className="mt-4">
-                  <label className="block text-sm font-medium mb-2 text-navy-700">
-                    請簡述情況 <span className="text-ink-500 font-normal">（選填）</span>
-                  </label>
-                  <textarea
-                    value={formData.medicalConditionNote}
-                    onChange={(e) => updateFormData('medicalConditionNote', e.target.value)}
-                    rows={2}
-                    className="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
-                    placeholder="例如：膝蓋退化、心臟手術等"
-                  />
-                </div>
-              )}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Step 3: 預約資訊 */}
-        {step === 3 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold mb-4 text-navy-700">預約資訊</h2>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                選擇門店 <span className="text-red-500">*</span>
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {stores.map((store) => (
-                  <button
-                    key={store.id}
-                    type="button"
-                    onClick={() => updateFormData('storeId', store.id)}
-                    className={`p-3 sm:p-4 rounded-lg border text-left transition-all ${
-                      formData.storeId === store.id
-                        ? 'border-orange bg-orange/10 ring-2 ring-orange'
-                        : 'border-cream-200 hover:border-orange/50'
-                    }`}
-                  >
-                    <div className="font-semibold text-navy-700 text-sm sm:text-base">{store.name}</div>
-                    <div className="text-xs sm:text-sm text-ink/60 mt-0.5">{store.address}</div>
-                    <div className="text-xs sm:text-sm text-navy-700 mt-0.5">{store.phone}</div>
-                  </button>
-                ))}
-              </div>
-              {errors.storeId && <p className="text-red-500 text-sm mt-2">{errors.storeId}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                方便聯繫時段 <span className="text-red-500">*</span>
-                <span className="text-ink-500 font-normal ml-1">（可複選）</span>
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {contactTimeOptions.map((time) => (
-                  <button
-                    key={time}
-                    type="button"
-                    onClick={() => togglePreferredTime(time)}
-                    className={`p-2.5 rounded-lg border text-sm text-center transition-all flex items-center justify-center gap-2 ${
-                      formData.preferredTimes.includes(time)
-                        ? 'border-orange bg-orange/10 text-orange'
-                        : 'border-cream-200 hover:border-orange/50'
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                        formData.preferredTimes.includes(time)
-                          ? 'border-orange bg-orange'
-                          : 'border-ink-300'
-                      }`}
-                    >
-                      {formData.preferredTimes.includes(time) && (
-                        <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </div>
-                    {time}
-                  </button>
-                ))}
-              </div>
-              {formData.preferredTimes.includes('其他') && (
-                <input
-                  type="text"
-                  value={formData.preferredTimeOther}
-                  onChange={(e) => updateFormData('preferredTimeOther', e.target.value)}
-                  className="w-full mt-2 px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
-                  placeholder="請說明其他方便時段"
-                />
-              )}
-              {errors.preferredTimes && <p className="text-red-500 text-sm mt-2">{errors.preferredTimes}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                從哪裡得知練健康？ <span className="text-ink-500 font-normal">（可複選）</span>
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {sourceOptions.map((source) => (
-                  <button
-                    key={source}
-                    type="button"
-                    onClick={() => toggleSource(source)}
-                    className={`p-2.5 rounded-lg border text-sm text-center transition-all flex items-center justify-center gap-2 ${
-                      formData.sources.includes(source)
-                        ? 'border-orange bg-orange/10 text-orange'
-                        : 'border-cream-200 hover:border-orange/50'
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                        formData.sources.includes(source)
-                          ? 'border-orange bg-orange'
-                          : 'border-ink-300'
-                      }`}
-                    >
-                      {formData.sources.includes(source) && (
-                        <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </div>
-                    {source}
-                  </button>
-                ))}
-              </div>
-              {formData.sources.includes('其他') && (
-                <input
-                  type="text"
-                  value={formData.sourceOther}
-                  onChange={(e) => updateFormData('sourceOther', e.target.value)}
-                  className="w-full mt-2 px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
-                  placeholder="請說明從哪裡得知"
-                />
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                付款方式 <span className="text-red-500">*</span>
-              </label>
-              <div className="space-y-2">
+          <div className="pt-2">
+            <label className="block text-sm font-medium mb-2 text-navy-700">
+              是否有疾病，或 3 年內曾開過刀或住院？ <span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-4">
+              {['是', '否'].map((opt) => (
                 <button
+                  key={opt}
                   type="button"
-                  onClick={() => updateFormData('paymentMethod', '50歲以上免費')}
-                  className={`w-full p-4 rounded-lg border text-left transition-all ${
-                    formData.paymentMethod === '50歲以上免費'
-                      ? 'border-green-500 bg-green-50 ring-2 ring-green-500'
-                      : 'border-cream-200 hover:border-green-300'
+                  onClick={() => updateFormData('hasMedicalCondition', opt)}
+                  className={`flex-1 py-3 rounded-lg border text-center transition-all ${
+                    formData.hasMedicalCondition === opt
+                      ? 'border-orange bg-orange/10 text-orange font-medium'
+                      : 'border-cream-200 hover:border-orange/50'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      formData.paymentMethod === '50歲以上免費' ? 'border-green-500' : 'border-ink-300'
-                    }`}>
-                      {formData.paymentMethod === '50歲以上免費' && (
-                        <div className="w-3 h-3 rounded-full bg-green-500" />
-                      )}
-                    </div>
-                    <div>
-                      <span className="font-semibold text-green-600">50 歲以上免費</span>
-                      <span className="text-sm text-ink/60 ml-2">首次體驗完全免費</span>
-                    </div>
-                  </div>
+                  {opt}
                 </button>
+              ))}
+            </div>
+            {errors.hasMedicalCondition && <p className="text-red-500 text-sm mt-1">{errors.hasMedicalCondition}</p>}
+          </div>
+
+          {formData.hasMedicalCondition === '是' && (
+            <div>
+              <label className="block text-sm font-medium mb-2 text-navy-700">
+                請簡述情況 <span className="text-ink-500 font-normal">（選填）</span>
+              </label>
+              <textarea
+                name="medicalConditionNote"
+                value={formData.medicalConditionNote}
+                onChange={(e) => updateFormData('medicalConditionNote', e.target.value)}
+                rows={2}
+                className="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                placeholder="例如：膝蓋退化、心臟手術等"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="my-8 border-t border-cream-200" />
+
+        {/* Section 3: 預約資訊 */}
+        <div className="space-y-5">
+          <h2 className="text-xl font-bold text-navy-700 flex items-center gap-2">
+            <span className="w-7 h-7 rounded-full bg-orange text-white text-sm flex items-center justify-center">3</span>
+            預約資訊
+          </h2>
+
+          <div id="storeId">
+            <label className="block text-sm font-medium mb-2 text-navy-700">
+              選擇門店 <span className="text-red-500">*</span>
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {stores.map((store) => (
                 <button
+                  key={store.id}
                   type="button"
-                  onClick={() => updateFormData('paymentMethod', '臨櫃付款')}
-                  className={`w-full p-4 rounded-lg border text-left transition-all ${
-                    formData.paymentMethod === '臨櫃付款'
+                  onClick={() => updateFormData('storeId', store.id)}
+                  className={`p-3 sm:p-4 rounded-lg border text-left transition-all ${
+                    formData.storeId === store.id
                       ? 'border-orange bg-orange/10 ring-2 ring-orange'
                       : 'border-cream-200 hover:border-orange/50'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      formData.paymentMethod === '臨櫃付款' ? 'border-orange' : 'border-ink-300'
-                    }`}>
-                      {formData.paymentMethod === '臨櫃付款' && (
-                        <div className="w-3 h-3 rounded-full bg-orange" />
-                      )}
-                    </div>
-                    <div>
-                      <span className="font-semibold text-navy-700">臨櫃付款</span>
-                      <span className="text-sm text-ink/60 ml-2">首次體驗 $500</span>
-                    </div>
-                  </div>
+                  <div className="font-semibold text-navy-700 text-sm sm:text-base">{store.name}</div>
+                  <div className="text-xs sm:text-sm text-ink/60 mt-0.5">{store.address}</div>
+                  <div className="text-xs sm:text-sm text-navy-700 mt-0.5">{store.phone}</div>
                 </button>
-              </div>
-              {errors.paymentMethod && <p className="text-red-500 text-sm mt-2">{errors.paymentMethod}</p>}
+              ))}
             </div>
+            {errors.storeId && <p className="text-red-500 text-sm mt-2">{errors.storeId}</p>}
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2 text-navy-700">
-                想說什麼或想問什麼 <span className="text-ink-500 font-normal">（選填）</span>
-              </label>
-              <textarea
-                value={formData.message}
-                onChange={(e) => updateFormData('message', e.target.value)}
-                rows={3}
-                className="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
-                placeholder="有任何問題或特殊需求，請在此告訴我們"
+          <div id="preferredTimes">
+            <label className="block text-sm font-medium mb-2 text-navy-700">
+              方便聯繫時段 <span className="text-red-500">*</span>
+              <span className="text-ink-500 font-normal ml-1">（可複選）</span>
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {contactTimeOptions.map((time) => (
+                <button
+                  key={time}
+                  type="button"
+                  onClick={() => togglePreferredTime(time)}
+                  className={`p-2.5 rounded-lg border text-sm text-center transition-all flex items-center justify-center gap-2 ${
+                    formData.preferredTimes.includes(time)
+                      ? 'border-orange bg-orange/10 text-orange'
+                      : 'border-cream-200 hover:border-orange/50'
+                  }`}
+                >
+                  <div
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                      formData.preferredTimes.includes(time)
+                        ? 'border-orange bg-orange'
+                        : 'border-ink-300'
+                    }`}
+                  >
+                    {formData.preferredTimes.includes(time) && (
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                  {time}
+                </button>
+              ))}
+            </div>
+            {formData.preferredTimes.includes('其他') && (
+              <input
+                type="text"
+                value={formData.preferredTimeOther}
+                onChange={(e) => updateFormData('preferredTimeOther', e.target.value)}
+                className="w-full mt-2 px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                placeholder="請說明其他方便時段"
               />
-            </div>
+            )}
+            {errors.preferredTimes && <p className="text-red-500 text-sm mt-2">{errors.preferredTimes}</p>}
           </div>
-        )}
 
-        {/* Step 4: 確認資料 */}
-        {step === 4 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold mb-4 text-navy-700">確認預約資料</h2>
-
-            <div className="bg-cream-100 rounded-lg p-4 space-y-3">
-              <div className="pb-3 border-b border-cream-200">
-                <div className="text-xs text-ink-500 mb-1">學員資料</div>
-                <div className="flex justify-between">
-                  <span className="text-ink-600">姓名</span>
-                  <span className="font-medium">{formData.name}</span>
-                </div>
-                <div className="flex justify-between mt-1">
-                  <span className="text-ink-600">手機</span>
-                  <span className="font-medium">{formData.phone}</span>
-                </div>
-                <div className="flex justify-between mt-1">
-                  <span className="text-ink-600">性別</span>
-                  <span className="font-medium">{formData.gender}</span>
-                </div>
-                <div className="flex justify-between mt-1">
-                  <span className="text-ink-600">出生日期</span>
-                  <span className="font-medium">{formData.birthDate}</span>
-                </div>
-                <div className="flex justify-between mt-1">
-                  <span className="text-ink-600">Email</span>
-                  <span className="font-medium text-sm">{formData.email}</span>
-                </div>
-                {formData.line && (
-                  <div className="flex justify-between mt-1">
-                    <span className="text-ink-600">Line</span>
-                    <span className="font-medium">{formData.line}</span>
+          <div>
+            <label className="block text-sm font-medium mb-2 text-navy-700">
+              從哪裡得知練健康？ <span className="text-ink-500 font-normal">（可複選）</span>
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {sourceOptions.map((source) => (
+                <button
+                  key={source}
+                  type="button"
+                  onClick={() => toggleSource(source)}
+                  className={`p-2.5 rounded-lg border text-sm text-center transition-all flex items-center justify-center gap-2 ${
+                    formData.sources.includes(source)
+                      ? 'border-orange bg-orange/10 text-orange'
+                      : 'border-cream-200 hover:border-orange/50'
+                  }`}
+                >
+                  <div
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
+                      formData.sources.includes(source)
+                        ? 'border-orange bg-orange'
+                        : 'border-ink-300'
+                    }`}
+                  >
+                    {formData.sources.includes(source) && (
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
                   </div>
-                )}
-              </div>
-
-              {formData.filledBySelf === '親友代填' && (
-                <div className="pb-3 border-b border-cream-200">
-                  <div className="text-xs text-ink-500 mb-1">預約者資料</div>
-                  <div className="flex justify-between">
-                    <span className="text-ink-600">預約者</span>
-                    <span className="font-medium">{formData.bookerName}（{formData.relationship}）</span>
-                  </div>
-                  <div className="flex justify-between mt-1">
-                    <span className="text-ink-600">聯繫電話</span>
-                    <span className="font-medium">{formData.contactPhone}</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="pb-3 border-b border-cream-200">
-                <div className="text-xs text-ink-500 mb-1">預約資訊</div>
-                <div className="flex justify-between">
-                  <span className="text-ink-600">門店</span>
-                  <span className="font-medium">{stores.find((s) => s.id === formData.storeId)?.name}</span>
-                </div>
-                <div className="flex justify-between mt-1">
-                  <span className="text-ink-600">方便時段</span>
-                  <span className="font-medium text-right">{formData.preferredTimes.join('、')}</span>
-                </div>
-                <div className="flex justify-between mt-1">
-                  <span className="text-ink-600">付款方式</span>
-                  <span className={`font-medium ${formData.paymentMethod === '50歲以上免費' ? 'text-green-600' : ''}`}>
-                    {formData.paymentMethod}
-                  </span>
-                </div>
-              </div>
-
-              {formData.hasMedicalCondition === '是' && (
-                <div className="pb-3 border-b border-cream-200">
-                  <div className="text-xs text-ink-500 mb-1">健康狀況</div>
-                  <div className="text-sm">有疾病或近期手術/住院史</div>
-                  {formData.medicalConditionNote && (
-                    <div className="text-sm text-ink-600 mt-1">{formData.medicalConditionNote}</div>
-                  )}
-                </div>
-              )}
-
-              {formData.sources.length > 0 && (
-                <div className="pb-3 border-b border-cream-200">
-                  <div className="text-xs text-ink-500 mb-1">得知管道</div>
-                  <div className="text-sm">{formData.sources.join('、')}</div>
-                </div>
-              )}
-
-              {formData.message && (
-                <div>
-                  <div className="text-xs text-ink-500 mb-1">留言</div>
-                  <div className="text-sm">{formData.message}</div>
-                </div>
-              )}
+                  {source}
+                </button>
+              ))}
             </div>
-
-            <p className="text-sm text-ink-500">
-              送出後，我們將於 1 個工作天內與您聯繫確認體驗時間。
-            </p>
+            {formData.sources.includes('其他') && (
+              <input
+                type="text"
+                value={formData.sourceOther}
+                onChange={(e) => updateFormData('sourceOther', e.target.value)}
+                className="w-full mt-2 px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                placeholder="請說明從哪裡得知"
+              />
+            )}
           </div>
-        )}
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8 pt-6 border-t border-cream-200">
-          {step > 1 ? (
-            <button type="button" onClick={handlePrev} className="btn btn-secondary">
-              {t('form.prev')}
-            </button>
-          ) : (
-            <div />
-          )}
+          <div id="paymentMethod">
+            <label className="block text-sm font-medium mb-2 text-navy-700">
+              付款方式 <span className="text-red-500">*</span>
+            </label>
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => updateFormData('paymentMethod', '50歲以上免費')}
+                className={`w-full p-4 rounded-lg border text-left transition-all ${
+                  formData.paymentMethod === '50歲以上免費'
+                    ? 'border-green-500 bg-green-50 ring-2 ring-green-500'
+                    : 'border-cream-200 hover:border-green-300'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    formData.paymentMethod === '50歲以上免費' ? 'border-green-500' : 'border-ink-300'
+                  }`}>
+                    {formData.paymentMethod === '50歲以上免費' && (
+                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                    )}
+                  </div>
+                  <div>
+                    <span className="font-semibold text-green-600">50 歲以上免費</span>
+                    <span className="text-sm text-ink/60 ml-2">首次體驗完全免費</span>
+                  </div>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => updateFormData('paymentMethod', '臨櫃付款')}
+                className={`w-full p-4 rounded-lg border text-left transition-all ${
+                  formData.paymentMethod === '臨櫃付款'
+                    ? 'border-orange bg-orange/10 ring-2 ring-orange'
+                    : 'border-cream-200 hover:border-orange/50'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    formData.paymentMethod === '臨櫃付款' ? 'border-orange' : 'border-ink-300'
+                  }`}>
+                    {formData.paymentMethod === '臨櫃付款' && (
+                      <div className="w-3 h-3 rounded-full bg-orange" />
+                    )}
+                  </div>
+                  <div>
+                    <span className="font-semibold text-navy-700">臨櫃付款</span>
+                    <span className="text-sm text-ink/60 ml-2">首次體驗 $500</span>
+                  </div>
+                </div>
+              </button>
+            </div>
+            {errors.paymentMethod && <p className="text-red-500 text-sm mt-2">{errors.paymentMethod}</p>}
+          </div>
 
-          {step < totalSteps ? (
-            <button type="button" onClick={handleNext} className="btn btn-primary">
-              {t('form.next')}
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="btn btn-primary disabled:opacity-50"
-            >
-              {isSubmitting ? t('form.submitting') : t('form.submit')}
-            </button>
-          )}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-navy-700">
+              想說什麼或想問什麼 <span className="text-ink-500 font-normal">（選填）</span>
+            </label>
+            <textarea
+              name="message"
+              value={formData.message}
+              onChange={(e) => updateFormData('message', e.target.value)}
+              rows={3}
+              className="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+              placeholder="有任何問題或特殊需求，請在此告訴我們"
+            />
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="mt-8 pt-6 border-t border-cream-200">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="w-full btn btn-primary py-4 text-lg disabled:opacity-50"
+          >
+            {isSubmitting ? t('form.submitting') : '送出預約'}
+          </button>
+          <p className="text-sm text-ink-500 text-center mt-4">
+            送出後，我們將於 1 個工作天內與您聯繫確認體驗時間。
+          </p>
         </div>
       </div>
     </div>
