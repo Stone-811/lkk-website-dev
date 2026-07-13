@@ -410,7 +410,7 @@ export default function BookingForm() {
         </div>
 
         {/* Divider */}
-        <div className="my-8 border-t border-cream-200" />
+        <div className="my-6 border-t border-cream-200" />
 
         {/* Section 2: 填寫者資料 & 健康狀況 */}
         <div className="space-y-5">
@@ -542,7 +542,7 @@ export default function BookingForm() {
         </div>
 
         {/* Divider */}
-        <div className="my-8 border-t border-cream-200" />
+        <div className="my-6 border-t border-cream-200" />
 
         {/* Section 3: 預約資訊 */}
         <div className="space-y-5">
@@ -587,7 +587,7 @@ export default function BookingForm() {
                   key={time}
                   type="button"
                   onClick={() => togglePreferredTime(time)}
-                  className={`p-2.5 rounded-lg border text-sm text-center transition-all flex items-center justify-center gap-2 ${
+                  className={`p-2.5 rounded-lg border text-sm text-left transition-all flex items-center justify-start gap-2 ${
                     formData.preferredTimes.includes(time)
                       ? 'border-orange bg-orange/10 text-orange'
                       : 'border-cream-200 hover:border-orange/50'
@@ -632,7 +632,7 @@ export default function BookingForm() {
                   key={source}
                   type="button"
                   onClick={() => toggleSource(source)}
-                  className={`p-2.5 rounded-lg border text-sm text-center transition-all flex items-center justify-center gap-2 ${
+                  className={`p-2.5 rounded-lg border text-sm text-left transition-all flex items-center justify-start gap-2 ${
                     formData.sources.includes(source)
                       ? 'border-orange bg-orange/10 text-orange'
                       : 'border-cream-200 hover:border-orange/50'
