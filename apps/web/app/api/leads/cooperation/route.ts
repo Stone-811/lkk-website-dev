@@ -13,6 +13,8 @@ export async function POST(request: NextRequest) {
       phone,
       lineId,
       email,
+      companySize,
+      budgetRange,
       message,
       sourcePage,
     } = body;
@@ -61,6 +63,8 @@ export async function POST(request: NextRequest) {
         cooperationType,
         organization,
         lineId: lineId || null,
+        companySize: companySize || null,
+        budgetRange: budgetRange || null,
       },
       status: 'new',
       internalNote: null,
@@ -99,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '表單已送出，我們將於 2 個工作天內與您聯繫',
+      message: '表單已送出，我們將於 3-5 個工作天內與您聯繫',
     });
   } catch (error) {
     console.error('Cooperation API error:', error);

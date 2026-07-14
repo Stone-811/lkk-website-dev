@@ -621,7 +621,10 @@ GET    /api/admin/leads/export
 **cooperation（合作洽詢）**
 - cooperationType（講座邀約 / 企業健康促進邀請 / 媒體採訪與異業合作）
 - organization（公司/單位名稱）
-- name, phone, lineId, email, message
+- name, phone, lineId, email
+- companySize（規模人數，選填）
+- budgetRange（預算區間，選填）
+- message
 
 **franchise（加盟洽詢）**
 - name, organization, email, phone

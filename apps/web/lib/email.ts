@@ -211,7 +211,7 @@ const formConfirmationConfig: Record<string, {
     subject: '【練健康】感謝您的合作洽詢',
     title: '洽詢確認',
     greeting: '感謝您對練健康的關注與洽詢！',
-    message: '我們已收到您的合作洽詢，專人將於 2 個工作天內與您聯繫。',
+    message: '我們已收到您的合作洽詢，專人將於 3-5 個工作天內與您聯繫。',
     closing: '如有緊急需求，歡迎直接來電洽詢。<br>期待與您的合作！',
   },
   franchise: {

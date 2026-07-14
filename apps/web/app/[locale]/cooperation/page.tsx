@@ -53,6 +53,8 @@ interface FormData {
   phone: string;
   lineId: string;
   email: string;
+  companySize: string;
+  budgetRange: string;
   message: string;
 }
 
@@ -62,6 +64,8 @@ const initialFormData: FormData = {
   phone: '',
   lineId: '',
   email: '',
+  companySize: '',
+  budgetRange: '',
   message: '',
 };
 
@@ -139,6 +143,8 @@ export default function CooperationPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
+          companySize: formData.companySize || null,
+          budgetRange: formData.budgetRange || null,
           cooperationType: enquiryTypes[activeType].value,
           sourcePage: '/cooperation',
         }),
@@ -333,7 +339,7 @@ export default function CooperationPage() {
               與我們攜手，<span className="text-orange">共創雙贏的健康價值</span>
             </h2>
             <p className="text-ink/60 text-base leading-relaxed max-w-2xl mx-auto">
-              不論您是需要專業授課的醫療學術單位、期望舉辦員工健康促進講座的企業品牌，或是海外地區的訓練營授權洽詢。歡迎填寫下方表單，團隊將於 2 個工作天內由專人主動與您聯繫。
+              不論您是需要專業授課的醫療學術單位、期望舉辦員工健康促進講座的企業品牌，或是海外地區的訓練營授權洽詢。歡迎填寫下方表單，團隊將於 3-5 個工作天內由專人主動與您聯繫。
             </p>
           </div>
 
@@ -366,7 +372,7 @@ export default function CooperationPage() {
                   </svg>
                 </div>
                 <h3 className="font-serif text-2xl font-bold text-navy-700 mb-2">表單已送出！</h3>
-                <p className="text-ink/60 mb-6">我們將於 2 個工作天內與您聯繫</p>
+                <p className="text-ink/60 mb-6">我們將於 3-5 個工作天內與您聯繫</p>
                 <button
                   type="button"
                   onClick={() => setSubmitStatus('idle')}
@@ -443,6 +449,31 @@ export default function CooperationPage() {
                     className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
                     placeholder="請輸入 Line ID 以利快速聯絡"
                   />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-ink/70 block mb-1.5">規模人數 <span className="text-ink/40 font-normal">(選填)</span></label>
+                    <input
+                      type="text"
+                      value={formData.companySize}
+                      onChange={(e) => updateField('companySize', e.target.value)}
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
+                      placeholder="例如：50 人、100-200 人"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-ink/70 block mb-1.5">預算區間 <span className="text-ink/40 font-normal">(選填)</span></label>
+                    <input
+                      type="text"
+                      value={formData.budgetRange}
+                      onChange={(e) => updateField('budgetRange', e.target.value)}
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 bg-cream-100 border border-navy-700/20 rounded focus:ring-2 focus:ring-navy-700 focus:border-navy-700 outline-none text-sm disabled:opacity-50"
+                      placeholder="例如：5 萬以下、5-10 萬、10 萬以上"
+                    />
+                  </div>
                 </div>
 
                 <div>
