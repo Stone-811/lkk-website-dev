@@ -10,6 +10,8 @@ interface CooperationLead {
   organization: string;
   lineId: string;
   cooperationType: string;
+  companySize: string;
+  budgetRange: string;
   status: string;
   message: string;
   internalNote: string;
@@ -66,6 +68,8 @@ export default function CooperationPage() {
               organization: lead.payload?.organization || '-',
               lineId: lead.payload?.lineId || '-',
               cooperationType: lead.payload?.cooperationType || '-',
+              companySize: lead.payload?.companySize || '',
+              budgetRange: lead.payload?.budgetRange || '',
               status: lead.status,
               message: lead.message || '',
               internalNote: lead.internalNote || '',
@@ -139,13 +143,15 @@ export default function CooperationPage() {
   };
 
   const handleExport = () => {
-    const headers = ['單位', '聯絡人', '電話', 'Line ID', 'Email', '洽詢類型', '狀態', '合作內容', '備註', '建立時間'];
+    const headers = ['單位', '聯絡人', '電話', 'Line ID', 'Email', '公司規模', '預算區間', '洽詢類型', '狀態', '合作內容', '備註', '建立時間'];
     const rows = filteredLeads.map((lead) => [
       lead.organization,
       lead.name,
       lead.phone,
       lead.lineId,
       lead.email,
+      lead.companySize || '',
+      lead.budgetRange || '',
       lead.cooperationType,
       statusLabels[lead.status]?.label || lead.status,
       lead.message,
@@ -343,6 +349,18 @@ export default function CooperationPage() {
                   <p className="text-sm text-gray-500">Email</p>
                   <p className="font-medium">{selectedLead.email || '-'}</p>
                 </div>
+                {selectedLead.companySize && (
+                  <div>
+                    <p className="text-sm text-gray-500">公司規模</p>
+                    <p className="font-medium">{selectedLead.companySize}</p>
+                  </div>
+                )}
+                {selectedLead.budgetRange && (
+                  <div>
+                    <p className="text-sm text-gray-500">預算區間</p>
+                    <p className="font-medium">{selectedLead.budgetRange}</p>
+                  </div>
+                )}
                 <div className="col-span-2">
                   <p className="text-sm text-gray-500">建立時間</p>
                   <p className="font-medium">{selectedLead.createdAt}</p>

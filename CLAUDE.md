@@ -497,6 +497,34 @@ lkk-website/                    # 根目錄（Monorepo）
 }
 ```
 
+### lkk4_records
+
+LKK4 中高齡四項體能挑戰賽的參賽成績紀錄。
+
+```typescript
+{
+  id: string
+  year: number                    // 參賽年度 (e.g., 2024, 2025)
+  competitionGroup: string        // 組別 (e.g., 長青混合組, 男子第一組)
+  teamName: string | null         // 隊伍名稱
+  rank: number | null             // 名次
+  name: string                    // 參賽者姓名
+  gender: string                  // 性別 (男/女)
+  bodyWeight: number | null       // 體重 (kg)
+  firstAttempt: number | null     // 第一次試舉重量
+  firstAttemptResult: string | null   // 第一次試舉結果 (y/n)
+  secondAttempt: number | null    // 第二次試舉重量
+  secondAttemptResult: string | null  // 第二次試舉結果 (y/n)
+  thirdAttempt: number | null     // 第三次試舉重量
+  thirdAttemptResult: string | null   // 第三次試舉結果 (y/n)
+  finalScore: number              // 最終成績 (kg)
+  ipfGlPoint: number              // IPF GL 積分
+  createdAt: Timestamp
+}
+```
+
+**匯入方式**：後台 `/admin/lkk4-records` 頁面上傳 CSV 檔案，匯入時會自動覆蓋所有舊資料。
+
 ### users
 
 ```typescript
@@ -530,6 +558,7 @@ GET  /api/public/stores/:slug
 GET  /api/public/coaches
 GET  /api/public/coaches?store=slug
 GET  /api/public/faqs
+GET  /api/public/lkk4-records?year=2025&name=姓名
 POST /api/public/leads/booking
 POST /api/public/leads/franchise
 POST /api/public/leads/cooperation
@@ -564,6 +593,8 @@ GET    /api/admin/leads
 PATCH  /api/admin/leads/:id/status
 PATCH  /api/admin/leads/:id/note
 GET    /api/admin/leads/export
+POST   /api/admin/lkk4-records/import
+DELETE /api/admin/lkk4-records/import
 ```
 
 ---

@@ -3,27 +3,77 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
+interface LKK4Record {
+  id: string;
+  year: number;
+  name: string;
+  competitionGroup: string;
+  rank: number | null;
+  finalScore: number;
+  teamName: string | null;
+  gender: string;
+}
+
 export default function PersonalRecordPage() {
-  const [participantId, setParticipantId] = useState('');
+  const [year, setYear] = useState('');
   const [name, setName] = useState('');
   const [searched, setSearched] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [records, setRecords] = useState<LKK4Record[]>([]);
+  const [error, setError] = useState('');
+
+  // 可選年度（從 CSV 資料來看有 2024 和 2025）
+  const availableYears = ['2025', '2024'];
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!participantId.trim() || !name.trim()) return;
+    if (!year || !name.trim()) return;
 
     setIsLoading(true);
-    // Simulate API call - will be replaced with actual API when data table is ready
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setSearched(true);
-    setIsLoading(false);
+    setError('');
+    setRecords([]);
+
+    try {
+      const res = await fetch(
+        `/api/public/lkk4-records?year=${encodeURIComponent(year)}&name=${encodeURIComponent(name.trim())}`
+      );
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || '查詢失敗');
+      }
+
+      setRecords(data.data || []);
+      setSearched(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '查詢失敗，請稍後再試');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReset = () => {
-    setParticipantId('');
+    setYear('');
     setName('');
     setSearched(false);
+    setRecords([]);
+    setError('');
+  };
+
+  // 組別名稱對照
+  const getGroupDisplayName = (group: string) => {
+    const groupMap: Record<string, string> = {
+      '長青混合組': '長青混合組',
+      '男子第一組': '男子第一組',
+      '男子第二組': '男子第二組',
+      '男子第三組': '男子第三組',
+      '男子第四組': '男子第四組',
+      '女子第一組': '女子第一組',
+      '女子第二組': '女子第二組',
+      '女子第三組': '女子第三組',
+      '女子第四組': '女子第四組',
+    };
+    return groupMap[group] || group;
   };
 
   return (
@@ -46,7 +96,7 @@ export default function PersonalRecordPage() {
             LKK4 <span className="text-orange">參賽成績查詢</span>
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
-            輸入您的參賽編號與姓名，即可查詢歷年參賽成績紀錄
+            選擇參賽年度並輸入姓名，即可查詢您的參賽成績紀錄
           </p>
         </div>
       </section>
@@ -57,20 +107,25 @@ export default function PersonalRecordPage() {
           <div className="max-w-lg mx-auto">
             <form onSubmit={handleSearch} className="bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-navy-700/10">
               <div className="space-y-5">
-                {/* Participant ID */}
+                {/* Year */}
                 <div>
-                  <label htmlFor="participantId" className="block text-sm font-semibold text-navy-700 mb-2">
-                    參賽編號 <span className="text-orange">*</span>
+                  <label htmlFor="year" className="block text-sm font-semibold text-navy-700 mb-2">
+                    參賽年度 <span className="text-orange">*</span>
                   </label>
-                  <input
-                    type="text"
-                    id="participantId"
-                    value={participantId}
-                    onChange={(e) => setParticipantId(e.target.value)}
-                    placeholder="例：LKK4-2025-001"
-                    className="w-full px-4 py-3 border border-navy-700/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange transition-colors"
+                  <select
+                    id="year"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    className="w-full px-4 py-3 border border-navy-700/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange transition-colors bg-white"
                     required
-                  />
+                  >
+                    <option value="">請選擇年度</option>
+                    {availableYears.map((y) => (
+                      <option key={y} value={y}>
+                        {y} 年
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Name */}
@@ -89,10 +144,17 @@ export default function PersonalRecordPage() {
                   />
                 </div>
 
+                {/* Error Message */}
+                {error && (
+                  <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
+                    {error}
+                  </div>
+                )}
+
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={isLoading || !participantId.trim() || !name.trim()}
+                  disabled={isLoading || !year || !name.trim()}
                   className="w-full bg-orange text-white font-bold py-3 rounded-lg shadow-lg shadow-orange/25 hover:bg-orange-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
@@ -115,8 +177,89 @@ export default function PersonalRecordPage() {
               </div>
             </form>
 
-            {/* Search Result */}
-            {searched && (
+            {/* Search Result - Has Records */}
+            {searched && records.length > 0 && (
+              <div className="mt-8 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-navy-700/10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-xl font-bold text-navy-700">
+                      查詢成功
+                    </h3>
+                    <p className="text-ink/60 text-sm">
+                      共找到 {records.length} 筆成績紀錄
+                    </p>
+                  </div>
+                </div>
+
+                {/* Records Table */}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-navy-700/10">
+                        <th className="text-left py-3 px-2 font-semibold text-navy-700">年度</th>
+                        <th className="text-left py-3 px-2 font-semibold text-navy-700">組別</th>
+                        <th className="text-center py-3 px-2 font-semibold text-navy-700">名次</th>
+                        <th className="text-right py-3 px-2 font-semibold text-navy-700">成績 (kg)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {records.map((record) => (
+                        <tr key={record.id} className="border-b border-navy-700/5 hover:bg-cream-50">
+                          <td className="py-3 px-2">
+                            <span className="font-medium text-navy-700">{record.year}</span>
+                          </td>
+                          <td className="py-3 px-2">
+                            <span className="text-ink/80">{getGroupDisplayName(record.competitionGroup)}</span>
+                          </td>
+                          <td className="py-3 px-2 text-center">
+                            {record.rank ? (
+                              <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold ${
+                                record.rank === 1
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : record.rank === 2
+                                  ? 'bg-gray-100 text-gray-700'
+                                  : record.rank === 3
+                                  ? 'bg-orange-100 text-orange-700'
+                                  : 'bg-navy-700/5 text-navy-700'
+                              }`}>
+                                {record.rank}
+                              </span>
+                            ) : (
+                              <span className="text-ink/40">-</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-2 text-right">
+                            <span className="font-bold text-orange text-lg">
+                              {record.finalScore > 0 ? record.finalScore : '-'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-navy-700/10 flex justify-center">
+                  <button
+                    onClick={handleReset}
+                    className="text-navy-700 font-semibold hover:text-orange transition-colors flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    重新查詢
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Search Result - No Records */}
+            {searched && records.length === 0 && (
               <div className="mt-8 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-navy-700/10 text-center">
                 <div className="w-16 h-16 bg-cream-200 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-navy-700/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,7 +270,7 @@ export default function PersonalRecordPage() {
                   尚無符合的成績紀錄
                 </h3>
                 <p className="text-ink/60 text-sm mb-4">
-                  查無參賽編號「{participantId}」與姓名「{name}」的成績資料。<br />
+                  查無 {year} 年姓名「{name}」的成績資料。<br />
                   請確認輸入資訊是否正確，或聯繫主辦單位。
                 </p>
                 <button
@@ -148,7 +291,7 @@ export default function PersonalRecordPage() {
                 <div>
                   <p className="font-semibold text-navy-700 mb-1">查詢說明</p>
                   <ul className="space-y-1">
-                    <li>參賽編號可於報名確認信或現場報到時取得</li>
+                    <li>請選擇您參賽的年度</li>
                     <li>姓名請輸入報名時填寫的完整中文姓名</li>
                     <li>成績資料將於賽後 3-5 個工作天內更新</li>
                   </ul>
