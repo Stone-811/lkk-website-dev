@@ -320,7 +320,9 @@ lkk-website/                    # 根目錄（Monorepo）
 │       │   │   ├── dashboard/page.tsx
 │       │   │   ├── stores/page.tsx       # 門店管理（含照片）
 │       │   │   ├── coaches/page.tsx      # 教練管理
-│       │   │   ├── lecturers/page.tsx    # 講師管理（新增）
+│       │   │   ├── lecturers/page.tsx    # 講師管理
+│       │   │   ├── lkk4-records/page.tsx # LKK4 成績管理
+│       │   │   ├── cooperation/page.tsx  # 合作表單
 │       │   │   ├── faqs/page.tsx
 │       │   │   ├── leads/page.tsx
 │       │   │   └── settings/page.tsx
