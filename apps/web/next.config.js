@@ -118,6 +118,11 @@ const WORDPRESS_BACKEND_URL = process.env.WORDPRESS_BACKEND_URL || 'https://wp-b
 const nextConfig = {
   output: 'standalone',
   images: {
+    // 圖片優化配置
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920], // 常見裝置寬度
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],     // 小尺寸圖片
+    formats: ['image/webp'],                        // 優先使用 WebP 格式
+    minimumCacheTTL: 60,                            // 最小快取時間 60 秒
     remotePatterns: [
       {
         protocol: 'https',

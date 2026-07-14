@@ -209,8 +209,6 @@ Site Address (URL):      https://l-kk.tw
 
 ## 設計樣式
 
-網站視覺以 `lkk-website/` 目錄的 HTML mockup 為準。
-
 ### 色彩系統
 
 | 名稱 | 色碼 | 用途 |
@@ -334,8 +332,6 @@ lkk-website/                    # 根目錄（Monorepo）
 │       ├── components/
 │       ├── lib/
 │       └── messages/
-│
-└── lkk-website/                # HTML Mockup 參考
 ```
 
 ### 重要：Monorepo 注意事項
@@ -928,9 +924,6 @@ npx firebase-tools deploy --only firestore:indexes --project lkk-website-dev
 
 # 部署 Firestore 規則
 npx firebase-tools deploy --only firestore:rules --project lkk-website-dev
-
-# 預覽 HTML mockup
-cd lkk-website && python3 -m http.server 8080
 ```
 
 ### 部署流程
@@ -1089,6 +1082,43 @@ npx firebase-tools deploy --only firestore:indexes --project lkk-website-dev
 - [ ] 進階監控與告警
 - [ ] CDN 快取優化
 - [ ] WordPress 效能調校
+
+---
+
+## 效能優化待辦
+
+### Phase 1：已完成（無成本）
+
+- [x] 調整渲染策略：SSR → ISR（首頁 60s、列表頁 300s）
+- [x] 設定字體 `display: 'swap'` 和 fallback
+- [x] 新增 next.config.js 圖片優化配置（deviceSizes、imageSizes、WebP）
+
+### Phase 2：短期（低成本 ~$10/月）
+
+- [ ] 設定 `minInstances: 1`（避免冷啟動）
+- [ ] 統一使用 `next/image` + blur placeholder
+- [ ] 優先載入關鍵圖片（Hero 區塊加 `priority`）
+
+### Phase 3：中期（視流量需求）
+
+- [ ] 升級記憶體至 1GB
+- [ ] 導入 Cloudflare CDN
+- [ ] 實施 Firebase Performance Monitoring
+
+### Phase 4：長期優化
+
+- [ ] Bundle 分析與 tree-shaking
+- [ ] Firebase SDK 按需載入
+- [ ] 評估 Edge Runtime 適用性
+
+### 效能監控指標目標
+
+| 指標 | 目標值 |
+|------|--------|
+| LCP (Largest Contentful Paint) | < 2.5s |
+| FID (First Input Delay) | < 100ms |
+| CLS (Cumulative Layout Shift) | < 0.1 |
+| TTFB (Time to First Byte) | < 200ms |
 
 ---
 

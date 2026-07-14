@@ -8,8 +8,8 @@ import {
   FAQSection,
 } from '@/components/sections';
 
-// Force dynamic rendering for next-intl
-export const dynamic = 'force-dynamic';
+// ISR: 重新驗證間隔 60 秒（首頁內容變動頻率低）
+export const revalidate = 60;
 
 export default function HomePage() {
   return (

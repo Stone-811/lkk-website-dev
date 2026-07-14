@@ -4,8 +4,8 @@ import CoachCarousel from '@/components/CoachCarousel';
 import { db, CoachDoc, StoreDoc, docsToArray } from '@/lib/firebase';
 import { fallbackCoaches, Coach } from '@/lib/fallback-coaches';
 
-// Force dynamic rendering for next-intl
-export const dynamic = 'force-dynamic';
+// ISR: 重新驗證間隔 300 秒（門店詳情資料穩定）
+export const revalidate = 300;
 
 // 從 Firestore 取得門店教練，若失敗則使用 fallback 資料
 async function getCoachesByStoreSlug(storeSlug: string): Promise<Coach[]> {

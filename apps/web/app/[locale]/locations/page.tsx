@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { db, StoreDoc, docsToArray } from '@/lib/firebase';
 
-// Force dynamic rendering for Firestore data
-export const dynamic = 'force-dynamic';
+// ISR: 重新驗證間隔 300 秒（門店資料穩定）
+export const revalidate = 300;
 
 // 靜態門店資料（備援用）
 const fallbackStores = [

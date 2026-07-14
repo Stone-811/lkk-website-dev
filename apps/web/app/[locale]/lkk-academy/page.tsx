@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
-// Force dynamic rendering for next-intl
-export const dynamic = 'force-dynamic';
+// ISR: 重新驗證間隔 300 秒（學院課程內容穩定）
+export const revalidate = 300;
 
 export const metadata = {
   title: '練健康學院｜專業教練培訓課程',

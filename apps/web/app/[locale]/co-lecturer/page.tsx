@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { db, LecturerDoc, docsToArray } from '@/lib/firebase';
 
-// Force dynamic rendering for Firestore data
-export const dynamic = 'force-dynamic';
+// ISR: 重新驗證間隔 300 秒（講師資料變動少）
+export const revalidate = 300;
 
 export const metadata = {
   title: '合作講師｜練健康 LKK Wellness',

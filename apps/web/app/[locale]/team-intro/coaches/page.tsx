@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { db, CoachDoc, StoreDoc, docsToArray } from '@/lib/firebase';
 import { fallbackCoaches, Coach } from '@/lib/fallback-coaches';
 
-// Force dynamic rendering for Firestore data
-export const dynamic = 'force-dynamic';
+// ISR: 重新驗證間隔 300 秒（教練資料變動少）
+export const revalidate = 300;
 
 export const metadata = {
   title: '全體教練｜練健康 LKK Wellness',

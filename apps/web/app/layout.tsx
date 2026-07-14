@@ -6,12 +6,16 @@ const notoSans = Noto_Sans_TC({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
   variable: '--font-noto-sans',
+  display: 'swap', // 先顯示系統字體，字體載入後替換，改善 FCP
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
 });
 
 const notoSerif = Noto_Serif_TC({
   subsets: ['latin'],
   weight: ['400', '700', '900'],
   variable: '--font-noto-serif',
+  display: 'swap', // 先顯示系統字體，字體載入後替換，改善 FCP
+  fallback: ['Georgia', 'Times New Roman', 'serif'],
 });
 
 export const metadata: Metadata = {
