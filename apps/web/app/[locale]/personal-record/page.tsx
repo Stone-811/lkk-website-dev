@@ -116,7 +116,7 @@ export default function PersonalRecordPage() {
                     id="year"
                     value={year}
                     onChange={(e) => setYear(e.target.value)}
-                    className="w-full px-4 py-3 border border-navy-700/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange transition-colors bg-white"
+                    className="w-full px-4 py-3 border border-navy-700/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange transition-colors bg-white appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%232A5269%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[right_12px_center] bg-no-repeat pr-10"
                     required
                   >
                     <option value="">請選擇年度</option>
@@ -203,6 +203,7 @@ export default function PersonalRecordPage() {
                       <tr className="border-b border-navy-700/10">
                         <th className="text-left py-3 px-2 font-semibold text-navy-700">年度</th>
                         <th className="text-left py-3 px-2 font-semibold text-navy-700">組別</th>
+                        <th className="text-left py-3 px-2 font-semibold text-navy-700">隊名</th>
                         <th className="text-center py-3 px-2 font-semibold text-navy-700">名次</th>
                         <th className="text-right py-3 px-2 font-semibold text-navy-700">成績 (kg)</th>
                       </tr>
@@ -215,6 +216,9 @@ export default function PersonalRecordPage() {
                           </td>
                           <td className="py-3 px-2">
                             <span className="text-ink/80">{getGroupDisplayName(record.competitionGroup)}</span>
+                          </td>
+                          <td className="py-3 px-2">
+                            <span className="text-ink/80">{record.teamName || '-'}</span>
                           </td>
                           <td className="py-3 px-2 text-center">
                             {record.rank ? (
@@ -281,23 +285,6 @@ export default function PersonalRecordPage() {
                 </button>
               </div>
             )}
-
-            {/* Info Note */}
-            <div className="mt-6 bg-navy-700/5 rounded-xl p-4 text-sm text-ink/60">
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-navy-700/40 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div>
-                  <p className="font-semibold text-navy-700 mb-1">查詢說明</p>
-                  <ul className="space-y-1">
-                    <li>請選擇您參賽的年度</li>
-                    <li>姓名請輸入報名時填寫的完整中文姓名</li>
-                    <li>成績資料將於賽後 3-5 個工作天內更新</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
