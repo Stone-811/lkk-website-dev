@@ -481,36 +481,50 @@ export default function ServicesPage() {
       </section>
 
       {/* 比較表 */}
-      <section className="py-16 md:py-24 bg-navy-700 text-white">
+      <section id="compare" className="py-16 md:py-24 bg-[#1a3545] text-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center font-serif mb-12">
             三種上課形式快速比較
           </h2>
 
           <div className="overflow-x-auto">
-            <table className="w-full max-w-4xl mx-auto">
-              <thead>
-                <tr className="border-b border-white/20">
-                  <th className="py-4 px-4 text-left font-medium text-cream-200"></th>
-                  <th className="py-4 px-4 text-center font-bold text-orange">一對一訓練</th>
-                  <th className="py-4 px-4 text-center font-bold">團體課程</th>
-                  <th className="py-4 px-4 text-center font-bold">線上課程</th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparisonData.map((row, index) => (
-                  <tr
-                    key={row.item}
-                    className={index !== comparisonData.length - 1 ? 'border-b border-white/10' : ''}
-                  >
-                    <td className="py-4 px-4 text-cream-200">{row.item}</td>
-                    <td className="py-4 px-4 text-center">{row.personal}</td>
-                    <td className="py-4 px-4 text-center">{row.group}</td>
-                    <td className="py-4 px-4 text-center">{row.online}</td>
+            <div className="bg-white/5 rounded-[14px] max-w-4xl mx-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-white/[0.08]">
+                    <th className="py-4 px-4 text-left text-[0.78rem] font-semibold text-white/60 tracking-wide border-b border-white/[0.08]"></th>
+                    <th className="py-4 px-4 text-center text-[0.78rem] font-semibold text-white/60 tracking-wide border-b border-white/[0.08]">一對一訓練</th>
+                    <th className="py-4 px-4 text-center text-[0.78rem] font-semibold text-white/60 tracking-wide border-b border-white/[0.08]">團體課程</th>
+                    <th className="py-4 px-4 text-center text-[0.78rem] font-semibold text-white/60 tracking-wide border-b border-white/[0.08]">線上課程</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {comparisonData.map((row, index) => (
+                    <tr
+                      key={row.item}
+                      className={index !== comparisonData.length - 1 ? 'border-b border-white/[0.06]' : ''}
+                    >
+                      <td className="py-4 px-4 text-white/70 text-left">{row.item}</td>
+                      <td className="py-4 px-4 text-center bg-orange/[0.08]">
+                        <span className={row.personal === '✓' ? 'text-orange font-bold' : row.personal === '—' ? 'text-white/20' : 'text-white/70'}>
+                          {row.personal}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className={row.group === '✓' ? 'text-orange font-bold' : row.group === '—' ? 'text-white/20' : 'text-white/70'}>
+                          {row.group}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className={row.online === '✓' ? 'text-orange font-bold' : row.online === '—' ? 'text-white/20' : 'text-white/70'}>
+                          {row.online}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
