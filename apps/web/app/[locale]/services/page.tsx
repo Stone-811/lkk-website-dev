@@ -223,20 +223,20 @@ export default function ServicesPage() {
 
       {/* 粘性頁籤 */}
       <nav
-        className={`bg-white border-b border-cream-200 z-40 transition-shadow ${
-          isSticky ? 'sticky top-0 shadow-md' : ''
+        className={`bg-white border-b border-navy-700/[0.14] z-40 transition-shadow ${
+          isSticky ? 'sticky top-0 shadow-sm' : ''
         }`}
       >
         <div className="container mx-auto px-4">
-          <div className="flex justify-center gap-2 py-3">
+          <div className="flex justify-center h-[52px]">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => scrollToSection(tab.id)}
-                className={`px-6 py-2 rounded-full font-medium transition-all ${
+                className={`px-4 h-full font-medium transition-all border-b-[3px] ${
                   activeTab === tab.id
-                    ? 'bg-navy-700 text-white'
-                    : 'text-ink-600 hover:bg-cream-200'
+                    ? 'text-[#1a3545] border-orange font-bold'
+                    : 'text-[#7a7a7a] border-transparent hover:text-navy-700'
                 }`}
               >
                 {tab.label}
