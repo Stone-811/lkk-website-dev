@@ -245,6 +245,98 @@ const reasons = [
       </div>
     </section>
 
+    <!-- Other Stores Section -->
+    <section id="other-stores" class="bg-navy py-16 lg:py-20">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-10">
+          <div class="flex items-center justify-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
+            <span class="w-5 h-0.5 bg-orange" />
+            全台門店
+          </div>
+          <h2 class="font-serif text-2xl lg:text-3xl font-black text-white">
+            其他<span class="text-orange">門店據點</span>
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          <NuxtLink
+            v-for="(store, index) in stores.filter((_, i) => i > 0)"
+            :key="store.id"
+            :to="`/locations/${store.id}`"
+            class="group bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-orange/30 rounded-xl p-5 transition-all"
+          >
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-full bg-orange/20 border border-orange/30 flex items-center justify-center text-orange font-bold flex-shrink-0">
+                {{ index + 2 }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-serif text-lg font-bold text-white group-hover:text-orange transition-colors mb-1">
+                  {{ store.name }}
+                </h3>
+                <p class="text-white/50 text-sm truncate">{{ store.address }}</p>
+                <span class="inline-flex items-center gap-1 text-orange text-sm mt-2 group-hover:gap-2 transition-all">
+                  查看詳情
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cases Section -->
+    <section id="cases" class="bg-white py-16 lg:py-20">
+      <div class="container mx-auto px-4">
+        <div class="max-w-5xl mx-auto bg-cream rounded-2xl border border-navy/10 shadow-sm overflow-hidden">
+          <div class="grid lg:grid-cols-2">
+            <!-- Left: Text -->
+            <div class="p-8 lg:p-10 flex flex-col justify-center">
+              <div class="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-3">
+                <span class="w-5 h-0.5 bg-orange" />
+                成果見證
+              </div>
+              <h2 class="font-serif text-2xl lg:text-3xl font-black text-navy mb-4">
+                他們都在這裡<br /><span class="text-orange">找回健康</span>
+              </h2>
+              <p class="text-ink/60 leading-relaxed mb-6">
+                從 50 歲到 90 歲，從術後復健到慢性病改善——每一位學員都是我們最驕傲的成果。
+              </p>
+              <a
+                href="https://l-kk.tw/category/%e6%a1%88%e4%be%8b%e5%88%86%e4%ba%ab/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 text-orange font-semibold hover:gap-3 transition-all"
+              >
+                查看所有學員案例
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
+
+            <!-- Right: Stats -->
+            <div class="bg-navy/[0.03] p-8 lg:p-10 flex flex-col justify-center gap-4">
+              <div class="bg-white rounded-xl p-5 border border-navy/10">
+                <div class="font-serif text-3xl lg:text-4xl font-black text-orange">1,000+</div>
+                <div class="text-ink/60 text-sm mt-1">服務學員</div>
+              </div>
+              <div class="bg-white rounded-xl p-5 border border-navy/10">
+                <div class="font-serif text-3xl lg:text-4xl font-black text-orange">70%</div>
+                <div class="text-ink/60 text-sm mt-1">學員為 50 歲以上</div>
+              </div>
+              <div class="bg-white rounded-xl p-5 border border-navy/10">
+                <div class="font-serif text-3xl lg:text-4xl font-black text-orange">7+ 年</div>
+                <div class="text-ink/60 text-sm mt-1">深耕中高齡訓練</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- CTA Section -->
     <section class="bg-orange py-16 lg:py-20 text-center">
       <div class="container mx-auto px-4">
