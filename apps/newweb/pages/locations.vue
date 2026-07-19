@@ -1,0 +1,268 @@
+<script setup lang="ts">
+useHead({
+  title: '門店地點｜練健康 LKK Wellness',
+  meta: [
+    {
+      name: 'description',
+      content: '練健康在大台北地區有 4 間分店，新店七張、南京、松江、西門，每間都鄰近捷運站。50歲以上首次體驗完全免費。'
+    }
+  ]
+})
+
+// 門店資料類型
+interface Store {
+  id: string
+  name: string
+  district: string
+  address: string
+  phone: string
+  mrt: string
+  features: string[]
+  coachCount: number
+}
+
+// 靜態門店資料
+const stores = ref<Store[]>([
+  {
+    id: 'nanjing',
+    name: '南京店',
+    district: '台北市中山區',
+    address: '台北市中山區南京東路三段 29 號 B1',
+    phone: '(02) 2507-4196',
+    mrt: '捷運南京復興站 步行3分鐘',
+    features: ['一對一訓練', '團體課程'],
+    coachCount: 3,
+  },
+  {
+    id: 'songjiang',
+    name: '松江店',
+    district: '台北市中山區',
+    address: '台北市中山區松江路 122 號 B1',
+    phone: '(02) 2537-1055',
+    mrt: '捷運松江南京站 步行2分鐘',
+    features: ['一對一訓練'],
+    coachCount: 2,
+  },
+  {
+    id: 'ximending',
+    name: '西門店',
+    district: '台北市中正區',
+    address: '台北市中正區寶慶路 39 號',
+    phone: '(02) 2370-3245',
+    mrt: '捷運西門站 步行5分鐘',
+    features: ['一對一訓練', '團體課程'],
+    coachCount: 2,
+  },
+  {
+    id: 'xindian',
+    name: '新店七張店',
+    district: '新北市新店區',
+    address: '新北市新店區北新路二段 252 號 B1-2',
+    phone: '(02) 8914-6428',
+    mrt: '捷運七張站 步行1分鐘',
+    features: ['一對一訓練', '寬敞空間'],
+    coachCount: 3,
+  },
+])
+
+// 為什麼選擇練健康
+const reasons = [
+  {
+    iconType: 'medical',
+    title: '物理治療師背景',
+    desc: '每間門店都有物理治療師或運動科學專業教練，安全是最高原則。',
+  },
+  {
+    iconType: 'transit',
+    title: '捷運三分鐘可達',
+    desc: '所有門店都在捷運站步行範圍內，不管刮風下雨都能輕鬆抵達。',
+  },
+  {
+    iconType: 'senior',
+    title: '專為中高齡設計',
+    desc: '70% 學員都是 50 歲以上，環境安靜、不擁擠、沒有壓力。',
+  },
+  {
+    iconType: 'free',
+    title: '50歲以上免費體驗',
+    desc: '不是試課，是真正完整的 60-75 分鐘體驗課，讓我們先了解你。',
+  },
+]
+</script>
+
+<template>
+  <div class="min-h-screen bg-cream-100">
+    <!-- Hero Section -->
+    <section class="relative bg-navy-700 pt-16 overflow-hidden">
+      <!-- Background effects -->
+      <div class="absolute inset-0">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,rgba(251,114,10,0.10)_0%,transparent_55%),radial-gradient(circle_at_5%_75%,rgba(58,106,133,0.3)_0%,transparent_45%)]" />
+        <div
+          class="absolute inset-0 opacity-[0.022]"
+          :style="{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
+            backgroundSize: '55px 55px',
+          }"
+        />
+      </div>
+
+      <div class="container mx-auto px-4 relative z-10 py-16 lg:py-24 text-center">
+        <div class="inline-flex items-center gap-2 bg-orange/20 border border-orange/40 text-orange text-sm font-medium px-4 py-1.5 rounded-full mb-5">
+          <span class="w-2 h-2 bg-orange rounded-full" />
+          全台 {{ stores.length }} 間門店
+        </div>
+
+        <h1 class="font-serif text-4xl lg:text-5xl font-black text-white leading-tight mb-4">
+          找到離你最近的<span class="text-orange">練健康</span>
+        </h1>
+
+        <p class="text-white/60 text-lg font-light leading-relaxed mb-8 max-w-xl mx-auto">
+          每間門店都鄰近捷運站，由物理治療師背景教練帶領，專為中高齡及特殊族群打造的訓練環境。
+        </p>
+
+        <div class="flex items-center justify-center gap-2 text-sm text-white/40">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <span><strong class="text-orange-300">50歲以上免費</strong>・一般首次 $500・不強迫買課</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stores Grid -->
+    <section class="py-12 lg:py-16">
+      <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <NuxtLink
+            v-for="(store, idx) in stores"
+            :key="store.id"
+            :to="`/locations/${store.id}`"
+            class="group bg-white rounded-2xl overflow-hidden border border-navy-700/15 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1"
+          >
+            <!-- Store image placeholder -->
+            <div class="aspect-video bg-gradient-to-br from-navy-700 to-navy-700/80 relative">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="font-serif text-5xl font-black text-white/20">{{ store.name.charAt(0) }}</span>
+              </div>
+              <!-- Number badge -->
+              <div class="absolute top-4 left-4 w-8 h-8 rounded-full bg-orange flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                {{ idx + 1 }}
+              </div>
+              <!-- District badge -->
+              <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-xs font-medium text-navy-700 px-3 py-1 rounded-full">
+                {{ store.district }}
+              </div>
+            </div>
+
+            <!-- Store info -->
+            <div class="p-5">
+              <h2 class="font-serif text-xl font-black text-navy-700 mb-2 group-hover:text-orange transition-colors">
+                {{ store.name }}
+              </h2>
+
+              <div class="space-y-2 mb-4">
+                <div class="flex items-start gap-2 text-sm text-ink/60">
+                  <svg class="w-4 h-4 text-orange mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span>{{ store.address }}</span>
+                </div>
+                <div class="flex items-start gap-2 text-sm text-ink/60">
+                  <svg class="w-4 h-4 text-orange mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>{{ store.mrt }}</span>
+                </div>
+              </div>
+
+              <!-- Features -->
+              <div class="flex flex-wrap gap-1.5 mb-4">
+                <span
+                  v-for="feature in store.features"
+                  :key="feature"
+                  class="text-xs font-medium text-navy-700 bg-navy-700/[0.08] px-2.5 py-0.5 rounded-full"
+                >
+                  {{ feature }}
+                </span>
+              </div>
+
+              <!-- Phone & CTA -->
+              <div class="flex items-center justify-between pt-4 border-t border-navy-700/10">
+                <span class="text-orange font-semibold">{{ store.phone }}</span>
+                <span class="text-sm text-navy-700 font-medium group-hover:text-orange transition-colors">
+                  查看詳情 →
+                </span>
+              </div>
+            </div>
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Section -->
+    <section class="bg-cream-100 py-12 lg:py-16">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-10">
+          <div class="flex items-center justify-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
+            <span class="w-5 h-0.5 bg-orange" />
+            為什麼選擇練健康
+          </div>
+          <h2 class="font-serif text-2xl lg:text-3xl font-black text-navy-700">
+            每一間店都是<span class="text-orange">同樣的堅持</span>
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div
+            v-for="reason in reasons"
+            :key="reason.title"
+            class="bg-white rounded-2xl p-6 border border-navy-700/15 shadow-sm"
+          >
+            <div class="mb-4">
+              <!-- Medical Icon -->
+              <svg v-if="reason.iconType === 'medical'" class="w-8 h-8 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              <!-- Transit Icon -->
+              <svg v-else-if="reason.iconType === 'transit'" class="w-8 h-8 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8m-8 4h8m-4 8V7m-4 12h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <!-- Senior Icon -->
+              <svg v-else-if="reason.iconType === 'senior'" class="w-8 h-8 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <!-- Free Icon -->
+              <svg v-else-if="reason.iconType === 'free'" class="w-8 h-8 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-navy-700 mb-2">{{ reason.title }}</h3>
+            <p class="text-sm text-ink/60 leading-relaxed">{{ reason.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-orange py-16 lg:py-20 text-center">
+      <div class="container mx-auto px-4">
+        <h2 class="font-serif text-3xl lg:text-4xl font-black text-white mb-3">
+          找到離你最近的門店了嗎？
+        </h2>
+        <p class="text-white/80 mb-8 max-w-md mx-auto">
+          立即預約免費體驗，由我們的專業教練帶領你開始第一步。
+        </p>
+        <NuxtLink
+          to="/booking"
+          class="inline-flex items-center gap-2 bg-white text-orange font-bold px-8 py-3.5 rounded-full shadow-lg hover:-translate-y-0.5 transition-transform"
+        >
+          立即預約體驗 →
+        </NuxtLink>
+        <div class="mt-4 text-white/60 text-sm">
+          50歲以上完全免費・不強迫買課
+        </div>
+      </div>
+    </section>
+  </div>
+</template>
