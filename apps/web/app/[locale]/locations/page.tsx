@@ -73,16 +73,36 @@ async function getStores() {
       }
     });
 
-    return stores.map((store) => ({
-      id: store.slug,
-      name: store.name,
-      district: `${store.city || ''}${store.district || ''}`,
-      address: store.address || '',
-      phone: store.phone || '',
-      mrt: store.transportation || '',
-      features: [], // TODO: 可從資料庫新增 features 欄位
-      coachCount: storeCoachCounts.get(store.id) || 0,
-    }));
+    return stores.map((store) => {
+      // Extract MRT info from transportation object
+      let mrtInfo = '';
+      if (store.transportation) {
+        if (typeof store.transportation === 'string') {
+          mrtInfo = store.transportation;
+        } else if (typeof store.transportation === 'object') {
+          const transport = store.transportation as {
+            mrt?: { station?: string; desc?: string };
+          };
+          if (transport.mrt) {
+            mrtInfo = transport.mrt.station || '';
+            if (transport.mrt.desc) {
+              mrtInfo += ` ${transport.mrt.desc}`;
+            }
+          }
+        }
+      }
+
+      return {
+        id: store.slug,
+        name: store.name,
+        district: `${store.city || ''}${store.district || ''}`,
+        address: store.address || '',
+        phone: store.phone || '',
+        mrt: mrtInfo,
+        features: [], // TODO: 可從資料庫新增 features 欄位
+        coachCount: storeCoachCounts.get(store.id) || 0,
+      };
+    });
   } catch (error) {
     console.error('Failed to fetch stores from Firestore, using fallback data:', error);
     return fallbackStores;
