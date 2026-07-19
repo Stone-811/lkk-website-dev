@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-cream-100 text-ink-900;
+}
+
+/* Button utilities */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 font-bold rounded-full transition-colors;
+  }
+
+  .btn-primary {
+    @apply bg-orange hover:bg-orange-600 text-white;
+  }
+
+  .btn-secondary {
+    @apply bg-navy-700 hover:bg-navy-800 text-white;
+  }
+
+  .btn-outline {
+    @apply border-2 border-navy-700 text-navy-700 hover:bg-navy-700 hover:text-white;
+  }
+}
