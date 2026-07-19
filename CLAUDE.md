@@ -334,7 +334,57 @@ lkk-website/                    # 根目錄（Monorepo）
 │       ├── components/
 │       ├── lib/
 │       └── messages/
+│
+│   └── newweb/                 # Vue 3 + Nuxt 3 應用（開發中）
+│       ├── package.json        # @lkk/newweb
+│       ├── nuxt.config.ts      # Nuxt 設定
+│       ├── tailwind.config.ts  # Tailwind 設定（含自訂色彩）
+│       │
+│       ├── pages/
+│       │   ├── index.vue               # 首頁
+│       │   ├── booking.vue             # 預約體驗
+│       │   ├── services.vue            # 服務方案
+│       │   ├── franchise.vue           # 加盟說明
+│       │   ├── shop.vue                # 商品導購
+│       │   ├── personal-record.vue     # LKK4 成績查詢
+│       │   ├── lkk4.vue                # LKK4 賽事
+│       │   ├── lkk-academy.vue         # 練健康學院
+│       │   ├── cooperation.vue         # 合作洽詢
+│       │   ├── locations/
+│       │   │   ├── index.vue           # 門店總覽
+│       │   │   └── [store].vue         # 門店詳情
+│       │   ├── team-intro/
+│       │   │   ├── index.vue           # 經營團隊
+│       │   │   └── coaches.vue         # 全體教練
+│       │   └── admin/
+│       │       ├── index.vue           # 後台儀表板
+│       │       └── login.vue           # 後台登入
+│       │
+│       ├── layouts/
+│       │   ├── default.vue             # 預設 Layout（含 Header/Footer）
+│       │   ├── admin.vue               # 後台 Layout
+│       │   └── auth.vue                # 登入頁 Layout
+│       │
+│       └── components/
+│           ├── Header.vue
+│           └── Footer.vue
 ```
+
+### Vue/Nuxt 版本（newweb）開發進度
+
+| 頁面 | 狀態 | 說明 |
+|------|------|------|
+| 首頁 | ✅ | Hero、服務、案例、FAQ、CTA |
+| 預約體驗 | ✅ | 表單含年齡偵測、運動目的多選 |
+| 服務方案 | ✅ | 一對一/團課/線上，比較表 |
+| 門店總覽 | ✅ | 4 間門店、stats bar、cases section |
+| 門店詳情 | ✅ | 交通、教練、環境照、CTA |
+| 加盟說明 | ✅ | 市場數據、申請表單 |
+| LKK4 賽事 | ✅ | 賽事介紹、報名導流 |
+| 成績查詢 | ✅ | 年度/姓名查詢 |
+| 商品導購 | ✅ | 產品目錄、詢問 modal |
+| 後台登入 | ✅ | Email/密碼登入 |
+| 後台儀表板 | ✅ | 統計、近期名單 |
 
 ### 重要：Monorepo 注意事項
 
@@ -342,6 +392,46 @@ lkk-website/                    # 根目錄（Monorepo）
 2. **只有根目錄有 `package-lock.json`**，子目錄不應該有
 3. **使用 `turbo` 執行 build**：`npm run build` 會自動使用 turbo
 4. **根目錄 package.json 必須有 `packageManager` 欄位**：Turbo 2.x 需要此欄位來解析 workspaces
+
+### Vue/Nuxt 版本（newweb）技術說明
+
+| 項目 | 技術 |
+|------|------|
+| 前台框架 | Vue 3 + Nuxt 3 |
+| CSS 框架 | Tailwind CSS（@nuxtjs/tailwindcss） |
+| 字型 | Google Fonts（@nuxtjs/google-fonts） |
+| 路由 | Nuxt 檔案系統路由 |
+| 狀態管理 | Vue Composition API（ref, reactive, computed） |
+
+**Tailwind 自訂色彩（tailwind.config.ts）：**
+
+```typescript
+colors: {
+  navy: { DEFAULT: '#2A5269', 50-950: '...' },
+  orange: { DEFAULT: '#FB720A', 50-950: '...' },
+  cream: { DEFAULT: '#F5EFE4', 50-950: '...' },
+  ink: { DEFAULT: '#1a1a1a', 50-950: '...' },
+}
+```
+
+**開發指令：**
+
+```bash
+# 開發
+cd apps/newweb && npm run dev
+
+# 建置
+npm run build
+
+# 預覽
+npm run preview
+```
+
+**注意事項：**
+- Nuxt 模組（@nuxtjs/tailwindcss、@nuxtjs/google-fonts）需放在 `dependencies`（非 devDependencies），否則 postinstall 時會找不到
+- Vue 單檔元件使用 `<script setup>` 語法
+- 頁面使用 `useHead()` 設定 meta
+- 動態路由使用 `[param].vue` 檔名格式
 
 ---
 
