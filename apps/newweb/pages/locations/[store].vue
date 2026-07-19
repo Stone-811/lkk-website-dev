@@ -131,11 +131,63 @@ const photos = [
   { label: '舒適休息區', span: false, image: 'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=600&h=450&fit=crop&q=80' },
 ]
 
-// 教練資料（模擬）
-const coaches = [
-  { id: '1', name: '陳教練', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力訓練'], photo: '' },
-  { id: '2', name: '林教練', roleTitle: '教練', specialties: ['體能訓練', '核心訓練'], photo: '' },
-]
+// 各門店教練資料
+const coachesByStore: Record<string, any[]> = {
+  xindian: [
+    { id: 'xd-chen-shaowei', name: '陳紹緯', roleTitle: '店長 / 資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xd-wu-minghao', name: '吳銘浩', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xd-wu-jiaying', name: '吳家穎', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xd-chen-bowen', name: '陳柏文', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xd-xu-jiazhen', name: '許嘉真', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xd-lin-guanyu', name: '林冠宇', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xd-liu-yulin', name: '劉昱麟', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xd-zheng-siming', name: '鄭司明', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xd-huang-yuqi', name: '黃昱淇', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xd-lin-yuchen', name: '林妤宸', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+  ],
+  nanjing: [
+    { id: 'nj-su-kaijie', name: '蘇愷捷', roleTitle: '店長 / 資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-chen-yishu', name: '陳奕樹', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-peng-junzhi', name: '彭竣峙', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-fang-yunping', name: '方韻蘋', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-li-ruoyu', name: '李若瑀', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-xie-zhiyu', name: '謝之妤', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-hong-yuxiang', name: '洪鈺翔', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-xie-bingyu', name: '謝秉諭', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-zeng-yuqing', name: '曾宥晴', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-lin-bohan', name: '林柏翰', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-sun-minghong', name: '孫銘宏', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-wu-peiting', name: '吳沛庭', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-wu-shengxun', name: '伍聖勛', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'nj-zhan-yuning', name: '詹鈺寧', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+  ],
+  songjiang: [
+    { id: 'sj-li-guanwei', name: '李冠緯', roleTitle: '店長 / 資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'sj-xie-qiwen', name: '謝其彣', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'sj-chen-yihong', name: '陳奕宏', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'sj-chen-yixuan', name: '陳依萱', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'sj-lu-junyi', name: '呂峻毅', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+  ],
+  ximending: [
+    { id: 'xm-lin-weizhe', name: '林暐哲', roleTitle: '店長 / 資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-cai-xumin', name: '蔡旭旻', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-liao-jiayi', name: '廖家漪', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-huang-yuxuan', name: '黃妤瑄', roleTitle: '資深教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-wang-xinyu', name: '王欣妤', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-chen-yiren', name: '陳奕任', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-yang-shengteng', name: '楊勝騰', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-chen-weizhi', name: '陳韋志', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-qiu-zhihong', name: '邱子弘', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-zhong-peiyu', name: '鐘沛諭', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-yang-yueqian', name: '楊玥蒨', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-cai-tingyun', name: '蔡亭芸', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-xiao-zhaohan', name: '蕭昭涵', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+    { id: 'xm-xiao-yusheng', name: '蕭宇昇', roleTitle: '教練', specialties: ['中高齡訓練', '肌力與體能'], photo: '' },
+  ],
+}
+
+// 取得當前門店的教練
+const coaches = coachesByStore[storeSlug] || []
 </script>
 
 <template>
