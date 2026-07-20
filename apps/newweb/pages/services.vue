@@ -83,11 +83,11 @@ const onlineAdvantages = [
 
 // 比較表資料
 const comparisonData = [
-  { item: '個人化程度', personal: '★★★★★', group: '★★★☆☆', online: '★★☆☆☆' },
+  { item: '個人化程度', personal: '最高', group: '中等', online: '基礎' },
   { item: '教練即時指導', personal: '✓', group: '✓', online: '—' },
   { item: '人數配置', personal: '1 對 1', group: '4-8 人', online: '無限制' },
-  { item: '特殊族群適配', personal: '★★★★★', group: '★★★☆☆', online: '★★☆☆☆' },
-  { item: '時間彈性', personal: '★★★★★', group: '★★★☆☆', online: '★★★★★' },
+  { item: '特殊族群適配', personal: '最適合', group: '部分適合', online: '需自行評估' },
+  { item: '時間彈性', personal: '彈性排課', group: '固定時段', online: '隨時觀看' },
   { item: '地點需求', personal: '需到店', group: '需到店', online: '不限' },
   { item: '開始方式', personal: '預約體驗', group: '查詢課表', online: '直接購買' },
 ]
@@ -362,9 +362,10 @@ const onlineFeatures = [
             購課與請假規定
           </h4>
           <ul class="text-sm text-ink-600 space-y-2">
-            <li>• 團體課以期為單位購買，每期 8-12 堂課</li>
-            <li>• 請假需於課前 24 小時通知，可安排補課</li>
-            <li>• 單堂體驗課程歡迎先預約試上</li>
+            <li>• 團體課以四堂為一期購買，可彈性選擇開始日期</li>
+            <li>• 每堂課 50 分鐘，4-8 人小班制</li>
+            <li>• 請假需提前一週通知，可安排補課</li>
+            <li>• 歡迎先預約單堂體驗試上</li>
           </ul>
         </div>
 

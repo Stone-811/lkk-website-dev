@@ -2,13 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles */
-html {
-  scroll-behavior: smooth;
-}
+@layer base {
+  /* Base styles */
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  @apply bg-cream-100 text-ink-900;
+  body {
+    @apply bg-cream-100 text-ink-900;
+    font-family: 'Noto Sans TC', system-ui, sans-serif;
+  }
+
+  /* Typography - serif headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Noto Serif TC', Georgia, serif;
+  }
+
+  /* Ensure font-serif class works correctly */
+  .font-serif {
+    font-family: 'Noto Serif TC', Georgia, serif !important;
+  }
+
+  /* Ensure proper font rendering */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 /* Button utilities */

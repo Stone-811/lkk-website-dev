@@ -376,39 +376,8 @@ const coaches = coachesByStore[storeSlug] || []
           </div>
         </div>
 
-        <!-- Coach Grid -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div
-            v-for="coach in coaches"
-            :key="coach.id"
-            class="bg-white rounded-2xl overflow-hidden shadow-sm border border-navy-700/10"
-          >
-            <div class="aspect-square relative bg-gradient-to-br from-navy-700 to-navy-700/80">
-              <img
-                v-if="coach.photo"
-                :src="coach.photo"
-                :alt="coach.name"
-                class="w-full h-full object-cover"
-              />
-              <div v-else class="absolute inset-0 flex items-center justify-center">
-                <span class="font-serif text-6xl font-black text-white/20">{{ coach.name.charAt(0) }}</span>
-              </div>
-            </div>
-            <div class="p-5">
-              <h3 class="font-serif text-lg font-bold text-navy-700">{{ coach.name }}</h3>
-              <p class="text-orange text-sm font-medium mb-3">{{ coach.roleTitle }}</p>
-              <div class="flex flex-wrap gap-1.5">
-                <span
-                  v-for="specialty in coach.specialties"
-                  :key="specialty"
-                  class="text-xs bg-orange/10 text-orange px-2 py-0.5 rounded-full"
-                >
-                  {{ specialty }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- Coach Carousel -->
+        <CoachCarousel :coaches="coaches" />
       </div>
     </section>
 

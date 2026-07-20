@@ -16,9 +16,12 @@ export default defineNuxtConfig({
   googleFonts: {
     families: {
       'Noto+Sans+TC': [400, 500, 600, 700],
-      'Noto+Serif+TC': [400, 500, 600, 700],
+      'Noto+Serif+TC': [400, 500, 600, 700, 900],
     },
     display: 'swap',
+    preconnect: true,
+    prefetch: true,
+    preload: true,
   },
 
   // App config
