@@ -1,7 +1,28 @@
-import { SignJWT, jwtVerify } from 'jose';
 import { H3Event, getCookie, setCookie, deleteCookie } from 'h3';
 import { db, UserDoc, docToObject } from './firebase';
-import bcrypt from 'bcryptjs';
+
+// Lazy load jose to avoid bundling issues
+let SignJWT: any;
+let jwtVerify: any;
+
+async function getJose() {
+  if (!SignJWT) {
+    const jose = await import('jose');
+    SignJWT = jose.SignJWT;
+    jwtVerify = jose.jwtVerify;
+  }
+  return { SignJWT, jwtVerify };
+}
+
+// Lazy load bcrypt
+let bcryptModule: any;
+
+async function getBcrypt() {
+  if (!bcryptModule) {
+    bcryptModule = (await import('bcryptjs')).default;
+  }
+  return bcryptModule;
+}
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-in-production'
@@ -19,6 +40,7 @@ export type UserSession = {
 
 // Create JWT token for session
 export async function createToken(user: UserSession): Promise<string> {
+  const { SignJWT } = await getJose();
   return new SignJWT({ user })
     .setProtectedHeader({ alg: 'HS256' })
     .setExpirationTime('7d')
@@ -28,6 +50,7 @@ export async function createToken(user: UserSession): Promise<string> {
 // Verify JWT token
 export async function verifyToken(token: string): Promise<UserSession | null> {
   try {
+    const { jwtVerify } = await getJose();
     const { payload } = await jwtVerify(token, JWT_SECRET);
     return payload.user as UserSession;
   } catch {
@@ -100,6 +123,7 @@ export async function loginWithCredentials(
     const userData = userDoc.data();
 
     // Check password using bcrypt
+    const bcrypt = await getBcrypt();
     const isValidPassword = await bcrypt.compare(password, userData.passwordHash || '');
 
     if (!isValidPassword) {
@@ -130,6 +154,7 @@ export async function createUser(
   storeId?: string
 ): Promise<{ success: boolean; userId?: string; error?: string }> {
   try {
+    const bcrypt = await getBcrypt();
     const passwordHash = await bcrypt.hash(password, 10);
 
     const userRef = db.collection('users').doc();

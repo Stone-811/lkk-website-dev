@@ -40,5 +40,14 @@ export default defineNuxtConfig({
   // Let Firebase App Hosting auto-detect the correct preset
   nitro: {
     preset: 'firebase-app-hosting',
+    // Externalize Node.js modules that shouldn't be bundled
+    externals: {
+      inline: ['firebase-admin'],
+    },
+  },
+
+  // Build configuration
+  build: {
+    transpile: ['jose'],
   },
 });
