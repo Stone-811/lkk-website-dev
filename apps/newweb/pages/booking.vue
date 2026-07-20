@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 
 useHead({
   title: '預約體驗 | 練健康',
@@ -8,12 +8,12 @@ useHead({
   ]
 })
 
-const stores = [
+const stores = ref([
   { id: 'nanjing', name: '南京店', address: '台北市中山區南京東路三段 29 號 B1', phone: '(02) 2507-4196' },
   { id: 'songjiang', name: '松江店', address: '台北市中山區松江路 122 號 B1', phone: '(02) 2537-1055' },
   { id: 'ximending', name: '西門店', address: '台北市中正區寶慶路 39 號', phone: '(02) 2370-3245' },
   { id: 'xindian', name: '新店七張店', address: '新北市新店區北新路二段 252 號 B1-2', phone: '(02) 8914-6428' },
-]
+])
 
 const faqs = [
   { q: '我年紀這麼大，可以練嗎？', a: '練健康 70% 的學員都是中高齡族群，90 歲阿嬤都在這裡練硬舉。' },
@@ -42,30 +42,90 @@ const whatYouGet = [
   '訓練目標評估與規劃建議',
 ]
 
-// Exercise goals options
-const exerciseGoals = [
-  { id: 'strength', label: '增加肌力與活動力' },
-  { id: 'chronic', label: '慢性病管理' },
-  { id: 'weight', label: '體重管理' },
-  { id: 'other', label: '其他' },
+// 方便聯繫時段選項（多選）
+const contactTimeOptions = [
+  '不限',
+  '平日白天 (10:00-17:00)',
+  '平日晚上 (18:00-21:00)',
+  '假日白天',
+  '假日晚上',
+  '其他',
+]
+
+// 從哪裡得知選項（多選）
+const sourceOptions = [
+  'Google 搜尋',
+  'Facebook',
+  'Instagram',
+  'LINE',
+  'YouTube',
+  'Podcast',
+  '朋友推薦',
+  '路過門店',
+  '醫療院所轉介',
+  '其他',
+]
+
+// 與學員關係選項
+const relationshipOptions = [
+  '配偶',
+  '子女',
+  '父母',
+  '兄弟姊妹',
+  '朋友',
+  '其他',
 ]
 
 // Form state
 const formData = reactive({
+  // 學員資料
   name: '',
   phone: '',
   gender: '',
   birthDate: '',
   email: '',
+  line: '',
+  // 填寫者資料
+  filledBySelf: '本人填寫',
+  relationship: '',
+  bookerName: '',
+  contactPhone: '',
+  // 健康狀況
+  hasMedicalCondition: '',
+  medicalConditionNote: '',
+  // 預約資訊
   storeId: '',
+  preferredTimes: [] as string[],
+  preferredTimeOther: '',
+  sources: [] as string[],
+  sourceOther: '',
   paymentMethod: '',
-  goals: [] as string[],
   message: '',
 })
 
 const isSubmitting = ref(false)
 const isSuccess = ref(false)
 const errors = ref<Record<string, string>>({})
+
+// Fetch stores from API
+onMounted(async () => {
+  try {
+    const res = await fetch('/api/public/stores')
+    if (res.ok) {
+      const data = await res.json()
+      if (data.data && data.data.length > 0) {
+        stores.value = data.data.map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          address: `${s.city || ''}${s.district || ''}${s.address || ''}`,
+          phone: s.phone || '',
+        }))
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch stores:', error)
+  }
+})
 
 // Calculate age from birthdate
 const userAge = computed(() => {
@@ -82,38 +142,131 @@ const userAge = computed(() => {
 
 const isFreeEligible = computed(() => userAge.value !== null && userAge.value >= 50)
 
-// Toggle goal selection
-const toggleGoal = (goalId: string) => {
-  const index = formData.goals.indexOf(goalId)
+// Toggle preferred time selection
+const togglePreferredTime = (time: string) => {
+  const index = formData.preferredTimes.indexOf(time)
   if (index === -1) {
-    formData.goals.push(goalId)
+    formData.preferredTimes.push(time)
   } else {
-    formData.goals.splice(index, 1)
+    formData.preferredTimes.splice(index, 1)
+  }
+}
+
+// Toggle source selection
+const toggleSource = (source: string) => {
+  const index = formData.sources.indexOf(source)
+  if (index === -1) {
+    formData.sources.push(source)
+  } else {
+    formData.sources.splice(index, 1)
   }
 }
 
 const validateForm = () => {
   const newErrors: Record<string, string> = {}
-  if (!formData.name.trim()) newErrors.name = '請輸入姓名'
+
+  // 學員基本資料驗證
+  if (!formData.name.trim()) newErrors.name = '請輸入學員姓名'
   if (!formData.phone.trim()) newErrors.phone = '請輸入手機號碼'
   if (formData.phone && !/^09\d{8}$/.test(formData.phone)) newErrors.phone = '請輸入有效的手機號碼'
   if (!formData.gender) newErrors.gender = '請選擇性別'
   if (!formData.birthDate) newErrors.birthDate = '請選擇出生年月日'
-  if (!formData.email.trim()) newErrors.email = '請輸入 Email'
+  if (!formData.email.trim()) {
+    newErrors.email = '請輸入 Email'
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    newErrors.email = '請輸入有效的 Email'
+  }
+
+  // 填寫者資料驗證
+  if (formData.filledBySelf === '親友代填') {
+    if (!formData.relationship) newErrors.relationship = '請選擇與學員的關係'
+    if (!formData.bookerName.trim()) newErrors.bookerName = '請輸入預約者姓名'
+    if (!formData.contactPhone.trim()) newErrors.contactPhone = '請輸入方便聯繫的電話'
+    if (formData.contactPhone && !/^09\d{8}$/.test(formData.contactPhone)) {
+      newErrors.contactPhone = '請輸入有效的手機號碼'
+    }
+  }
+
+  // 健康狀況驗證
+  if (!formData.hasMedicalCondition) newErrors.hasMedicalCondition = '請選擇健康狀況'
+
+  // 預約資訊驗證
   if (!formData.storeId) newErrors.storeId = '請選擇門店'
+  if (formData.preferredTimes.length === 0) newErrors.preferredTimes = '請至少選擇一個時段'
   if (!formData.paymentMethod) newErrors.paymentMethod = '請選擇付款方式'
+
   errors.value = newErrors
   return Object.keys(newErrors).length === 0
 }
 
 const handleSubmit = async () => {
-  if (!validateForm()) return
+  if (!validateForm()) {
+    // 滾動到第一個錯誤欄位
+    const firstErrorKey = Object.keys(errors.value)[0]
+    if (firstErrorKey) {
+      const element = document.querySelector(`[name="${firstErrorKey}"]`) ||
+                     document.getElementById(firstErrorKey)
+      element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+    return
+  }
+
   isSubmitting.value = true
 
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1500))
-  isSuccess.value = true
-  isSubmitting.value = false
+  try {
+    // 組合來源
+    let finalSources = [...formData.sources]
+    if (formData.sources.includes('其他') && formData.sourceOther.trim()) {
+      finalSources = finalSources.filter(s => s !== '其他')
+      finalSources.push(`其他: ${formData.sourceOther}`)
+    }
+
+    // 組合聯繫時段
+    let finalPreferredTimes = [...formData.preferredTimes]
+    if (formData.preferredTimes.includes('其他') && formData.preferredTimeOther.trim()) {
+      finalPreferredTimes = finalPreferredTimes.filter(t => t !== '其他')
+      finalPreferredTimes.push(`其他: ${formData.preferredTimeOther}`)
+    }
+
+    const response = await fetch('/api/leads/booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        // 學員資料
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        gender: formData.gender,
+        birthDate: formData.birthDate,
+        line: formData.line || null,
+        // 填寫者資料
+        filledBySelf: formData.filledBySelf === '本人填寫',
+        relationship: formData.filledBySelf === '親友代填' ? formData.relationship : null,
+        bookerName: formData.filledBySelf === '親友代填' ? formData.bookerName : null,
+        contactPhone: formData.filledBySelf === '親友代填' ? formData.contactPhone : formData.phone,
+        // 健康狀況
+        hasMedicalCondition: formData.hasMedicalCondition === '是',
+        medicalConditionNote: formData.hasMedicalCondition === '是' ? formData.medicalConditionNote : null,
+        // 預約資訊
+        storeId: formData.storeId,
+        preferredTime: finalPreferredTimes,
+        sources: finalSources,
+        paymentMethod: formData.paymentMethod,
+        message: formData.message,
+        sourcePage: '/booking',
+      }),
+    })
+
+    if (response.ok) {
+      isSuccess.value = true
+    } else {
+      alert('送出失敗，請稍後再試')
+    }
+  } catch (error) {
+    alert('網路錯誤，請稍後再試')
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 
@@ -231,33 +384,36 @@ const handleSubmit = async () => {
               </div>
 
               <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
-                <!-- 學員基本資料 -->
+                <!-- Section 1: 學員基本資料 -->
                 <div class="space-y-5">
                   <h2 class="text-xl font-bold text-navy-700 flex items-center gap-2">
                     <span class="w-7 h-7 rounded-full bg-orange text-white text-sm flex items-center justify-center">1</span>
-                    基本資料
+                    學員基本資料
                   </h2>
 
+                  <!-- Row 1: 學員姓名 | 學員手機 -->
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label class="block text-sm font-medium mb-2 text-navy-700">
-                        姓名 <span class="text-red-500">*</span>
+                        學員姓名 <span class="text-red-500">*</span>
                       </label>
                       <input
                         v-model="formData.name"
                         type="text"
+                        name="name"
                         :class="['w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange', errors.name ? 'border-red-500' : 'border-cream-200']"
-                        placeholder="您的姓名"
+                        placeholder="要來上課的人"
                       />
                       <p v-if="errors.name" class="text-red-500 text-sm mt-1">{{ errors.name }}</p>
                     </div>
                     <div>
                       <label class="block text-sm font-medium mb-2 text-navy-700">
-                        手機 <span class="text-red-500">*</span>
+                        學員手機 <span class="text-red-500">*</span>
                       </label>
                       <input
                         v-model="formData.phone"
                         type="tel"
+                        name="phone"
                         :class="['w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange', errors.phone ? 'border-red-500' : 'border-cream-200']"
                         placeholder="0912345678"
                       />
@@ -265,6 +421,7 @@ const handleSubmit = async () => {
                     </div>
                   </div>
 
+                  <!-- Row 2: 性別 | 出生年月日 -->
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label class="block text-sm font-medium mb-2 text-navy-700">
@@ -272,6 +429,7 @@ const handleSubmit = async () => {
                       </label>
                       <select
                         v-model="formData.gender"
+                        name="gender"
                         :class="['w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange', errors.gender ? 'border-red-500' : 'border-cream-200']"
                       >
                         <option value="">請選擇</option>
@@ -287,7 +445,10 @@ const handleSubmit = async () => {
                       <input
                         v-model="formData.birthDate"
                         type="date"
+                        name="birthDate"
                         :class="['w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange', errors.birthDate ? 'border-red-500' : 'border-cream-200']"
+                        max="2010-01-01"
+                        min="1920-01-01"
                       />
                       <p v-if="isFreeEligible" class="text-green-600 text-sm mt-1 font-medium flex items-center gap-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,30 +460,167 @@ const handleSubmit = async () => {
                     </div>
                   </div>
 
-                  <div>
-                    <label class="block text-sm font-medium mb-2 text-navy-700">
-                      Email <span class="text-red-500">*</span>
-                    </label>
-                    <input
-                      v-model="formData.email"
-                      type="email"
-                      :class="['w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange', errors.email ? 'border-red-500' : 'border-cream-200']"
-                      placeholder="your@email.com"
-                    />
-                    <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
+                  <!-- Row 3: Email | Line -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium mb-2 text-navy-700">
+                        Email <span class="text-red-500">*</span>
+                      </label>
+                      <input
+                        v-model="formData.email"
+                        type="email"
+                        name="email"
+                        :class="['w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange', errors.email ? 'border-red-500' : 'border-cream-200']"
+                        placeholder="your@email.com"
+                      />
+                      <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium mb-2 text-navy-700">
+                        Line ID <span class="text-ink-500 font-normal">（選填）</span>
+                      </label>
+                      <input
+                        v-model="formData.line"
+                        type="text"
+                        name="line"
+                        class="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange focus:border-orange"
+                        placeholder="方便我們聯繫您"
+                      />
+                    </div>
                   </div>
                 </div>
 
+                <!-- Divider -->
                 <div class="my-6 border-t border-cream-200" />
 
-                <!-- 預約資訊 -->
+                <!-- Section 2: 填寫者資料 & 健康狀況 -->
                 <div class="space-y-5">
                   <h2 class="text-xl font-bold text-navy-700 flex items-center gap-2">
                     <span class="w-7 h-7 rounded-full bg-orange text-white text-sm flex items-center justify-center">2</span>
+                    填寫者資料 & 健康狀況
+                  </h2>
+
+                  <!-- 本人填寫 / 親友代填 -->
+                  <div>
+                    <label class="block text-sm font-medium mb-2 text-navy-700">
+                      是否為本人填寫 <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex gap-4">
+                      <button
+                        v-for="opt in ['本人填寫', '親友代填']"
+                        :key="opt"
+                        type="button"
+                        :class="[
+                          'flex-1 py-3 rounded-lg border text-center transition-all',
+                          formData.filledBySelf === opt
+                            ? 'border-orange bg-orange/10 text-orange font-medium'
+                            : 'border-cream-200 hover:border-orange/50'
+                        ]"
+                        @click="formData.filledBySelf = opt"
+                      >
+                        {{ opt }}
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 親友代填欄位 -->
+                  <div v-if="formData.filledBySelf === '親友代填'" class="bg-cream-50 rounded-lg p-4 space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium mb-2 text-navy-700">
+                        與學員的關係 <span class="text-red-500">*</span>
+                      </label>
+                      <select
+                        v-model="formData.relationship"
+                        name="relationship"
+                        :class="['w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange', errors.relationship ? 'border-red-500' : 'border-cream-200']"
+                      >
+                        <option value="">請選擇</option>
+                        <option v-for="r in relationshipOptions" :key="r" :value="r">{{ r }}</option>
+                      </select>
+                      <p v-if="errors.relationship" class="text-red-500 text-sm mt-1">{{ errors.relationship }}</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-sm font-medium mb-2 text-navy-700">
+                          預約者姓名 <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                          v-model="formData.bookerName"
+                          type="text"
+                          name="bookerName"
+                          :class="['w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange', errors.bookerName ? 'border-red-500' : 'border-cream-200']"
+                          placeholder="請輸入您的姓名"
+                        />
+                        <p v-if="errors.bookerName" class="text-red-500 text-sm mt-1">{{ errors.bookerName }}</p>
+                      </div>
+
+                      <div>
+                        <label class="block text-sm font-medium mb-2 text-navy-700">
+                          方便聯繫的電話 <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                          v-model="formData.contactPhone"
+                          type="tel"
+                          name="contactPhone"
+                          :class="['w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange focus:border-orange', errors.contactPhone ? 'border-red-500' : 'border-cream-200']"
+                          placeholder="0912345678"
+                        />
+                        <p v-if="errors.contactPhone" class="text-red-500 text-sm mt-1">{{ errors.contactPhone }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 健康狀況 -->
+                  <div class="pt-2">
+                    <label class="block text-sm font-medium mb-2 text-navy-700">
+                      是否有疾病，或 3 年內曾開過刀或住院？ <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex gap-4">
+                      <button
+                        v-for="opt in ['是', '否']"
+                        :key="opt"
+                        type="button"
+                        :class="[
+                          'flex-1 py-3 rounded-lg border text-center transition-all',
+                          formData.hasMedicalCondition === opt
+                            ? 'border-orange bg-orange/10 text-orange font-medium'
+                            : 'border-cream-200 hover:border-orange/50'
+                        ]"
+                        @click="formData.hasMedicalCondition = opt"
+                      >
+                        {{ opt }}
+                      </button>
+                    </div>
+                    <p v-if="errors.hasMedicalCondition" class="text-red-500 text-sm mt-1">{{ errors.hasMedicalCondition }}</p>
+                  </div>
+
+                  <!-- 健康狀況備註 -->
+                  <div v-if="formData.hasMedicalCondition === '是'">
+                    <label class="block text-sm font-medium mb-2 text-navy-700">
+                      請簡述情況 <span class="text-ink-500 font-normal">（選填）</span>
+                    </label>
+                    <textarea
+                      v-model="formData.medicalConditionNote"
+                      rows="2"
+                      class="w-full px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                      placeholder="例如：膝蓋退化、心臟手術等"
+                    />
+                  </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="my-6 border-t border-cream-200" />
+
+                <!-- Section 3: 預約資訊 -->
+                <div class="space-y-5">
+                  <h2 class="text-xl font-bold text-navy-700 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-full bg-orange text-white text-sm flex items-center justify-center">3</span>
                     預約資訊
                   </h2>
 
-                  <div>
+                  <!-- 選擇門店 -->
+                  <div id="storeId">
                     <label class="block text-sm font-medium mb-2 text-navy-700">
                       選擇門店 <span class="text-red-500">*</span>
                     </label>
@@ -347,77 +645,146 @@ const handleSubmit = async () => {
                     <p v-if="errors.storeId" class="text-red-500 text-sm mt-2">{{ errors.storeId }}</p>
                   </div>
 
+                  <!-- 方便聯繫時段 -->
+                  <div id="preferredTimes">
+                    <label class="block text-sm font-medium mb-2 text-navy-700">
+                      方便聯繫時段 <span class="text-red-500">*</span>
+                      <span class="text-ink-500 font-normal ml-1">（可複選）</span>
+                    </label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <button
+                        v-for="time in contactTimeOptions"
+                        :key="time"
+                        type="button"
+                        :class="[
+                          'p-2.5 rounded-lg border text-sm text-left transition-all flex items-center justify-start gap-2',
+                          formData.preferredTimes.includes(time)
+                            ? 'border-orange bg-orange/10 text-orange'
+                            : 'border-cream-200 hover:border-orange/50'
+                        ]"
+                        @click="togglePreferredTime(time)"
+                      >
+                        <div
+                          :class="[
+                            'w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0',
+                            formData.preferredTimes.includes(time)
+                              ? 'border-orange bg-orange'
+                              : 'border-ink-300'
+                          ]"
+                        >
+                          <svg v-if="formData.preferredTimes.includes(time)" class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        {{ time }}
+                      </button>
+                    </div>
+                    <input
+                      v-if="formData.preferredTimes.includes('其他')"
+                      v-model="formData.preferredTimeOther"
+                      type="text"
+                      class="w-full mt-2 px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                      placeholder="請說明其他方便時段"
+                    />
+                    <p v-if="errors.preferredTimes" class="text-red-500 text-sm mt-2">{{ errors.preferredTimes }}</p>
+                  </div>
+
+                  <!-- 從哪裡得知 -->
                   <div>
+                    <label class="block text-sm font-medium mb-2 text-navy-700">
+                      從哪裡得知練健康？ <span class="text-ink-500 font-normal">（可複選）</span>
+                    </label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <button
+                        v-for="source in sourceOptions"
+                        :key="source"
+                        type="button"
+                        :class="[
+                          'p-2.5 rounded-lg border text-sm text-left transition-all flex items-center justify-start gap-2',
+                          formData.sources.includes(source)
+                            ? 'border-orange bg-orange/10 text-orange'
+                            : 'border-cream-200 hover:border-orange/50'
+                        ]"
+                        @click="toggleSource(source)"
+                      >
+                        <div
+                          :class="[
+                            'w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0',
+                            formData.sources.includes(source)
+                              ? 'border-orange bg-orange'
+                              : 'border-ink-300'
+                          ]"
+                        >
+                          <svg v-if="formData.sources.includes(source)" class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        {{ source }}
+                      </button>
+                    </div>
+                    <input
+                      v-if="formData.sources.includes('其他')"
+                      v-model="formData.sourceOther"
+                      type="text"
+                      class="w-full mt-2 px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                      placeholder="請說明從哪裡得知"
+                    />
+                  </div>
+
+                  <!-- 付款方式 -->
+                  <div id="paymentMethod">
                     <label class="block text-sm font-medium mb-2 text-navy-700">
                       付款方式 <span class="text-red-500">*</span>
                     </label>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-2">
                       <button
                         type="button"
                         :class="[
-                          'p-4 rounded-lg border text-center transition-all',
+                          'w-full p-4 rounded-lg border text-left transition-all',
                           formData.paymentMethod === '50歲以上免費'
                             ? 'border-green-500 bg-green-50 ring-2 ring-green-500'
                             : 'border-cream-200 hover:border-green-300'
                         ]"
                         @click="formData.paymentMethod = '50歲以上免費'"
                       >
-                        <div :class="['w-5 h-5 rounded-full border-2 flex items-center justify-center mx-auto mb-2', formData.paymentMethod === '50歲以上免費' ? 'border-green-500' : 'border-ink-300']">
-                          <div v-if="formData.paymentMethod === '50歲以上免費'" class="w-3 h-3 rounded-full bg-green-500" />
+                        <div class="flex items-center gap-3">
+                          <div :class="['w-5 h-5 rounded-full border-2 flex items-center justify-center', formData.paymentMethod === '50歲以上免費' ? 'border-green-500' : 'border-ink-300']">
+                            <div v-if="formData.paymentMethod === '50歲以上免費'" class="w-3 h-3 rounded-full bg-green-500" />
+                          </div>
+                          <div>
+                            <span class="font-semibold text-green-600">50 歲以上免費</span>
+                            <span class="text-sm text-ink/60 ml-2">首次體驗完全免費</span>
+                          </div>
                         </div>
-                        <div class="font-semibold text-green-600 text-sm">50 歲以上免費</div>
-                        <div class="text-xs text-ink/60 mt-0.5">首次體驗完全免費</div>
                       </button>
                       <button
                         type="button"
                         :class="[
-                          'p-4 rounded-lg border text-center transition-all',
+                          'w-full p-4 rounded-lg border text-left transition-all',
                           formData.paymentMethod === '臨櫃付款'
                             ? 'border-orange bg-orange/10 ring-2 ring-orange'
                             : 'border-cream-200 hover:border-orange/50'
                         ]"
                         @click="formData.paymentMethod = '臨櫃付款'"
                       >
-                        <div :class="['w-5 h-5 rounded-full border-2 flex items-center justify-center mx-auto mb-2', formData.paymentMethod === '臨櫃付款' ? 'border-orange' : 'border-ink-300']">
-                          <div v-if="formData.paymentMethod === '臨櫃付款'" class="w-3 h-3 rounded-full bg-orange" />
+                        <div class="flex items-center gap-3">
+                          <div :class="['w-5 h-5 rounded-full border-2 flex items-center justify-center', formData.paymentMethod === '臨櫃付款' ? 'border-orange' : 'border-ink-300']">
+                            <div v-if="formData.paymentMethod === '臨櫃付款'" class="w-3 h-3 rounded-full bg-orange" />
+                          </div>
+                          <div>
+                            <span class="font-semibold text-navy-700">臨櫃付款</span>
+                            <span class="text-sm text-ink/60 ml-2">首次體驗 $500</span>
+                          </div>
                         </div>
-                        <div class="font-semibold text-navy-700 text-sm">臨櫃付款</div>
-                        <div class="text-xs text-ink/60 mt-0.5">首次體驗 $500</div>
                       </button>
                     </div>
                     <p v-if="errors.paymentMethod" class="text-red-500 text-sm mt-2">{{ errors.paymentMethod }}</p>
                   </div>
 
+                  <!-- 備註 -->
                   <div>
                     <label class="block text-sm font-medium mb-2 text-navy-700">
-                      運動目的 <span class="text-ink-500 font-normal">（可複選）</span>
-                    </label>
-                    <div class="grid grid-cols-2 gap-2">
-                      <button
-                        v-for="goal in exerciseGoals"
-                        :key="goal.id"
-                        type="button"
-                        :class="[
-                          'p-3 rounded-lg border text-sm font-medium transition-all text-left flex items-center gap-2',
-                          formData.goals.includes(goal.id)
-                            ? 'border-orange bg-orange/10 text-orange'
-                            : 'border-cream-200 text-navy-700 hover:border-orange/50'
-                        ]"
-                        @click="toggleGoal(goal.id)"
-                      >
-                        <div :class="['w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0', formData.goals.includes(goal.id) ? 'border-orange bg-orange' : 'border-ink-300']">
-                          <svg v-if="formData.goals.includes(goal.id)" class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        {{ goal.label }}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium mb-2 text-navy-700">
-                      備註 <span class="text-ink-500 font-normal">（選填）</span>
+                      想說什麼或想問什麼 <span class="text-ink-500 font-normal">（選填）</span>
                     </label>
                     <textarea
                       v-model="formData.message"
