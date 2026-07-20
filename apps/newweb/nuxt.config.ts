@@ -50,7 +50,8 @@ export default defineNuxtConfig({
   },
 
   // Nitro server config for Firebase App Hosting
+  // Let Firebase App Hosting auto-detect the correct preset
   nitro: {
-    preset: 'firebase',
+    preset: 'firebase-app-hosting',
   },
 });
