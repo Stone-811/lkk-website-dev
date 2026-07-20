@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "build:newweb": "cd apps/newweb && npm run build",
+    "build:newweb": "npm run build --workspace=@lkk/newweb",
     "start": "turbo run start",
     "lint": "turbo run lint"
   },
