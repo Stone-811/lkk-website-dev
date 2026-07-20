@@ -9,9 +9,11 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "build:newweb": "cd apps/newweb && npm run build",
     "start": "turbo run start",
     "lint": "turbo run lint"
   },
+  "dependencies": {},
   "devDependencies": {
     "dotenv": "^17.4.2",
     "firebase-tools": "^15.19.0",
