@@ -237,10 +237,11 @@ const onlineFeatures = [
     <!-- 一對一訓練區 -->
     <section id="personal" class="py-16 md:py-24">
       <div class="container mx-auto px-4">
-        <div class="flex flex-col lg:flex-row gap-12 items-start">
+        <!-- 上半部：圖片+文字說明 -->
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center mb-12">
           <!-- 左側圖片 -->
-          <div class="lg:w-2/5">
-            <div class="sticky top-32 rounded-3xl overflow-hidden shadow-xl">
+          <div class="lg:w-1/2">
+            <div class="rounded-3xl overflow-hidden shadow-xl">
               <img
                 src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&h=675&fit=crop&q=80"
                 alt="練健康一對一訓練：專業教練指導學員進行肌力訓練"
@@ -250,14 +251,14 @@ const onlineFeatures = [
           </div>
 
           <!-- 右側內容 -->
-          <div class="lg:w-3/5">
+          <div class="lg:w-1/2">
             <span class="text-orange font-semibold mb-2 block">最熱門</span>
             <h2 class="text-3xl md:text-4xl font-bold text-navy-700 font-serif mb-6">
               一對一訓練
             </h2>
 
             <!-- 特色列表 -->
-            <ul class="space-y-3 mb-10">
+            <ul class="space-y-3">
               <li v-for="feature in personalFeatures" :key="feature" class="flex items-start gap-3">
                 <svg class="w-6 h-6 text-orange flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -265,38 +266,42 @@ const onlineFeatures = [
                 <span class="text-ink-700">{{ feature }}</span>
               </li>
             </ul>
+          </div>
+        </div>
 
-            <!-- 四種課表方向 -->
-            <h3 class="text-xl font-bold text-navy-700 mb-4">四種課表方向</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-              <div
-                v-for="course in courseDirections"
-                :key="course.id"
-                class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow border border-cream-200"
-              >
-                <div class="text-orange mb-3">
-                  <!-- Heart icon -->
-                  <svg v-if="course.icon === 'heart'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                  <!-- Shield icon -->
-                  <svg v-else-if="course.icon === 'shield'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                  <!-- Refresh icon -->
-                  <svg v-else-if="course.icon === 'refresh'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  <!-- Bolt icon -->
-                  <svg v-else-if="course.icon === 'bolt'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <h4 class="font-bold text-navy-700 mb-2">{{ course.title }}</h4>
-                <p class="text-sm text-ink-600">{{ course.description }}</p>
+        <!-- 下半部：四種課表方向（全寬度） -->
+        <div class="max-w-5xl mx-auto">
+          <h3 class="text-xl font-bold text-navy-700 mb-4 text-center">四種課表方向</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <div
+              v-for="course in courseDirections"
+              :key="course.id"
+              class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow border border-cream-200"
+            >
+              <div class="text-orange mb-3">
+                <!-- Heart icon -->
+                <svg v-if="course.icon === 'heart'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <!-- Shield icon -->
+                <svg v-else-if="course.icon === 'shield'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <!-- Refresh icon -->
+                <svg v-else-if="course.icon === 'refresh'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <!-- Bolt icon -->
+                <svg v-else-if="course.icon === 'bolt'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
               </div>
+              <h4 class="font-bold text-navy-700 mb-2">{{ course.title }}</h4>
+              <p class="text-sm text-ink-600">{{ course.description }}</p>
             </div>
+          </div>
 
+          <div class="text-center">
             <NuxtLink
               to="/booking"
               class="inline-flex items-center gap-2 bg-orange hover:bg-orange-light text-white font-bold px-8 py-4 rounded-full transition-colors"
