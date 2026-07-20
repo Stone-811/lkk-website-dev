@@ -12,7 +12,6 @@ const menuItems = [
   { name: '教練管理', path: '/admin/coaches', icon: 'people' },
   { name: '講師管理', path: '/admin/lecturers', icon: 'school' },
   { name: 'LKK4 成績', path: '/admin/lkk4-records', icon: 'chart' },
-  { name: 'FAQ 管理', path: '/admin/faqs', icon: 'help' },
   { name: '系統設定', path: '/admin/settings', icon: 'settings' },
 ]
 
