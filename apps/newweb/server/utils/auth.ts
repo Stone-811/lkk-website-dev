@@ -1,5 +1,10 @@
 import { H3Event, getCookie, setCookie, deleteCookie } from 'h3';
-import { db, UserDoc, docToObject } from './firebase';
+
+// Lazy load firebase to avoid initialization issues
+async function getFirebaseDb() {
+  const { db } = await import('./firebase');
+  return db;
+}
 
 // Lazy load jose to avoid bundling issues
 let SignJWT: any;
@@ -108,6 +113,7 @@ export async function loginWithCredentials(
 
   try {
     // Get user from Firestore
+    const db = await getFirebaseDb();
     const usersSnapshot = await db
       .collection('users')
       .where('email', '==', email)
@@ -157,6 +163,7 @@ export async function createUser(
     const bcrypt = await getBcrypt();
     const passwordHash = await bcrypt.hash(password, 10);
 
+    const db = await getFirebaseDb();
     const userRef = db.collection('users').doc();
     await userRef.set({
       email,
