@@ -2,10 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Define CSS variables for fonts (matching Next.js approach) */
+/* Define CSS variables for fonts */
 :root {
-  --font-noto-sans: 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-noto-serif: 'Noto Serif TC', Georgia, 'Times New Roman', serif;
+  --font-main: 'Microsoft JhengHei', '微軟正黑體', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 @layer base {
@@ -15,13 +14,13 @@
 
   body {
     @apply bg-cream-100 text-ink antialiased;
-    font-family: var(--font-noto-sans);
+    font-family: var(--font-main);
   }
 
-  /* Headings use serif font */
+  /* Headings use same font, no bold */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-noto-serif);
-    @apply font-bold;
+    font-family: var(--font-main);
+    @apply font-normal;
   }
 }
 
@@ -51,7 +50,7 @@
   }
 
   .section-title {
-    @apply text-3xl md:text-4xl font-bold text-center mb-4 font-serif;
+    @apply text-3xl md:text-4xl font-normal text-center mb-4;
   }
 
   .section-subtitle {

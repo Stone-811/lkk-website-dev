@@ -100,8 +100,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-noto-sans)', 'Noto Sans TC', 'system-ui', 'sans-serif'],
-        serif: ['var(--font-noto-serif)', 'Noto Serif TC', 'Georgia', 'serif'],
+        sans: ['var(--font-main)', 'Microsoft JhengHei', '微軟正黑體', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-main)', 'Microsoft JhengHei', '微軟正黑體', 'system-ui', 'sans-serif'],
       },
       container: {
         center: true,

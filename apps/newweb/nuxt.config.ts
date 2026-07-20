@@ -6,23 +6,10 @@ export default defineNuxtConfig({
   // Modules
   modules: [
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/google-fonts',
   ],
 
   // CSS
   css: ['~/assets/css/main.css'],
-
-  // Google Fonts
-  googleFonts: {
-    families: {
-      'Noto+Sans+TC': [400, 500, 600, 700],
-      'Noto+Serif+TC': [400, 500, 600, 700, 900],
-    },
-    display: 'swap',
-    preconnect: true,
-    prefetch: true,
-    preload: true,
-  },
 
   // App config
   app: {
