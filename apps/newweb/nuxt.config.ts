@@ -42,12 +42,26 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-      navigateFallback: '/',
-      // Only precache essential small files, use runtime caching for images
-      globPatterns: ['**/*.{js,css,html,woff2}'],
-      // Exclude large files from precaching
-      globIgnores: ['**/images/**', '**/node_modules/**'],
+      // Don't use navigateFallback for SSR apps
+      navigateFallback: null,
+      // Only precache essential small files
+      globPatterns: ['**/*.{js,css,woff2}'],
+      // Exclude large files and HTML from precaching (SSR generates HTML)
+      globIgnores: ['**/images/**', '**/node_modules/**', '**/*.html'],
       runtimeCaching: [
+        {
+          // Cache navigation requests with NetworkFirst strategy
+          urlPattern: ({ request }) => request.mode === 'navigate',
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'pages-cache',
+            expiration: {
+              maxEntries: 50,
+              maxAgeSeconds: 60 * 60 * 24, // 1 day
+            },
+            networkTimeoutSeconds: 3,
+          },
+        },
         {
           urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
           handler: 'CacheFirst',
