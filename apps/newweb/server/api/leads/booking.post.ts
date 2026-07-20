@@ -114,6 +114,35 @@ export default defineEventHandler(async (event) => {
       paymentMethod,
     })
 
+    // Send email notifications (non-blocking)
+    try {
+      const { sendLeadNotification, sendBookingConfirmation } = await import('~/server/utils/email')
+
+      // Notify admins
+      sendLeadNotification({
+        type: 'booking',
+        name,
+        phone,
+        email,
+        storeName,
+        message,
+        createdAt: new Date(),
+      }).catch(err => console.error('Failed to send admin notification:', err))
+
+      // Send confirmation to customer (if email provided)
+      if (email) {
+        sendBookingConfirmation({
+          name,
+          email,
+          storeName,
+          preferredTime: preferredTimeArray,
+          paymentMethod,
+        }).catch(err => console.error('Failed to send booking confirmation:', err))
+      }
+    } catch (emailError) {
+      console.error('Email module error:', emailError)
+    }
+
     return {
       success: true,
       message: '預約成功，我們將盡快與您聯繫',

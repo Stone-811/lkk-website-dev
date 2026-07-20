@@ -70,6 +70,31 @@ export default defineEventHandler(async (event) => {
       region,
     })
 
+    // Send email notifications (non-blocking)
+    try {
+      const { sendLeadNotification, sendFranchiseConfirmation } = await import('~/server/utils/email')
+
+      // Notify admins
+      sendLeadNotification({
+        type: 'franchise',
+        name,
+        phone,
+        email,
+        organization,
+        message,
+        createdAt: new Date(),
+      }).catch(err => console.error('Failed to send admin notification:', err))
+
+      // Send confirmation to customer
+      sendFranchiseConfirmation({
+        name,
+        email,
+        region,
+      }).catch(err => console.error('Failed to send franchise confirmation:', err))
+    } catch (emailError) {
+      console.error('Email module error:', emailError)
+    }
+
     return {
       success: true,
       message: '表單已送出，我們將盡快與您聯繫',

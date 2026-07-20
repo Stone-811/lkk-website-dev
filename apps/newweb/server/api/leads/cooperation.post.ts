@@ -74,6 +74,33 @@ export default defineEventHandler(async (event) => {
       cooperationType,
     })
 
+    // Send email notifications (non-blocking)
+    try {
+      const { sendLeadNotification, sendCooperationConfirmation } = await import('~/server/utils/email')
+
+      // Notify admins
+      sendLeadNotification({
+        type: 'cooperation',
+        name,
+        phone,
+        email,
+        organization,
+        cooperationType,
+        message,
+        createdAt: new Date(),
+      }).catch(err => console.error('Failed to send admin notification:', err))
+
+      // Send confirmation to customer
+      sendCooperationConfirmation({
+        name,
+        email,
+        organization,
+        cooperationType,
+      }).catch(err => console.error('Failed to send cooperation confirmation:', err))
+    } catch (emailError) {
+      console.error('Email module error:', emailError)
+    }
+
     return {
       success: true,
       message: '表單已送出，我們將於 3-5 個工作天內與您聯繫',
