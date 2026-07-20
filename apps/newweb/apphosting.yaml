@@ -6,6 +6,11 @@ runConfig:
   cpu: 1
   memoryMiB: 512
 
+# Override build command to skip Next.js adapter
+scripts:
+  buildCommand: npm run build
+  runCommand: node .output/server/index.mjs
+
 env:
   - variable: NUXT_PUBLIC_SITE_URL
     value: https://l-kk.tw
