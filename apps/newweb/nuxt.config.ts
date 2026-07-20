@@ -145,12 +145,42 @@ export default defineNuxtConfig({
   },
 
   // Nitro server config for Firebase App Hosting
-  // Let Firebase App Hosting auto-detect the correct preset
   nitro: {
     preset: 'firebase-app-hosting',
     // Externalize Node.js modules that shouldn't be bundled
     externals: {
-      inline: ['firebase-admin'],
+      external: [
+        'firebase-admin',
+        'firebase-admin/app',
+        'firebase-admin/firestore',
+        'firebase-admin/auth',
+        'firebase-admin/storage',
+        '@google-cloud/firestore',
+        'nodemailer',
+      ],
+    },
+  },
+
+  // Vite config for dev server
+  vite: {
+    optimizeDeps: {
+      exclude: [
+        'firebase-admin',
+        '@google-cloud/firestore',
+        'nodemailer',
+      ],
+    },
+    ssr: {
+      external: [
+        'firebase-admin',
+        'firebase-admin/app',
+        'firebase-admin/firestore',
+        'firebase-admin/auth',
+        'firebase-admin/storage',
+        '@google-cloud/firestore',
+        'nodemailer',
+      ],
+      noExternal: [],
     },
   },
 

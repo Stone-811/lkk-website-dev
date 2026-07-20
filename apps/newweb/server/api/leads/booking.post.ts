@@ -68,20 +68,20 @@ export default defineEventHandler(async (event) => {
       message: message || null,
       payload: {
         // 學員資料
-        gender,
-        birthDate,
+        gender: gender || null,
+        birthDate: birthDate || null,
         line: line || null,
         // 填寫者資料
-        filledBySelf,
+        filledBySelf: filledBySelf ?? null,
         relationship: relationship || null,
         bookerName: bookerName || null,
         contactPhone: contactPhone || phone,
         // 健康狀況
-        hasMedicalCondition,
+        hasMedicalCondition: hasMedicalCondition ?? null,
         medicalConditionNote: medicalConditionNote || null,
         // 預約資訊
         preferredTime: preferredTimeArray,
-        paymentMethod,
+        paymentMethod: paymentMethod || null,
         sources: sources || [],
       },
       status: 'new',
