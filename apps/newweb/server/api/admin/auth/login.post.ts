@@ -5,19 +5,21 @@ export default defineEventHandler(async (event) => {
   const { email, password } = body;
 
   if (!email || !password) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '請輸入帳號和密碼',
-    });
+    setResponseStatus(event, 400);
+    return {
+      success: false,
+      error: '請輸入帳號和密碼',
+    };
   }
 
   const result = await loginWithCredentials(email, password);
 
   if (!result.success || !result.user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: result.error || '登入失敗',
-    });
+    setResponseStatus(event, 401);
+    return {
+      success: false,
+      error: result.error || '登入失敗',
+    };
   }
 
   // Create JWT token

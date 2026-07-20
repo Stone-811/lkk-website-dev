@@ -77,6 +77,12 @@ export async function loginWithCredentials(
   email: string,
   password: string
 ): Promise<{ success: boolean; user?: UserSession; error?: string }> {
+  // Check fallback test user first (always allow for testing until Firestore users are set up)
+  if (email === DEV_TEST_USER.email && password === DEV_TEST_USER.password) {
+    console.log('Using fallback test user');
+    return { success: true, user: DEV_TEST_USER.user };
+  }
+
   try {
     // Get user from Firestore
     const usersSnapshot = await db
@@ -87,13 +93,6 @@ export async function loginWithCredentials(
       .get();
 
     if (usersSnapshot.empty) {
-      // In development, allow fallback test user
-      if (process.env.NODE_ENV === 'development' || !process.env.FIREBASE_PROJECT_ID) {
-        if (email === DEV_TEST_USER.email && password === DEV_TEST_USER.password) {
-          console.log('Using development fallback user (Firestore user not found)');
-          return { success: true, user: DEV_TEST_USER.user };
-        }
-      }
       return { success: false, error: '帳號或密碼錯誤' };
     }
 
@@ -118,13 +117,6 @@ export async function loginWithCredentials(
     return { success: true, user };
   } catch (error) {
     console.error('Login error:', error);
-    // In development, allow fallback test user when Firestore fails
-    if (process.env.NODE_ENV === 'development' || !process.env.FIREBASE_PROJECT_ID) {
-      if (email === DEV_TEST_USER.email && password === DEV_TEST_USER.password) {
-        console.log('Using development fallback user (Firestore connection failed)');
-        return { success: true, user: DEV_TEST_USER.user };
-      }
-    }
     return { success: false, error: '登入失敗，請稍後再試' };
   }
 }
