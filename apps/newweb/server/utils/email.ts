@@ -1,8 +1,15 @@
-import nodemailer from 'nodemailer'
-import type { Transporter } from 'nodemailer'
+// Lazy load nodemailer to avoid bundling issues
+let _nodemailer: any = null
+
+async function getNodemailer() {
+  if (!_nodemailer) {
+    _nodemailer = (await import('nodemailer')).default
+  }
+  return _nodemailer
+}
 
 // Email transporter configuration
-function createTransporter(): Transporter | null {
+async function createTransporter() {
   const host = process.env.SMTP_HOST
   const port = parseInt(process.env.SMTP_PORT || '465', 10)
   const user = process.env.SMTP_USER
@@ -13,6 +20,7 @@ function createTransporter(): Transporter | null {
     return null
   }
 
+  const nodemailer = await getNodemailer()
   return nodemailer.createTransport({
     host,
     port,
@@ -64,7 +72,7 @@ interface LeadNotificationData {
 
 // Send lead notification email to admins
 export async function sendLeadNotification(data: LeadNotificationData) {
-  const transporter = createTransporter()
+  const transporter = await createTransporter()
   if (!transporter) {
     console.log('Email transporter not configured, skipping notification')
     return false
@@ -229,7 +237,7 @@ interface FormConfirmationData {
 
 // Send form confirmation email to submitter
 export async function sendFormConfirmation(data: FormConfirmationData) {
-  const transporter = createTransporter()
+  const transporter = await createTransporter()
   if (!transporter) {
     console.log('Email transporter not configured, skipping confirmation')
     return false
