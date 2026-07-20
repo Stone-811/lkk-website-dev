@@ -13,7 +13,27 @@ scripts:
   runCommand: node apps/newweb/.output/server/index.mjs
 
 env:
+  # Site URL
   - variable: NUXT_PUBLIC_SITE_URL
     value: https://l-kk.tw
+
+  # Firebase
   - variable: FIREBASE_PROJECT_ID
     value: lkk-website-dev
+
+  # JWT Secret (use Firebase Secret for security)
+  - variable: JWT_SECRET
+    secret: jwt-secret
+
+  # SMTP Configuration
+  - variable: SMTP_HOST
+    value: smtp.gmail.com
+  - variable: SMTP_PORT
+    value: "465"
+  - variable: SMTP_USER
+    value: tingo8320@gmail.com
+  - variable: SMTP_FROM
+    value: tingo8320@gmail.com
+  # SMTP Password (use Firebase Secret for security)
+  - variable: SMTP_PASS
+    secret: smtp-pass
