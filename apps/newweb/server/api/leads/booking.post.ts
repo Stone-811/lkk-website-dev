@@ -1,5 +1,3 @@
-import { db, Timestamp, docToObject, StoreDoc } from '~/server/utils/firebase'
-
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
@@ -32,27 +30,26 @@ export default defineEventHandler(async (event) => {
     // Validate required fields
     const hasPreferredTime = Array.isArray(preferredTime) ? preferredTime.length > 0 : !!preferredTime
     if (!name || !phone || !storeId || !hasPreferredTime) {
-      throw createError({
-        statusCode: 400,
-        message: '請填寫必要欄位',
-      })
+      setResponseStatus(event, 400)
+      return { success: false, error: '請填寫必要欄位' }
     }
 
     // Validate phone format
     if (!/^09\d{8}$/.test(phone)) {
-      throw createError({
-        statusCode: 400,
-        message: '手機號碼格式不正確',
-      })
+      setResponseStatus(event, 400)
+      return { success: false, error: '手機號碼格式不正確' }
     }
 
     // Validate email if provided
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      throw createError({
-        statusCode: 400,
-        message: 'Email 格式不正確',
-      })
+      setResponseStatus(event, 400)
+      return { success: false, error: 'Email 格式不正確' }
     }
+
+    // Dynamic import to avoid bundling issues
+    const { getDb, getTimestamp, docToObject } = await import('~/server/utils/firebase')
+    const db = await getDb()
+    const Timestamp = await getTimestamp()
 
     // Normalize preferredTime to array
     const preferredTimeArray = Array.isArray(preferredTime) ? preferredTime : [preferredTime]
@@ -99,8 +96,9 @@ export default defineEventHandler(async (event) => {
     let storeName = ''
     try {
       const storeDoc = await db.collection('stores').doc(storeId).get()
-      const storeData = docToObject<StoreDoc>(storeDoc)
-      storeName = storeData?.name || ''
+      if (storeDoc.exists) {
+        storeName = storeDoc.data()?.name || ''
+      }
     } catch (e) {
       console.warn('Could not fetch store name:', e)
     }
@@ -122,9 +120,7 @@ export default defineEventHandler(async (event) => {
     }
   } catch (error: any) {
     console.error('Booking API error:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      message: error.message || '系統錯誤，請稍後再試',
-    })
+    setResponseStatus(event, 500)
+    return { success: false, error: '系統錯誤，請稍後再試' }
   }
 })

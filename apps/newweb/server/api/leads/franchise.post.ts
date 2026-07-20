@@ -1,5 +1,3 @@
-import { db, Timestamp } from '~/server/utils/firebase'
-
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
@@ -17,29 +15,28 @@ export default defineEventHandler(async (event) => {
 
     // Validate required fields
     if (!name || !phone || !email) {
-      throw createError({
-        statusCode: 400,
-        message: '請填寫必要欄位',
-      })
+      setResponseStatus(event, 400)
+      return { success: false, error: '請填寫必要欄位' }
     }
 
     // Validate phone format (Taiwan mobile or landline)
     const phoneRegex = /^(09\d{8}|0\d{1,2}-?\d{3,4}-?\d{4})$/
     if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
-      throw createError({
-        statusCode: 400,
-        message: '電話格式不正確',
-      })
+      setResponseStatus(event, 400)
+      return { success: false, error: '電話格式不正確' }
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      throw createError({
-        statusCode: 400,
-        message: '電子郵件格式不正確',
-      })
+      setResponseStatus(event, 400)
+      return { success: false, error: '電子郵件格式不正確' }
     }
+
+    // Dynamic import to avoid bundling issues
+    const { getDb, getTimestamp } = await import('~/server/utils/firebase')
+    const db = await getDb()
+    const Timestamp = await getTimestamp()
 
     // Create lead in Firestore
     const now = Timestamp.now()
@@ -79,9 +76,7 @@ export default defineEventHandler(async (event) => {
     }
   } catch (error: any) {
     console.error('Franchise API error:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      message: error.message || '系統錯誤，請稍後再試',
-    })
+    setResponseStatus(event, 500)
+    return { success: false, error: '系統錯誤，請稍後再試' }
   }
 })

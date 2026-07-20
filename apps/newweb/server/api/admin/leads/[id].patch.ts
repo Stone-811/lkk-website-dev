@@ -1,35 +1,32 @@
-import { db, Timestamp } from '~/server/utils/firebase';
-import { getSession } from '~/server/utils/auth';
-
 export default defineEventHandler(async (event) => {
-  // Check authentication
-  const session = await getSession(event);
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: '未登入',
-    });
-  }
-
-  const id = getRouterParam(event, 'id');
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '請提供名單 ID',
-    });
-  }
-
-  const body = await readBody(event);
-
   try {
+    // Dynamic imports
+    const { getSession } = await import('~/server/utils/auth');
+    const { getDb, getTimestamp } = await import('~/server/utils/firebase');
+
+    // Check authentication
+    const session = await getSession(event);
+    if (!session) {
+      setResponseStatus(event, 401);
+      return { success: false, error: '未登入' };
+    }
+
+    const id = getRouterParam(event, 'id');
+    if (!id) {
+      setResponseStatus(event, 400);
+      return { success: false, error: '請提供名單 ID' };
+    }
+
+    const body = await readBody(event);
+    const db = await getDb();
+    const Timestamp = await getTimestamp();
+
     const leadRef = db.collection('leads').doc(id);
     const leadDoc = await leadRef.get();
 
     if (!leadDoc.exists) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '名單不存在',
-      });
+      setResponseStatus(event, 404);
+      return { success: false, error: '名單不存在' };
     }
 
     const updateData: Record<string, any> = {
@@ -40,10 +37,8 @@ export default defineEventHandler(async (event) => {
     if (body.status !== undefined) {
       const validStatuses = ['new', 'contacted', 'scheduled', 'completed', 'cancelled'];
       if (!validStatuses.includes(body.status)) {
-        throw createError({
-          statusCode: 400,
-          statusMessage: '無效的狀態',
-        });
+        setResponseStatus(event, 400);
+        return { success: false, error: '無效的狀態' };
       }
       updateData.status = body.status;
     }
@@ -54,16 +49,10 @@ export default defineEventHandler(async (event) => {
 
     await leadRef.update(updateData);
 
-    return {
-      success: true,
-    };
+    return { success: true };
   } catch (error: any) {
-    if (error.statusCode) throw error;
-
     console.error('Error updating lead:', error);
-    throw createError({
-      statusCode: 500,
-      statusMessage: '更新名單失敗',
-    });
+    setResponseStatus(event, 500);
+    return { success: false, error: '更新名單失敗' };
   }
 });
