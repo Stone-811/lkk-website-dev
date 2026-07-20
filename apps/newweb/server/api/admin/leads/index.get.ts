@@ -1,28 +1,28 @@
-import { db, LeadDoc, docsToArray } from '~/server/utils/firebase';
-import { getSession } from '~/server/utils/auth';
-
 export default defineEventHandler(async (event) => {
-  // Check authentication
-  const session = await getSession(event);
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: '未登入',
-    });
-  }
-
-  const query = getQuery(event);
-  const type = query.type as string | undefined;
-  const status = query.status as string | undefined;
-
   try {
+    // Dynamic imports to avoid bundling issues
+    const { getSession } = await import('~/server/utils/auth');
+    const { getDb, docsToArray } = await import('~/server/utils/firebase');
+
+    // Check authentication
+    const session = await getSession(event);
+    if (!session) {
+      setResponseStatus(event, 401);
+      return { success: false, error: '未登入' };
+    }
+
+    const query = getQuery(event);
+    const type = query.type as string | undefined;
+    const status = query.status as string | undefined;
+
+    const db = await getDb();
     let leadsQuery = db.collection('leads').orderBy('createdAt', 'desc');
 
     // Build query based on filters
     // Note: Firestore doesn't support multiple inequality filters
     // So we fetch all and filter in memory for now
     const leadsSnapshot = await leadsQuery.limit(100).get();
-    let leads = docsToArray<LeadDoc>(leadsSnapshot);
+    let leads = docsToArray<any>(leadsSnapshot);
 
     // Apply filters
     if (type) {
@@ -48,9 +48,7 @@ export default defineEventHandler(async (event) => {
     };
   } catch (error) {
     console.error('Error fetching leads:', error);
-    throw createError({
-      statusCode: 500,
-      statusMessage: '取得名單失敗',
-    });
+    setResponseStatus(event, 500);
+    return { success: false, error: '取得名單失敗' };
   }
 });

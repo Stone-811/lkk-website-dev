@@ -1,17 +1,31 @@
-import { initializeApp, getApps, cert, applicationDefault, App } from 'firebase-admin/app';
-import { getFirestore, Firestore, Timestamp } from 'firebase-admin/firestore';
-import { getAuth, Auth } from 'firebase-admin/auth';
-import { getStorage, Storage } from 'firebase-admin/storage';
+// Lazy load firebase-admin to avoid bundling issues in Nitro
+let _firebaseAdmin: any = null;
+let _app: any = null;
+let _db: any = null;
+let _auth: any = null;
+let _storage: any = null;
+let _Timestamp: any = null;
 
-// Cached instances
-let _app: App | null = null;
-let _db: Firestore | null = null;
-let _auth: Auth | null = null;
-let _storage: Storage | null = null;
+// Get firebase-admin module lazily
+async function getFirebaseAdminModule() {
+  if (!_firebaseAdmin) {
+    _firebaseAdmin = {
+      app: await import('firebase-admin/app'),
+      firestore: await import('firebase-admin/firestore'),
+      auth: await import('firebase-admin/auth'),
+      storage: await import('firebase-admin/storage'),
+    };
+    _Timestamp = _firebaseAdmin.firestore.Timestamp;
+  }
+  return _firebaseAdmin;
+}
 
 // Initialize Firebase Admin SDK (lazy initialization)
-function getFirebaseAdmin(): App {
+async function getFirebaseApp() {
   if (_app) return _app;
+
+  const admin = await getFirebaseAdminModule();
+  const { initializeApp, getApps, cert, applicationDefault } = admin.app;
 
   if (getApps().length > 0) {
     _app = getApps()[0];
@@ -64,81 +78,116 @@ function getFirebaseAdmin(): App {
   return _app;
 }
 
-// Lazy getter for Firestore
-const dbProxy = {
-  get collection() {
-    if (!_db) {
-      const app = getFirebaseAdmin();
-      _db = getFirestore(app);
-    }
-    return _db.collection.bind(_db);
-  },
-  get doc() {
-    if (!_db) {
-      const app = getFirebaseAdmin();
-      _db = getFirestore(app);
-    }
-    return _db.doc.bind(_db);
-  },
-  get batch() {
-    if (!_db) {
-      const app = getFirebaseAdmin();
-      _db = getFirestore(app);
-    }
-    return _db.batch.bind(_db);
-  },
-  get runTransaction() {
-    if (!_db) {
-      const app = getFirebaseAdmin();
-      _db = getFirestore(app);
-    }
-    return _db.runTransaction.bind(_db);
-  },
-};
+// Get Firestore instance
+async function getFirestoreInstance() {
+  if (_db) return _db;
 
-// Get Auth instance (lazy)
-function getAdminAuthInstance(): Auth {
-  if (!_auth) {
-    const app = getFirebaseAdmin();
-    _auth = getAuth(app);
-  }
+  const admin = await getFirebaseAdminModule();
+  const app = await getFirebaseApp();
+  _db = admin.firestore.getFirestore(app);
+  return _db;
+}
+
+// Get Auth instance
+async function getAuthInstance() {
+  if (_auth) return _auth;
+
+  const admin = await getFirebaseAdminModule();
+  const app = await getFirebaseApp();
+  _auth = admin.auth.getAuth(app);
   return _auth;
 }
 
-// Get Storage instance (lazy)
-function getAdminStorageInstance(): Storage {
-  if (!_storage) {
-    const app = getFirebaseAdmin();
-    _storage = getStorage(app);
-  }
+// Get Storage instance
+async function getStorageInstance() {
+  if (_storage) return _storage;
+
+  const admin = await getFirebaseAdminModule();
+  const app = await getFirebaseApp();
+  _storage = admin.storage.getStorage(app);
   return _storage;
 }
 
-// Convenience exports - use proxy for lazy initialization
-export const db = dbProxy as unknown as Firestore;
-export const adminAuth = new Proxy({} as Auth, {
+// Proxy-based lazy db accessor (synchronous interface, async initialization)
+const dbProxy = new Proxy({} as any, {
   get(_, prop) {
-    const auth = getAdminAuthInstance();
-    const value = (auth as any)[prop as string];
-    return typeof value === 'function' ? value.bind(auth) : value;
-  },
-});
-export const adminStorage = new Proxy({} as Storage, {
-  get(_, prop) {
-    const storage = getAdminStorageInstance();
-    const value = (storage as any)[prop as string];
-    return typeof value === 'function' ? value.bind(storage) : value;
+    // Return an async function that gets the real db and calls the method
+    return async (...args: any[]) => {
+      const firestore = await getFirestoreInstance();
+      const method = (firestore as any)[prop];
+      if (typeof method === 'function') {
+        return method.apply(firestore, args);
+      }
+      return method;
+    };
   },
 });
 
-// Re-export Timestamp for convenience
-export { Timestamp };
+// Export async getters for direct use
+export async function getDb() {
+  return getFirestoreInstance();
+}
+
+export async function getAdminAuth() {
+  return getAuthInstance();
+}
+
+export async function getAdminStorage() {
+  return getStorageInstance();
+}
+
+export async function getTimestamp() {
+  await getFirebaseAdminModule();
+  return _Timestamp;
+}
+
+// Legacy exports for compatibility (use with caution - these are proxies)
+export const db = dbProxy;
+export const adminAuth = new Proxy({} as any, {
+  get(_, prop) {
+    return async (...args: any[]) => {
+      const auth = await getAuthInstance();
+      const method = (auth as any)[prop];
+      if (typeof method === 'function') {
+        return method.apply(auth, args);
+      }
+      return method;
+    };
+  },
+});
+export const adminStorage = new Proxy({} as any, {
+  get(_, prop) {
+    return async (...args: any[]) => {
+      const storage = await getStorageInstance();
+      const method = (storage as any)[prop];
+      if (typeof method === 'function') {
+        return method.apply(storage, args);
+      }
+      return method;
+    };
+  },
+});
+
+// Timestamp proxy
+export const Timestamp = new Proxy({} as any, {
+  get(_, prop) {
+    // For static methods like Timestamp.now()
+    return async (...args: any[]) => {
+      await getFirebaseAdminModule();
+      const method = (_Timestamp as any)[prop];
+      if (typeof method === 'function') {
+        return method.apply(_Timestamp, args);
+      }
+      return method;
+    };
+  },
+});
 
 // Helper types for Firestore documents
 export interface FirestoreDoc {
   id: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: any;
+  updatedAt: any;
 }
 
 export interface StoreDoc extends FirestoreDoc {
@@ -221,7 +270,7 @@ export interface LecturerDoc extends FirestoreDoc {
 
 // Helper function to convert Firestore doc to plain object
 export function docToObject<T extends FirestoreDoc>(
-  doc: FirebaseFirestore.DocumentSnapshot
+  doc: any
 ): T | null {
   if (!doc.exists) {
     return null;
@@ -235,9 +284,9 @@ export function docToObject<T extends FirestoreDoc>(
 
 // Helper function to convert Firestore docs to array
 export function docsToArray<T extends FirestoreDoc>(
-  snapshot: FirebaseFirestore.QuerySnapshot
+  snapshot: any
 ): T[] {
-  return snapshot.docs.map((doc) => ({
+  return snapshot.docs.map((doc: any) => ({
     id: doc.id,
     ...doc.data(),
   })) as T[];

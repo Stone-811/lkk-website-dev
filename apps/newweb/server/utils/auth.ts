@@ -2,8 +2,8 @@ import { H3Event, getCookie, setCookie, deleteCookie } from 'h3';
 
 // Lazy load firebase to avoid initialization issues
 async function getFirebaseDb() {
-  const { db } = await import('./firebase');
-  return db;
+  const { getDb } = await import('./firebase');
+  return getDb();
 }
 
 // Lazy load jose to avoid bundling issues
