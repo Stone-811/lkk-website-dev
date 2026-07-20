@@ -34,7 +34,7 @@ const isActive = (path: string) => {
 </script>
 
 <template>
-  <div class="min-h-screen flex bg-gray-100">
+  <div class="min-h-screen flex bg-gray-100 font-sans">
     <!-- Sidebar -->
     <aside
       :class="[
