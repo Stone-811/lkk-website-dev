@@ -111,24 +111,40 @@ const scrollToSection = (id: string) => {
 }
 
 onMounted(() => {
-  const handleScroll = () => {
-    const heroHeight = document.getElementById('hero')?.offsetHeight || 0
-    isSticky.value = window.scrollY > heroHeight - 60
+  let ticking = false
 
-    const sections = ['personal', 'group', 'online']
-    for (const section of sections) {
-      const element = document.getElementById(section)
-      if (element) {
-        const rect = element.getBoundingClientRect()
-        if (rect.top <= 150 && rect.bottom >= 150) {
-          activeTab.value = section
-          break
+  const handleScroll = () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const heroHeight = document.getElementById('hero')?.offsetHeight || 0
+        const newIsSticky = window.scrollY > heroHeight - 60
+
+        // Only update if value changed
+        if (isSticky.value !== newIsSticky) {
+          isSticky.value = newIsSticky
         }
-      }
+
+        const sections = ['personal', 'group', 'online']
+        for (const section of sections) {
+          const element = document.getElementById(section)
+          if (element) {
+            const rect = element.getBoundingClientRect()
+            if (rect.top <= 150 && rect.bottom >= 150) {
+              if (activeTab.value !== section) {
+                activeTab.value = section
+              }
+              break
+            }
+          }
+        }
+
+        ticking = false
+      })
+      ticking = true
     }
   }
 
-  window.addEventListener('scroll', handleScroll)
+  window.addEventListener('scroll', handleScroll, { passive: true })
   onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 })
 
