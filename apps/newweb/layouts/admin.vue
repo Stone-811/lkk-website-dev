@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const route = useRoute()
+const router = useRouter()
 
 const menuItems = [
   { name: '儀表板', path: '/admin', icon: 'dashboard' },
   { name: '客戶預約', path: '/admin/leads', icon: 'calendar', badge: true },
+  { name: '合作表單', path: '/admin/cooperation', icon: 'briefcase' },
   { name: '門店管理', path: '/admin/stores', icon: 'store' },
   { name: '教練管理', path: '/admin/coaches', icon: 'people' },
   { name: '講師管理', path: '/admin/lecturers', icon: 'school' },
@@ -16,14 +18,49 @@ const menuItems = [
 
 const isSidebarOpen = ref(false)
 
-// Mock user data (will be replaced with actual auth)
-const user = {
-  name: '管理員',
-  email: 'admin@l-kk.tw',
-}
+// User session
+const user = ref<{ id: string; name: string; email: string; role: string } | null>(null)
+const isLoading = ref(true)
 
-// Mock pending leads count
-const pendingLeadsCount = ref(3)
+// Pending leads count
+const pendingLeadsCount = ref(0)
+
+// Check session on mount
+onMounted(async () => {
+  try {
+    const { data } = await useFetch('/api/admin/auth/session')
+    if (data.value?.success && data.value?.user) {
+      user.value = data.value.user
+    } else {
+      // Redirect to login if not authenticated
+      router.push('/admin/login')
+    }
+  } catch (error) {
+    router.push('/admin/login')
+  } finally {
+    isLoading.value = false
+  }
+
+  // Fetch pending leads count
+  try {
+    const { data } = await useFetch('/api/admin/leads?status=new')
+    if (data.value?.success) {
+      pendingLeadsCount.value = data.value.data?.length || 0
+    }
+  } catch (error) {
+    console.error('Error fetching leads count:', error)
+  }
+})
+
+// Logout function
+async function logout() {
+  try {
+    await $fetch('/api/admin/auth/logout', { method: 'POST' })
+    router.push('/admin/login')
+  } catch (error) {
+    console.error('Logout error:', error)
+  }
+}
 
 const isActive = (path: string) => {
   if (path === '/admin') {
@@ -70,6 +107,10 @@ const isActive = (path: string) => {
               <!-- Calendar Icon -->
               <svg v-else-if="item.icon === 'calendar'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <!-- Briefcase Icon -->
+              <svg v-else-if="item.icon === 'briefcase'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               <!-- Store Icon -->
               <svg v-else-if="item.icon === 'store'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,14 +167,23 @@ const isActive = (path: string) => {
 
       <!-- User Info -->
       <div class="p-4 border-t border-gray-800">
-        <div class="flex items-center gap-3">
+        <div v-if="user" class="flex items-center gap-3">
           <div class="w-10 h-10 bg-orange rounded-full flex items-center justify-center text-white font-medium">
-            {{ user.name.charAt(0) }}
+            {{ user.name?.charAt(0) || '?' }}
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium truncate">{{ user.name }}</p>
             <p class="text-xs text-gray-400 truncate">{{ user.email }}</p>
           </div>
+          <button
+            @click="logout"
+            class="p-2 text-gray-400 hover:text-white transition-colors"
+            title="登出"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
         </div>
       </div>
     </aside>
@@ -162,7 +212,12 @@ const isActive = (path: string) => {
 
       <!-- Main Content -->
       <main class="flex-1 p-6 overflow-auto">
-        <slot />
+        <!-- Loading state -->
+        <div v-if="isLoading" class="flex items-center justify-center h-64">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
+        </div>
+        <!-- Content -->
+        <slot v-else />
       </main>
     </div>
   </div>

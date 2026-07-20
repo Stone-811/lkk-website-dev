@@ -7,28 +7,95 @@ useHead({
   title: '講師管理｜練健康後台',
 })
 
-const lecturers = ref([
-  { id: '1', name: '鄭宇劭', type: 'lkk', title: 'Lv 3 講師・物理治療師', isActive: true },
-  { id: '2', name: '林星辰', type: 'lkk', title: 'Lv 1 講師・物理治療師', isActive: true },
-  { id: '3', name: '鄭健寬', type: 'lkk', title: 'Lv 1 講師・職能治療師', isActive: true },
-  { id: '4', name: '卓彥廷', type: 'partner', title: '復健科醫師', isActive: true },
-  { id: '5', name: '陳彥志', type: 'partner', title: '骨科醫師', isActive: true },
-  { id: '6', name: '周千媚', type: 'overseas', title: '海外授權講師', isActive: true },
-])
+interface Lecturer {
+  id: string
+  name: string
+  title?: string
+  type: 'lkk' | 'partner' | 'overseas'
+  photo?: string
+  specialties?: string[]
+  isActive: boolean
+}
+
+const lecturers = ref<Lecturer[]>([])
+const isLoading = ref(true)
+const error = ref('')
+const showAddModal = ref(false)
+
+const typeFilter = ref('')
+const searchQuery = ref('')
 
 const typeLabels: Record<string, string> = {
-  lkk: '練健康講師',
+  lkk: '練健康授權講師',
   partner: '合作講師',
-  overseas: '海外講師',
+  overseas: '海外授權講師',
 }
 
 const typeColors: Record<string, string> = {
   lkk: 'bg-orange-100 text-orange-700',
   partner: 'bg-blue-100 text-blue-700',
-  overseas: 'bg-purple-100 text-purple-700',
+  overseas: 'bg-green-100 text-green-700',
 }
 
-const showAddModal = ref(false)
+// Fetch lecturers from API
+async function fetchLecturers() {
+  isLoading.value = true
+  error.value = ''
+  try {
+    const response = await $fetch<{ success: boolean; data: Lecturer[] }>('/api/admin/lecturers')
+    if (response.success) {
+      lecturers.value = response.data
+    }
+  } catch (e: any) {
+    error.value = e.data?.message || '載入失敗'
+    console.error('Error fetching lecturers:', e)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Toggle lecturer active status
+async function toggleActive(lecturer: Lecturer) {
+  try {
+    await $fetch(`/api/admin/lecturers/${lecturer.id}`, {
+      method: 'PATCH',
+      body: { isActive: !lecturer.isActive },
+    })
+    lecturer.isActive = !lecturer.isActive
+  } catch (e: any) {
+    alert(e.data?.message || '更新失敗')
+  }
+}
+
+// Delete lecturer
+async function deleteLecturer(lecturer: Lecturer) {
+  if (!confirm(`確定要刪除「${lecturer.name}」嗎？`)) return
+  try {
+    await $fetch(`/api/admin/lecturers/${lecturer.id}`, {
+      method: 'DELETE',
+    })
+    lecturers.value = lecturers.value.filter(l => l.id !== lecturer.id)
+  } catch (e: any) {
+    alert(e.data?.message || '刪除失敗')
+  }
+}
+
+onMounted(fetchLecturers)
+
+const filteredLecturers = computed(() => {
+  return lecturers.value.filter(lecturer => {
+    if (typeFilter.value && lecturer.type !== typeFilter.value) return false
+    if (searchQuery.value) {
+      const query = searchQuery.value.toLowerCase()
+      return (
+        lecturer.name.toLowerCase().includes(query) ||
+        (lecturer.title && lecturer.title.toLowerCase().includes(query)) ||
+        (lecturer.specialties && lecturer.specialties.some(s => s.toLowerCase().includes(query)))
+      )
+    }
+    return true
+  })
+})
 </script>
 
 <template>
@@ -36,7 +103,7 @@ const showAddModal = ref(false)
     <div class="flex items-center justify-between mb-8">
       <div>
         <h1 class="text-2xl font-bold text-gray-900">講師管理</h1>
-        <p class="text-gray-500 mt-1">管理練健康講師、合作講師與海外授權講師</p>
+        <p class="text-gray-500 mt-1">管理練健康授權講師、合作講師、海外授權講師</p>
       </div>
       <button
         @click="showAddModal = true"
@@ -49,61 +116,119 @@ const showAddModal = ref(false)
       </button>
     </div>
 
-    <!-- Lecturers Table -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-      <table class="w-full">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">講師</th>
-            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">類型</th>
-            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">職稱</th>
-            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">狀態</th>
-            <th class="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">操作</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          <tr v-for="lecturer in lecturers" :key="lecturer.id" class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-navy rounded-full flex items-center justify-center text-white font-bold">
-                  {{ lecturer.name.charAt(0) }}
-                </div>
-                <span class="font-medium text-gray-900">{{ lecturer.name }}</span>
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-4 mb-6">
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="搜尋姓名、職稱、專長..."
+        class="flex-1 min-w-[200px] border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white"
+      />
+      <select
+        v-model="typeFilter"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white"
+      >
+        <option value="">全部類型</option>
+        <option value="lkk">練健康授權講師</option>
+        <option value="partner">合作講師</option>
+        <option value="overseas">海外授權講師</option>
+      </select>
+    </div>
+
+    <!-- Error -->
+    <div v-if="error" class="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4">
+      {{ error }}
+    </div>
+
+    <!-- Loading -->
+    <div v-if="isLoading" class="flex items-center justify-center h-64">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
+    </div>
+
+    <!-- Lecturers Grid -->
+    <div v-else>
+      <!-- Empty State -->
+      <div v-if="filteredLecturers.length === 0" class="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center text-gray-500">
+        尚無講師資料
+      </div>
+
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          v-for="lecturer in filteredLecturers"
+          :key="lecturer.id"
+          class="bg-white rounded-xl border border-gray-200 shadow-sm p-4"
+        >
+          <div class="flex gap-4">
+            <!-- Avatar -->
+            <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <img
+                v-if="lecturer.photo"
+                :src="lecturer.photo"
+                :alt="lecturer.name"
+                class="w-full h-full object-cover"
+              />
+              <div v-else class="w-full h-full bg-navy flex items-center justify-center text-white font-bold text-xl">
+                {{ lecturer.name?.charAt(0) }}
               </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span :class="[typeColors[lecturer.type], 'text-xs font-medium px-2.5 py-1 rounded-full']">
+            </div>
+
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between">
+                <div>
+                  <h3 class="font-bold text-gray-900">{{ lecturer.name }}</h3>
+                  <p class="text-sm text-gray-500">{{ lecturer.title || '-' }}</p>
+                </div>
+                <span
+                  :class="[
+                    'text-xs font-medium px-2 py-0.5 rounded-full',
+                    lecturer.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                  ]"
+                >
+                  {{ lecturer.isActive ? '上架' : '下架' }}
+                </span>
+              </div>
+              <span :class="['inline-block text-xs px-2 py-0.5 rounded mt-2', typeColors[lecturer.type]]">
                 {{ typeLabels[lecturer.type] }}
               </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ lecturer.title }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span
-                :class="[
-                  'text-xs font-medium px-2.5 py-1 rounded-full',
-                  lecturer.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                ]"
-              >
-                {{ lecturer.isActive ? '啟用中' : '已停用' }}
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right">
-              <div class="flex items-center justify-end gap-2">
-                <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                  </svg>
-                </button>
-                <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+              <div class="flex flex-wrap gap-1 mt-2">
+                <span
+                  v-for="specialty in (lecturer.specialties || []).slice(0, 3)"
+                  :key="specialty"
+                  class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
+                >
+                  {{ specialty }}
+                </span>
+                <span v-if="(lecturer.specialties || []).length > 3" class="text-xs text-gray-400">
+                  +{{ (lecturer.specialties || []).length - 3 }}
+                </span>
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center justify-end gap-2 mt-4 pt-4 border-t border-gray-100">
+            <button
+              @click="toggleActive(lecturer)"
+              class="text-sm text-gray-600 hover:text-gray-900 px-3 py-1"
+            >
+              {{ lecturer.isActive ? '下架' : '上架' }}
+            </button>
+            <NuxtLink
+              :to="`/admin/lecturers/${lecturer.id}`"
+              class="text-sm text-navy hover:text-navy-600 px-3 py-1"
+            >
+              編輯
+            </NuxtLink>
+            <button
+              @click="deleteLecturer(lecturer)"
+              class="text-sm text-red-500 hover:text-red-600 px-3 py-1"
+            >
+              刪除
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Add Modal Placeholder -->

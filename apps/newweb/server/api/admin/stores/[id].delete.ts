@@ -1,0 +1,69 @@
+import { db } from '~/server/utils/firebase';
+import { getSession } from '~/server/utils/auth';
+
+export default defineEventHandler(async (event) => {
+  // Check authentication
+  const session = await getSession(event);
+  if (!session) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: '未登入',
+    });
+  }
+
+  // Only admin can delete stores
+  if (session.role !== 'admin') {
+    throw createError({
+      statusCode: 403,
+      statusMessage: '權限不足',
+    });
+  }
+
+  const id = getRouterParam(event, 'id');
+  if (!id) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: '請提供門店 ID',
+    });
+  }
+
+  try {
+    const storeRef = db.collection('stores').doc(id);
+    const storeDoc = await storeRef.get();
+
+    if (!storeDoc.exists) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: '門店不存在',
+      });
+    }
+
+    // Check if there are coaches linked to this store
+    const coachesSnapshot = await db
+      .collection('coaches')
+      .where('storeId', '==', id)
+      .limit(1)
+      .get();
+
+    if (!coachesSnapshot.empty) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: '無法刪除：此門店下仍有教練',
+      });
+    }
+
+    await storeRef.delete();
+
+    return {
+      success: true,
+    };
+  } catch (error: any) {
+    if (error.statusCode) throw error;
+
+    console.error('Error deleting store:', error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: '刪除門店失敗',
+    });
+  }
+});

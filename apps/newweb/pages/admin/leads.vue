@@ -7,16 +7,57 @@ useHead({
   title: '表單名單｜練健康後台',
 })
 
-const leads = ref([
-  { id: '1', name: '王小明', type: 'booking', store: '新店七張店', phone: '0912-345-678', status: 'new', createdAt: '2025-07-19 10:30' },
-  { id: '2', name: '林美玲', type: 'franchise', store: '-', phone: '0923-456-789', status: 'contacted', createdAt: '2025-07-19 08:15' },
-  { id: '3', name: '張先生', type: 'cooperation', store: '-', phone: '0934-567-890', status: 'new', createdAt: '2025-07-18 16:45' },
-  { id: '4', name: '陳小姐', type: 'booking', store: '南京復興店', phone: '0945-678-901', status: 'scheduled', createdAt: '2025-07-18 14:20' },
-  { id: '5', name: '李大華', type: 'booking', store: '松江南京店', phone: '0956-789-012', status: 'completed', createdAt: '2025-07-17 09:00' },
-])
+interface Lead {
+  id: string
+  name: string
+  type: 'booking' | 'franchise' | 'cooperation'
+  phone: string
+  email?: string
+  storeId?: string
+  status: 'new' | 'contacted' | 'scheduled' | 'completed' | 'cancelled'
+  internalNote?: string
+  createdAt: string
+  updatedAt?: string
+}
+
+const leads = ref<Lead[]>([])
+const isLoading = ref(true)
+const error = ref('')
 
 const selectedType = ref('all')
 const selectedStatus = ref('all')
+
+// Fetch leads from API
+async function fetchLeads() {
+  isLoading.value = true
+  error.value = ''
+  try {
+    const response = await $fetch<{ success: boolean; data: Lead[] }>('/api/admin/leads')
+    if (response.success) {
+      leads.value = response.data
+    }
+  } catch (e: any) {
+    error.value = e.data?.message || '載入失敗'
+    console.error('Error fetching leads:', e)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Update lead status
+async function updateStatus(lead: Lead, newStatus: string) {
+  try {
+    await $fetch(`/api/admin/leads/${lead.id}`, {
+      method: 'PATCH',
+      body: { status: newStatus },
+    })
+    lead.status = newStatus as Lead['status']
+  } catch (e: any) {
+    alert(e.data?.message || '更新失敗')
+  }
+}
+
+onMounted(fetchLeads)
 
 const typeLabels: Record<string, string> = {
   booking: '預約體驗',
@@ -96,14 +137,23 @@ const filteredLeads = computed(() => {
       </select>
     </div>
 
+    <!-- Error -->
+    <div v-if="error" class="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4">
+      {{ error }}
+    </div>
+
+    <!-- Loading -->
+    <div v-if="isLoading" class="flex items-center justify-center h-64">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
+    </div>
+
     <!-- Leads Table -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div v-else class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <table class="w-full">
         <thead class="bg-gray-50">
           <tr>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">姓名</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">類型</th>
-            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">門店</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">電話</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">狀態</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">時間</th>
@@ -111,21 +161,36 @@ const filteredLeads = computed(() => {
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
+          <tr v-if="filteredLeads.length === 0">
+            <td colspan="6" class="px-6 py-12 text-center text-gray-500">尚無名單資料</td>
+          </tr>
           <tr v-for="lead in filteredLeads" :key="lead.id" class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{{ lead.name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="font-medium text-gray-900">{{ lead.name }}</div>
+              <div v-if="lead.email" class="text-sm text-gray-500">{{ lead.email }}</div>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span :class="[typeColors[lead.type], 'text-xs font-medium px-2.5 py-1 rounded-full']">
                 {{ typeLabels[lead.type] }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ lead.store }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ lead.phone }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span :class="[statusColors[lead.status], 'text-xs font-medium px-2.5 py-1 rounded-full']">
-                {{ statusLabels[lead.status] }}
-              </span>
+              <select
+                :value="lead.status"
+                @change="updateStatus(lead, ($event.target).value)"
+                :class="[statusColors[lead.status], 'text-xs font-medium px-2 py-1 rounded-full border-0 cursor-pointer']"
+              >
+                <option value="new">新名單</option>
+                <option value="contacted">已聯繫</option>
+                <option value="scheduled">已預約</option>
+                <option value="completed">已完成</option>
+                <option value="cancelled">已取消</option>
+              </select>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-400 text-sm">{{ lead.createdAt }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-400 text-sm">
+              {{ lead.createdAt ? new Date(lead.createdAt).toLocaleString('zh-TW') : '-' }}
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-right">
               <button class="text-orange hover:text-orange-600 font-medium text-sm">
                 查看詳情

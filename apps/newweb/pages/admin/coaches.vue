@@ -7,16 +7,66 @@ useHead({
   title: '教練管理｜練健康後台',
 })
 
-const coaches = ref([
-  { id: '1', name: '李哲宇', store: '新店七張店', role: '店主管', isActive: true },
-  { id: '2', name: '蕭彥嶸', store: '南京復興店', role: '店主管', isActive: true },
-  { id: '3', name: '王韻婷', store: '松江南京店', role: '教練', isActive: true },
-  { id: '4', name: '吳禎明', store: '新店七張店', role: '教練', isActive: true },
-  { id: '5', name: '李柏橋', store: '南京復興店', role: '教練', isActive: true },
-  { id: '6', name: '林星辰', store: '松江南京店', role: '物理治療師', isActive: true },
-])
+interface Coach {
+  id: string
+  name: string
+  photo?: string
+  roleTitle?: string
+  storeId?: string
+  store?: { id: string; name: string; slug: string }
+  specialties?: string[]
+  isActive: boolean
+}
 
+const coaches = ref<Coach[]>([])
+const isLoading = ref(true)
+const error = ref('')
 const showAddModal = ref(false)
+
+// Fetch coaches from API
+async function fetchCoaches() {
+  isLoading.value = true
+  error.value = ''
+  try {
+    const response = await $fetch<{ success: boolean; data: Coach[] }>('/api/admin/coaches')
+    if (response.success) {
+      coaches.value = response.data
+    }
+  } catch (e: any) {
+    error.value = e.data?.message || '載入失敗'
+    console.error('Error fetching coaches:', e)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Toggle coach active status
+async function toggleActive(coach: Coach) {
+  try {
+    await $fetch(`/api/admin/coaches/${coach.id}`, {
+      method: 'PATCH',
+      body: { isActive: !coach.isActive },
+    })
+    coach.isActive = !coach.isActive
+  } catch (e: any) {
+    alert(e.data?.message || '更新失敗')
+  }
+}
+
+// Delete coach
+async function deleteCoach(coach: Coach) {
+  if (!confirm(`確定要刪除「${coach.name}」嗎？`)) return
+  try {
+    await $fetch(`/api/admin/coaches/${coach.id}`, {
+      method: 'DELETE',
+    })
+    coaches.value = coaches.value.filter(c => c.id !== coach.id)
+  } catch (e: any) {
+    alert(e.data?.message || '刪除失敗')
+  }
+}
+
+onMounted(fetchCoaches)
 </script>
 
 <template>
@@ -37,8 +87,18 @@ const showAddModal = ref(false)
       </button>
     </div>
 
+    <!-- Error -->
+    <div v-if="error" class="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4">
+      {{ error }}
+    </div>
+
+    <!-- Loading -->
+    <div v-if="isLoading" class="flex items-center justify-center h-64">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
+    </div>
+
     <!-- Coaches Table -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div v-else class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <table class="w-full">
         <thead class="bg-gray-50">
           <tr>
@@ -50,35 +110,53 @@ const showAddModal = ref(false)
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
+          <tr v-if="coaches.length === 0">
+            <td colspan="5" class="px-6 py-12 text-center text-gray-500">尚無教練資料</td>
+          </tr>
           <tr v-for="coach in coaches" :key="coach.id" class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-navy rounded-full flex items-center justify-center text-white font-bold">
-                  {{ coach.name.charAt(0) }}
+                <img
+                  v-if="coach.photo"
+                  :src="coach.photo"
+                  :alt="coach.name"
+                  class="w-10 h-10 rounded-full object-cover"
+                />
+                <div v-else class="w-10 h-10 bg-navy rounded-full flex items-center justify-center text-white font-bold">
+                  {{ coach.name?.charAt(0) }}
                 </div>
                 <span class="font-medium text-gray-900">{{ coach.name }}</span>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ coach.store }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ coach.role }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ coach.store?.name || '-' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ coach.roleTitle || '-' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span
+              <button
+                @click="toggleActive(coach)"
                 :class="[
-                  'text-xs font-medium px-2.5 py-1 rounded-full',
+                  'text-xs font-medium px-2.5 py-1 rounded-full cursor-pointer hover:opacity-80 transition-opacity',
                   coach.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
                 ]"
               >
                 {{ coach.isActive ? '啟用中' : '已停用' }}
-              </span>
+              </button>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right">
               <div class="flex items-center justify-end gap-2">
-                <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                <NuxtLink
+                  :to="`/admin/coaches/${coach.id}`"
+                  class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="編輯"
+                >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                   </svg>
-                </button>
-                <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                </NuxtLink>
+                <button
+                  @click="deleteCoach(coach)"
+                  class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  title="刪除"
+                >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
