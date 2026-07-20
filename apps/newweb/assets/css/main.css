@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Define CSS variables for fonts (matching Next.js approach) */
+:root {
+  --font-noto-sans: 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-noto-serif: 'Noto Serif TC', Georgia, 'Times New Roman', serif;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -9,11 +15,13 @@
 
   body {
     @apply bg-cream-100 text-ink antialiased;
+    font-family: var(--font-noto-sans);
   }
 
   /* Headings use serif font */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+    font-family: var(--font-noto-serif);
+    @apply font-bold;
   }
 }
 
