@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
+
 definePageMeta({
   layout: 'admin'
 })
@@ -10,17 +12,29 @@ useHead({
 interface Lecturer {
   id: string
   name: string
+  slug?: string
   title?: string
+  organization?: string
+  region?: string
+  countries?: string[]
   type: 'lkk' | 'partner' | 'overseas'
   photo?: string
+  description?: string
   specialties?: string[]
+  courses?: string[]
+  certifications?: string[]
+  sortOrder?: number
   isActive: boolean
 }
 
 const lecturers = ref<Lecturer[]>([])
 const isLoading = ref(true)
 const error = ref('')
-const showAddModal = ref(false)
+
+// Edit modal
+const showEditModal = ref(false)
+const editingLecturer = ref<Lecturer | null>(null)
+const saving = ref(false)
 
 const typeFilter = ref('')
 const searchQuery = ref('')
@@ -37,6 +51,23 @@ const typeColors: Record<string, string> = {
   overseas: 'bg-green-100 text-green-700',
 }
 
+const formData = ref({
+  name: '',
+  slug: '',
+  title: '',
+  organization: '',
+  region: '',
+  countriesText: '',
+  type: 'lkk' as 'lkk' | 'partner' | 'overseas',
+  photo: '',
+  description: '',
+  specialtiesText: '',
+  coursesText: '',
+  certificationsText: '',
+  sortOrder: 0,
+  isActive: true,
+})
+
 // Fetch lecturers from API
 async function fetchLecturers() {
   isLoading.value = true
@@ -51,6 +82,100 @@ async function fetchLecturers() {
     console.error('Error fetching lecturers:', e)
   } finally {
     isLoading.value = false
+  }
+}
+
+function openEditModal(lecturer?: Lecturer) {
+  if (lecturer) {
+    editingLecturer.value = lecturer
+    formData.value = {
+      name: lecturer.name || '',
+      slug: lecturer.slug || '',
+      title: lecturer.title || '',
+      organization: lecturer.organization || '',
+      region: lecturer.region || '',
+      countriesText: (lecturer.countries || []).join('\n'),
+      type: lecturer.type || 'lkk',
+      photo: lecturer.photo || '',
+      description: lecturer.description || '',
+      specialtiesText: (lecturer.specialties || []).join('\n'),
+      coursesText: (lecturer.courses || []).join('\n'),
+      certificationsText: (lecturer.certifications || []).join('\n'),
+      sortOrder: lecturer.sortOrder || 0,
+      isActive: lecturer.isActive ?? true,
+    }
+  } else {
+    editingLecturer.value = null
+    const maxSortOrder = lecturers.value.length > 0 ? Math.max(...lecturers.value.map(l => l.sortOrder || 0)) : 0
+    formData.value = {
+      name: '',
+      slug: '',
+      title: '',
+      organization: '',
+      region: '',
+      countriesText: '',
+      type: 'lkk',
+      photo: '',
+      description: '',
+      specialtiesText: '',
+      coursesText: '',
+      certificationsText: '',
+      sortOrder: maxSortOrder + 1,
+      isActive: true,
+    }
+  }
+  showEditModal.value = true
+}
+
+function closeEditModal() {
+  showEditModal.value = false
+  editingLecturer.value = null
+}
+
+async function saveLecturer() {
+  if (!formData.value.name || !formData.value.slug) {
+    alert('請填寫必填欄位')
+    return
+  }
+
+  saving.value = true
+  try {
+    const isNew = !editingLecturer.value
+    const url = isNew ? '/api/admin/lecturers' : `/api/admin/lecturers/${editingLecturer.value!.id}`
+    const method = isNew ? 'POST' : 'PATCH'
+
+    const payload = {
+      name: formData.value.name,
+      slug: formData.value.slug,
+      title: formData.value.title,
+      organization: formData.value.organization,
+      region: formData.value.region,
+      countries: formData.value.countriesText.split('\n').map(s => s.trim()).filter(Boolean),
+      type: formData.value.type,
+      photo: formData.value.photo,
+      description: formData.value.description,
+      specialties: formData.value.specialtiesText.split('\n').map(s => s.trim()).filter(Boolean),
+      courses: formData.value.coursesText.split('\n').map(s => s.trim()).filter(Boolean),
+      certifications: formData.value.certificationsText.split('\n').map(s => s.trim()).filter(Boolean),
+      sortOrder: formData.value.sortOrder,
+      isActive: formData.value.isActive,
+    }
+
+    const response = await $fetch<{ success: boolean; data?: Lecturer; error?: string }>(url, {
+      method,
+      body: payload,
+    })
+
+    if (response.success) {
+      await fetchLecturers()
+      closeEditModal()
+    } else {
+      alert(response.error || '儲存失敗')
+    }
+  } catch (e: any) {
+    alert(e.data?.message || '儲存失敗')
+  } finally {
+    saving.value = false
   }
 }
 
@@ -80,6 +205,24 @@ async function deleteLecturer(lecturer: Lecturer) {
   }
 }
 
+function generateSlug(name: string): string {
+  const mapping: Record<string, string> = {
+    '陳': 'chen', '林': 'lin', '黃': 'huang', '張': 'zhang', '李': 'li',
+    '王': 'wang', '吳': 'wu', '劉': 'liu', '蔡': 'tsai', '楊': 'yang',
+  }
+  let slug = name.toLowerCase()
+  Object.entries(mapping).forEach(([zh, en]) => {
+    slug = slug.replace(zh, en)
+  })
+  return slug.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+}
+
+function handleNameChange() {
+  if (!editingLecturer.value) {
+    formData.value.slug = generateSlug(formData.value.name)
+  }
+}
+
 onMounted(fetchLecturers)
 
 const filteredLecturers = computed(() => {
@@ -106,7 +249,7 @@ const filteredLecturers = computed(() => {
         <p class="text-gray-500 mt-1">管理練健康授權講師、合作講師、海外授權講師</p>
       </div>
       <button
-        @click="showAddModal = true"
+        @click="openEditModal()"
         class="inline-flex items-center gap-2 bg-orange text-white font-medium px-4 py-2.5 rounded-lg hover:bg-orange-600 transition-colors"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,12 +357,12 @@ const filteredLecturers = computed(() => {
             >
               {{ lecturer.isActive ? '下架' : '上架' }}
             </button>
-            <NuxtLink
-              :to="`/admin/lecturers/${lecturer.id}`"
+            <button
+              @click="openEditModal(lecturer)"
               class="text-sm text-navy hover:text-navy-600 px-3 py-1"
             >
               編輯
-            </NuxtLink>
+            </button>
             <button
               @click="deleteLecturer(lecturer)"
               class="text-sm text-red-500 hover:text-red-600 px-3 py-1"
@@ -231,21 +374,178 @@ const filteredLecturers = computed(() => {
       </div>
     </div>
 
-    <!-- Add Modal Placeholder -->
+    <!-- Edit Modal -->
     <div
-      v-if="showAddModal"
+      v-if="showEditModal"
       class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-      @click.self="showAddModal = false"
+      @click.self="closeEditModal"
     >
-      <div class="bg-white rounded-xl max-w-lg w-full p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">新增講師</h2>
-        <p class="text-gray-500 mb-6">此功能尚在開發中，請稍後再試。</p>
-        <button
-          @click="showAddModal = false"
-          class="w-full bg-gray-100 text-gray-700 font-medium py-2.5 rounded-lg hover:bg-gray-200 transition-colors"
-        >
-          關閉
-        </button>
+      <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
+          <h2 class="text-xl font-bold text-gray-900">
+            {{ editingLecturer ? '編輯講師' : '新增講師' }}
+          </h2>
+          <button @click="closeEditModal" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">姓名 <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                v-model="formData.name"
+                @input="handleNameChange"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                placeholder="講師姓名"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">網址代稱 <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                v-model="formData.slug"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                placeholder="lecturer-slug"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">職稱</label>
+              <input
+                type="text"
+                v-model="formData.title"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                placeholder="例如：首席講師"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">講師類型 <span class="text-red-500">*</span></label>
+              <select v-model="formData.type" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                <option value="lkk">練健康授權講師</option>
+                <option value="partner">合作講師</option>
+                <option value="overseas">海外授權講師</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">所屬機構</label>
+              <input
+                type="text"
+                v-model="formData.organization"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                placeholder="所屬機構名稱"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">地區（海外講師用）</label>
+              <input
+                type="text"
+                v-model="formData.region"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                placeholder="例如：東南亞"
+              />
+            </div>
+          </div>
+
+          <div v-if="formData.type === 'overseas'">
+            <label class="block text-sm font-medium mb-1">授權國家（每行一個）</label>
+            <textarea
+              v-model="formData.countriesText"
+              rows="3"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2"
+              placeholder="馬來西亞&#10;新加坡&#10;泰國"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">照片網址</label>
+            <input
+              type="url"
+              v-model="formData.photo"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2"
+              placeholder="https://..."
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">簡介</label>
+            <textarea
+              v-model="formData.description"
+              rows="3"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2"
+              placeholder="講師介紹..."
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">專長領域（每行一個）</label>
+              <textarea
+                v-model="formData.specialtiesText"
+                rows="4"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                placeholder="肌力與體能訓練&#10;運動傷害防護&#10;功能性訓練"
+              ></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">授課項目（每行一個）</label>
+              <textarea
+                v-model="formData.coursesText"
+                rows="4"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                placeholder="初階肌力訓練&#10;進階體能訓練&#10;教練培訓課程"
+              ></textarea>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">專業認證（每行一個）</label>
+            <textarea
+              v-model="formData.certificationsText"
+              rows="3"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2"
+              placeholder="NSCA-CSCS&#10;ACE-CPT&#10;FMS Level 2"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">排序</label>
+              <input
+                type="number"
+                v-model.number="formData.sortOrder"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                min="0"
+              />
+            </div>
+            <div class="flex items-center gap-2 pt-6">
+              <input type="checkbox" id="isActive" v-model="formData.isActive" class="w-4 h-4 text-orange rounded" />
+              <label for="isActive" class="text-sm">上架顯示</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+          <button @click="closeEditModal" class="bg-gray-100 text-gray-700 font-medium px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+            取消
+          </button>
+          <button
+            @click="saveLecturer"
+            :disabled="saving"
+            class="bg-orange text-white font-medium px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50"
+          >
+            {{ saving ? '儲存中...' : '儲存' }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
