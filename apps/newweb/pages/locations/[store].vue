@@ -144,7 +144,35 @@ const transport = computed(() => {
     parking: { desc: '請來電洽詢' },
   }
 })
-const geo = computed(() => extraData.value?.geo || { lat: 25.0330, lng: 121.5654 })
+// 從 googleMapUrl 提取座標（支援多種 Google Maps URL 格式）
+const geo = computed(() => {
+  const url = store.value?.googleMapUrl
+  if (url) {
+    // 嘗試從 URL 中提取座標（格式: @lat,lng 或 q=lat,lng）
+    const coordsMatch = url.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/) ||
+                        url.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/)
+    if (coordsMatch) {
+      return { lat: parseFloat(coordsMatch[1]), lng: parseFloat(coordsMatch[2]) }
+    }
+  }
+  // 備用：使用本地資料或預設值
+  return extraData.value?.geo || { lat: 25.0330, lng: 121.5654 }
+})
+
+// 生成地圖嵌入 URL
+const mapEmbedUrl = computed(() => {
+  // 優先使用座標
+  if (geo.value.lat && geo.value.lng) {
+    return `https://www.google.com/maps?q=${geo.value.lat},${geo.value.lng}&z=16&output=embed`
+  }
+  // 備用：使用地址搜尋
+  const address = `${store.value?.city || ''}${store.value?.district || ''}${store.value?.address || ''}`
+  if (address) {
+    return `https://www.google.com/maps?q=${encodeURIComponent(address)}&z=16&output=embed`
+  }
+  // 最後備用
+  return 'https://www.google.com/maps?q=25.0330,121.5654&z=16&output=embed'
+})
 
 // Fetch other stores for navigation
 const { data: storesResponse } = await useFetch<{ success: boolean; data: any[] }>('/api/public/stores')
@@ -270,7 +298,7 @@ const photos = computed(() => {
           <!-- Google Maps Embed -->
           <div class="aspect-[4/3] bg-cream-100 rounded-2xl shadow-lg overflow-hidden relative">
             <iframe
-              :src="`https://www.google.com/maps?q=${geo.lat},${geo.lng}&z=16&output=embed`"
+              :src="mapEmbedUrl"
               width="100%"
               height="100%"
               style="border: 0"
