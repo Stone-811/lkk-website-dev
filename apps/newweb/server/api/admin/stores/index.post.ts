@@ -1,4 +1,4 @@
-import { db, Timestamp } from '~/server/utils/firebase';
+import { getDb, getTimestamp } from '~/server/utils/firebase';
 import { getSession } from '~/server/utils/auth';
 
 export default defineEventHandler(async (event) => {
@@ -30,6 +30,9 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    const db = await getDb();
+    const Timestamp = await getTimestamp();
+
     // Check if slug already exists
     const existingSnapshot = await db
       .collection('stores')

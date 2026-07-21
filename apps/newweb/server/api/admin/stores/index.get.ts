@@ -1,4 +1,4 @@
-import { db, StoreDoc, docsToArray } from '~/server/utils/firebase';
+import { getDb, StoreDoc, docsToArray } from '~/server/utils/firebase';
 import { getSession } from '~/server/utils/auth';
 import { fallbackStores, fallbackCoaches } from '~/server/utils/fallback-data';
 
@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    const db = await getDb();
     const storesSnapshot = await db
       .collection('stores')
       .orderBy('sortOrder', 'asc')

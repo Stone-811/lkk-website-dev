@@ -1,4 +1,4 @@
-import { db, docsToArray, LecturerDoc } from '~/server/utils/firebase'
+import { getDb, docsToArray, LecturerDoc } from '~/server/utils/firebase'
 import { getSession } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 401, message: '未授權' })
     }
 
+    const db = await getDb()
     const query = getQuery(event)
     const type = query.type as string | undefined
 

@@ -1,4 +1,4 @@
-import { db, Timestamp } from '~/server/utils/firebase';
+import { getDb, getTimestamp } from '~/server/utils/firebase';
 import { getSession } from '~/server/utils/auth';
 
 export default defineEventHandler(async (event) => {
@@ -22,6 +22,9 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   try {
+    const db = await getDb();
+    const Timestamp = await getTimestamp();
+
     const coachRef = db.collection('coaches').doc(id);
     const coachDoc = await coachRef.get();
 

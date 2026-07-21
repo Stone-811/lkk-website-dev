@@ -1,4 +1,4 @@
-import { db, Timestamp } from '~/server/utils/firebase'
+import { getDb, getTimestamp } from '~/server/utils/firebase'
 import { getSession } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
@@ -7,6 +7,9 @@ export default defineEventHandler(async (event) => {
     if (!session || !['admin', 'editor'].includes(session.role)) {
       throw createError({ statusCode: 401, message: '未授權' })
     }
+
+    const db = await getDb()
+    const Timestamp = await getTimestamp()
 
     const body = await readBody(event)
     const {

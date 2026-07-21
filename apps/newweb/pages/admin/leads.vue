@@ -1,21 +1,25 @@
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+
 definePageMeta({
   layout: 'admin'
 })
 
 useHead({
-  title: '表單名單｜練健康後台',
+  title: '客戶預約｜練健康後台',
 })
 
 interface Lead {
   id: string
   name: string
-  type: 'booking' | 'franchise' | 'cooperation'
+  type: 'booking' | 'franchise'
   phone: string
   email?: string
   storeId?: string
   status: 'new' | 'contacted' | 'scheduled' | 'completed' | 'cancelled'
   internalNote?: string
+  message?: string
+  payload?: Record<string, any>
   createdAt: string
   updatedAt?: string
 }
@@ -26,15 +30,22 @@ const error = ref('')
 
 const selectedType = ref('all')
 const selectedStatus = ref('all')
+const searchQuery = ref('')
 
-// Fetch leads from API
+// Detail modal
+const selectedLead = ref<Lead | null>(null)
+const noteText = ref('')
+const saving = ref(false)
+
+// Fetch leads from API (only booking and franchise types)
 async function fetchLeads() {
   isLoading.value = true
   error.value = ''
   try {
     const response = await $fetch<{ success: boolean; data: Lead[] }>('/api/admin/leads')
     if (response.success) {
-      leads.value = response.data
+      // Filter out cooperation type - only show booking and franchise
+      leads.value = response.data.filter(lead => lead.type !== 'cooperation')
     }
   } catch (e: any) {
     error.value = e.data?.message || '載入失敗'
@@ -45,7 +56,9 @@ async function fetchLeads() {
 }
 
 // Update lead status
-async function updateStatus(lead: Lead, newStatus: string) {
+async function updateStatus(lead: Lead, event: Event) {
+  const target = event.target as HTMLSelectElement
+  const newStatus = target.value
   try {
     await $fetch(`/api/admin/leads/${lead.id}`, {
       method: 'PATCH',
@@ -62,48 +75,99 @@ onMounted(fetchLeads)
 const typeLabels: Record<string, string> = {
   booking: '預約體驗',
   franchise: '加盟洽詢',
-  cooperation: '合作洽詢',
 }
 
 const typeColors: Record<string, string> = {
   booking: 'bg-blue-100 text-blue-700',
   franchise: 'bg-purple-100 text-purple-700',
-  cooperation: 'bg-green-100 text-green-700',
 }
 
-const statusLabels: Record<string, string> = {
-  new: '新名單',
-  contacted: '已聯繫',
-  scheduled: '已預約',
-  completed: '已完成',
-  cancelled: '已取消',
-}
-
-const statusColors: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-700',
-  contacted: 'bg-yellow-100 text-yellow-700',
-  scheduled: 'bg-purple-100 text-purple-700',
-  completed: 'bg-green-100 text-green-700',
-  cancelled: 'bg-gray-100 text-gray-600',
+const statusLabels: Record<string, { label: string; class: string }> = {
+  new: { label: '新名單', class: 'bg-blue-100 text-blue-700' },
+  contacted: { label: '已聯繫', class: 'bg-yellow-100 text-yellow-700' },
+  scheduled: { label: '已預約', class: 'bg-purple-100 text-purple-700' },
+  completed: { label: '已完成', class: 'bg-green-100 text-green-700' },
+  cancelled: { label: '已取消', class: 'bg-gray-100 text-gray-600' },
 }
 
 const filteredLeads = computed(() => {
   return leads.value.filter(lead => {
     if (selectedType.value !== 'all' && lead.type !== selectedType.value) return false
     if (selectedStatus.value !== 'all' && lead.status !== selectedStatus.value) return false
+    if (searchQuery.value) {
+      const query = searchQuery.value.toLowerCase()
+      return (
+        lead.name.toLowerCase().includes(query) ||
+        lead.phone.includes(query) ||
+        (lead.email && lead.email.toLowerCase().includes(query))
+      )
+    }
     return true
   })
 })
+
+function openDetail(lead: Lead) {
+  selectedLead.value = lead
+  noteText.value = lead.internalNote || ''
+}
+
+function closeDetail() {
+  selectedLead.value = null
+}
+
+async function handleSaveNote() {
+  if (!selectedLead.value) return
+  saving.value = true
+  try {
+    await $fetch(`/api/admin/leads/${selectedLead.value.id}`, {
+      method: 'PATCH',
+      body: { internalNote: noteText.value },
+    })
+    const lead = leads.value.find(l => l.id === selectedLead.value?.id)
+    if (lead) lead.internalNote = noteText.value
+    selectedLead.value.internalNote = noteText.value
+    alert('備註已儲存')
+  } catch (e: any) {
+    alert(e.data?.message || '儲存失敗')
+  } finally {
+    saving.value = false
+  }
+}
+
+function handleExport() {
+  const headers = ['姓名', '電話', 'Email', '類型', '狀態', '門店', '備註', '建立時間']
+  const rows = filteredLeads.value.map(lead => [
+    lead.name,
+    lead.phone,
+    lead.email || '',
+    typeLabels[lead.type] || lead.type,
+    statusLabels[lead.status]?.label || lead.status,
+    lead.storeId || '',
+    lead.internalNote || '',
+    lead.createdAt ? new Date(lead.createdAt).toLocaleString('zh-TW') : '',
+  ])
+
+  const csvContent =
+    '\uFEFF' +
+    [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n')
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = `leads_${new Date().toISOString().split('T')[0]}.csv`
+  link.click()
+}
 </script>
 
 <template>
   <div>
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">表單名單</h1>
-        <p class="text-gray-500 mt-1">管理預約體驗、加盟洽詢與合作洽詢名單</p>
+        <h1 class="text-2xl font-bold text-gray-900">客戶預約</h1>
+        <p class="text-gray-500 mt-1">管理預約體驗與加盟洽詢名單</p>
       </div>
       <button
+        @click="handleExport"
         class="inline-flex items-center gap-2 bg-white border border-gray-300 text-gray-700 font-medium px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +178,13 @@ const filteredLeads = computed(() => {
     </div>
 
     <!-- Filters -->
-    <div class="flex gap-4 mb-6">
+    <div class="flex flex-wrap gap-4 mb-6">
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="搜尋姓名、電話、Email..."
+        class="flex-1 min-w-[200px] border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white"
+      />
       <select
         v-model="selectedType"
         class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white"
@@ -122,7 +192,6 @@ const filteredLeads = computed(() => {
         <option value="all">所有類型</option>
         <option value="booking">預約體驗</option>
         <option value="franchise">加盟洽詢</option>
-        <option value="cooperation">合作洽詢</option>
       </select>
       <select
         v-model="selectedStatus"
@@ -136,6 +205,11 @@ const filteredLeads = computed(() => {
         <option value="cancelled">已取消</option>
       </select>
     </div>
+
+    <!-- Results count -->
+    <p class="text-sm text-gray-500 mb-4">
+      共 {{ filteredLeads.length }} 筆資料
+    </p>
 
     <!-- Error -->
     <div v-if="error" class="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4">
@@ -178,8 +252,8 @@ const filteredLeads = computed(() => {
             <td class="px-6 py-4 whitespace-nowrap">
               <select
                 :value="lead.status"
-                @change="updateStatus(lead, ($event.target).value)"
-                :class="[statusColors[lead.status], 'text-xs font-medium px-2 py-1 rounded-full border-0 cursor-pointer']"
+                @change="updateStatus(lead, $event)"
+                :class="[statusLabels[lead.status]?.class || 'bg-gray-100 text-gray-600', 'text-xs font-medium px-2 py-1 rounded-full border-0 cursor-pointer']"
               >
                 <option value="new">新名單</option>
                 <option value="contacted">已聯繫</option>
@@ -192,13 +266,139 @@ const filteredLeads = computed(() => {
               {{ lead.createdAt ? new Date(lead.createdAt).toLocaleString('zh-TW') : '-' }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right">
-              <button class="text-orange hover:text-orange-600 font-medium text-sm">
+              <button
+                @click="openDetail(lead)"
+                class="text-orange hover:text-orange-600 font-medium text-sm"
+              >
                 查看詳情
               </button>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Detail Modal -->
+    <div
+      v-if="selectedLead"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      @click.self="closeDetail"
+    >
+      <div class="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+          <h2 class="text-lg font-bold text-gray-900">
+            {{ selectedLead.type === 'booking' ? '預約體驗詳情' : '加盟洽詢詳情' }}
+          </h2>
+          <button @click="closeDetail" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+              <p class="text-sm text-gray-500">類型</p>
+              <span :class="[typeColors[selectedLead.type], 'text-sm font-medium px-2.5 py-1 rounded-full']">
+                {{ typeLabels[selectedLead.type] }}
+              </span>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">姓名</p>
+              <p class="font-medium">{{ selectedLead.name }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">電話</p>
+              <p class="font-medium">{{ selectedLead.phone }}</p>
+            </div>
+            <div v-if="selectedLead.email">
+              <p class="text-sm text-gray-500">Email</p>
+              <p class="font-medium">{{ selectedLead.email }}</p>
+            </div>
+            <div v-if="selectedLead.storeId">
+              <p class="text-sm text-gray-500">門店</p>
+              <p class="font-medium">{{ selectedLead.storeId }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">狀態</p>
+              <span :class="[statusLabels[selectedLead.status]?.class || 'bg-gray-100 text-gray-600', 'text-sm font-medium px-2.5 py-1 rounded-full']">
+                {{ statusLabels[selectedLead.status]?.label || selectedLead.status }}
+              </span>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">建立時間</p>
+              <p class="font-medium">{{ selectedLead.createdAt ? new Date(selectedLead.createdAt).toLocaleString('zh-TW') : '-' }}</p>
+            </div>
+
+            <!-- Booking specific fields -->
+            <template v-if="selectedLead.type === 'booking' && selectedLead.payload">
+              <div v-if="selectedLead.payload.gender">
+                <p class="text-sm text-gray-500">性別</p>
+                <p class="font-medium">{{ selectedLead.payload.gender }}</p>
+              </div>
+              <div v-if="selectedLead.payload.age">
+                <p class="text-sm text-gray-500">年齡</p>
+                <p class="font-medium">{{ selectedLead.payload.age }}</p>
+              </div>
+              <div v-if="selectedLead.payload.goal" class="col-span-2">
+                <p class="text-sm text-gray-500">運動目標</p>
+                <p class="font-medium">{{ selectedLead.payload.goal }}</p>
+              </div>
+              <div v-if="selectedLead.payload.preferredTime" class="col-span-2">
+                <p class="text-sm text-gray-500">偏好時段</p>
+                <p class="font-medium">{{ selectedLead.payload.preferredTime }}</p>
+              </div>
+              <div v-if="selectedLead.payload.source" class="col-span-2">
+                <p class="text-sm text-gray-500">來源</p>
+                <p class="font-medium">{{ selectedLead.payload.source }}</p>
+              </div>
+            </template>
+
+            <!-- Franchise specific fields -->
+            <template v-if="selectedLead.type === 'franchise' && selectedLead.payload">
+              <div v-if="selectedLead.payload.organization" class="col-span-2">
+                <p class="text-sm text-gray-500">公司/單位</p>
+                <p class="font-medium">{{ selectedLead.payload.organization }}</p>
+              </div>
+              <div v-if="selectedLead.payload.region">
+                <p class="text-sm text-gray-500">目標區域</p>
+                <p class="font-medium">{{ selectedLead.payload.region }}</p>
+              </div>
+              <div v-if="selectedLead.payload.cooperationType">
+                <p class="text-sm text-gray-500">合作類型</p>
+                <p class="font-medium">{{ selectedLead.payload.cooperationType }}</p>
+              </div>
+            </template>
+          </div>
+
+          <div v-if="selectedLead.message" class="col-span-2">
+            <p class="text-sm text-gray-500">留言/備註</p>
+            <p class="mt-1 p-3 bg-gray-50 rounded-lg whitespace-pre-wrap">{{ selectedLead.message }}</p>
+          </div>
+
+          <div>
+            <p class="text-sm text-gray-500 mb-2">內部備註</p>
+            <textarea
+              v-model="noteText"
+              rows="3"
+              placeholder="新增內部備註..."
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700"
+            />
+          </div>
+        </div>
+        <div class="p-6 border-t border-gray-200 flex justify-end gap-3">
+          <button @click="closeDetail" class="bg-gray-100 text-gray-700 font-medium px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+            關閉
+          </button>
+          <button
+            @click="handleSaveNote"
+            :disabled="saving"
+            class="bg-orange text-white font-medium px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50"
+          >
+            {{ saving ? '儲存中...' : '儲存備註' }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
