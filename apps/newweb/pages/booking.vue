@@ -76,6 +76,14 @@ const relationshipOptions = [
   '其他',
 ]
 
+// 運動目的選項（可複選）
+const exerciseGoalOptions = [
+  '增加肌力與活動力',
+  '慢性病管理',
+  '體重管理',
+  '其他',
+]
+
 // Form state
 const formData = reactive({
   // 學員資料
@@ -99,6 +107,8 @@ const formData = reactive({
   preferredTimeOther: '',
   sources: [] as string[],
   sourceOther: '',
+  exerciseGoals: [] as string[],
+  exerciseGoalOther: '',
   paymentMethod: '',
   message: '',
 })
@@ -162,6 +172,16 @@ const toggleSource = (source: string) => {
   }
 }
 
+// Toggle exercise goal selection
+const toggleExerciseGoal = (goal: string) => {
+  const index = formData.exerciseGoals.indexOf(goal)
+  if (index === -1) {
+    formData.exerciseGoals.push(goal)
+  } else {
+    formData.exerciseGoals.splice(index, 1)
+  }
+}
+
 const validateForm = () => {
   const newErrors: Record<string, string> = {}
 
@@ -221,6 +241,13 @@ const handleSubmit = async () => {
       finalSources.push(`其他: ${formData.sourceOther}`)
     }
 
+    // 組合運動目的
+    let finalExerciseGoals = [...formData.exerciseGoals]
+    if (formData.exerciseGoals.includes('其他') && formData.exerciseGoalOther.trim()) {
+      finalExerciseGoals = finalExerciseGoals.filter(g => g !== '其他')
+      finalExerciseGoals.push(`其他: ${formData.exerciseGoalOther}`)
+    }
+
     // 組合聯繫時段
     let finalPreferredTimes = [...formData.preferredTimes]
     if (formData.preferredTimes.includes('其他') && formData.preferredTimeOther.trim()) {
@@ -251,6 +278,7 @@ const handleSubmit = async () => {
         storeId: formData.storeId,
         preferredTime: finalPreferredTimes,
         sources: finalSources,
+        exerciseGoals: finalExerciseGoals,
         paymentMethod: formData.paymentMethod,
         message: formData.message,
         sourcePage: '/booking',
@@ -731,49 +759,91 @@ const handleSubmit = async () => {
                     />
                   </div>
 
+                  <!-- 運動目的 -->
+                  <div>
+                    <label class="block text-sm font-medium mb-2 text-navy-700">
+                      運動目的 <span class="text-ink-500 font-normal">（可複選）</span>
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button
+                        v-for="goal in exerciseGoalOptions"
+                        :key="goal"
+                        type="button"
+                        :class="[
+                          'p-2.5 rounded-lg border text-sm text-left transition-all flex items-center justify-start gap-2',
+                          formData.exerciseGoals.includes(goal)
+                            ? 'border-orange bg-orange/10 text-orange'
+                            : 'border-cream-200 hover:border-orange/50'
+                        ]"
+                        @click="toggleExerciseGoal(goal)"
+                      >
+                        <div
+                          :class="[
+                            'w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0',
+                            formData.exerciseGoals.includes(goal)
+                              ? 'border-orange bg-orange'
+                              : 'border-ink-300'
+                          ]"
+                        >
+                          <svg v-if="formData.exerciseGoals.includes(goal)" class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        {{ goal }}
+                      </button>
+                    </div>
+                    <input
+                      v-if="formData.exerciseGoals.includes('其他')"
+                      v-model="formData.exerciseGoalOther"
+                      type="text"
+                      class="w-full mt-2 px-4 py-3 border border-cream-200 rounded-lg focus:ring-2 focus:ring-orange"
+                      placeholder="請說明其他運動目的"
+                    />
+                  </div>
+
                   <!-- 付款方式 -->
                   <div id="paymentMethod">
                     <label class="block text-sm font-medium mb-2 text-navy-700">
                       付款方式 <span class="text-red-500">*</span>
                     </label>
-                    <div class="space-y-2">
+                    <div class="grid grid-cols-2 gap-3">
                       <button
                         type="button"
                         :class="[
-                          'w-full p-4 rounded-lg border text-left transition-all',
+                          'p-4 rounded-lg border text-left transition-all',
                           formData.paymentMethod === '50歲以上免費'
                             ? 'border-green-500 bg-green-50 ring-2 ring-green-500'
                             : 'border-cream-200 hover:border-green-300'
                         ]"
                         @click="formData.paymentMethod = '50歲以上免費'"
                       >
-                        <div class="flex items-center gap-3">
-                          <div :class="['w-5 h-5 rounded-full border-2 flex items-center justify-center', formData.paymentMethod === '50歲以上免費' ? 'border-green-500' : 'border-ink-300']">
+                        <div class="flex items-center gap-2">
+                          <div :class="['w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0', formData.paymentMethod === '50歲以上免費' ? 'border-green-500' : 'border-ink-300']">
                             <div v-if="formData.paymentMethod === '50歲以上免費'" class="w-3 h-3 rounded-full bg-green-500" />
                           </div>
                           <div>
-                            <span class="font-semibold text-green-600">50 歲以上免費</span>
-                            <span class="text-sm text-ink/60 ml-2">首次體驗完全免費</span>
+                            <div class="font-semibold text-green-600 text-sm">50 歲以上免費</div>
+                            <div class="text-xs text-ink/60">首次體驗完全免費</div>
                           </div>
                         </div>
                       </button>
                       <button
                         type="button"
                         :class="[
-                          'w-full p-4 rounded-lg border text-left transition-all',
+                          'p-4 rounded-lg border text-left transition-all',
                           formData.paymentMethod === '臨櫃付款'
                             ? 'border-orange bg-orange/10 ring-2 ring-orange'
                             : 'border-cream-200 hover:border-orange/50'
                         ]"
                         @click="formData.paymentMethod = '臨櫃付款'"
                       >
-                        <div class="flex items-center gap-3">
-                          <div :class="['w-5 h-5 rounded-full border-2 flex items-center justify-center', formData.paymentMethod === '臨櫃付款' ? 'border-orange' : 'border-ink-300']">
+                        <div class="flex items-center gap-2">
+                          <div :class="['w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0', formData.paymentMethod === '臨櫃付款' ? 'border-orange' : 'border-ink-300']">
                             <div v-if="formData.paymentMethod === '臨櫃付款'" class="w-3 h-3 rounded-full bg-orange" />
                           </div>
                           <div>
-                            <span class="font-semibold text-navy-700">臨櫃付款</span>
-                            <span class="text-sm text-ink/60 ml-2">首次體驗 $500</span>
+                            <div class="font-semibold text-navy-700 text-sm">臨櫃付款</div>
+                            <div class="text-xs text-ink/60">首次體驗 $500</div>
                           </div>
                         </div>
                       </button>
