@@ -2,13 +2,20 @@
 
 ## 專案定位
 
-本專案採用「Next.js + Firebase + WordPress 內部代理」的低維運成本架構。
+本專案採用 **Turborepo Monorepo** 架構，包含兩個前端應用：
+
+| 應用 | 路徑 | 框架 | 狀態 |
+|------|------|------|------|
+| **newweb** | `apps/newweb` | Vue 3 + Nuxt 3 | 🚀 主要開發中（將取代 web） |
+| **web** | `apps/web` | Next.js 14 | 維護中 |
+
+**newweb（Nuxt）即將成為主站**，使用 Firebase App Hosting 部署。
 
 目標是用較低維運成本完成階段性網站改版，並讓業主可透過後台自行管理新官網頁面的照片、文案、CTA、連結、門店、教練與表單名單。
 
 **核心特點：統一網域 `l-kk.tw`**
-- 新官網頁面由 Next.js 處理
-- WordPress 文章透過 Next.js rewrites 代理，對外網址不變
+- 新官網頁面由 Nuxt（或 Next.js）處理
+- WordPress 文章透過 rewrites 代理，對外網址不變
 - 使用者與搜尋引擎只看到 `l-kk.tw`，SEO 零影響
 
 本版本不使用：
@@ -432,6 +439,156 @@ npm run preview
 - Vue 單檔元件使用 `<script setup>` 語法
 - 頁面使用 `useHead()` 設定 meta
 - 動態路由使用 `[param].vue` 檔名格式
+
+### Nuxt Server API（apps/newweb/server/）
+
+newweb 使用 Nitro 作為 server-side 引擎，API 放在 `server/api/` 目錄：
+
+```
+server/
+├── api/
+│   ├── admin/
+│   │   ├── auth/
+│   │   │   └── login.post.ts      # 後台登入
+│   │   ├── settings/
+│   │   │   ├── index.get.ts       # 取得設定
+│   │   │   ├── index.patch.ts     # 更新設定
+│   │   │   └── index.post.ts      # 發送測試信
+│   │   └── upload.post.ts         # 圖片上傳
+│   │
+│   ├── leads/
+│   │   ├── booking.post.ts        # 預約體驗表單
+│   │   ├── cooperation.post.ts    # 合作洽詢表單
+│   │   └── franchise.post.ts      # 加盟洽詢表單
+│   │
+│   └── public/
+│       ├── coaches.get.ts         # 取得教練列表
+│       ├── faqs.get.ts            # 取得 FAQ
+│       ├── stores.get.ts          # 取得門店列表
+│       └── lkk4-records.get.ts    # 取得 LKK4 成績
+│
+└── utils/
+    ├── firebase.ts                # Firebase Admin SDK（延遲載入）
+    ├── auth.ts                    # JWT 驗證
+    └── email.ts                   # Email 通知系統
+```
+
+### Email 通知系統（apps/newweb/server/utils/email.ts）
+
+表單提交後會觸發兩種郵件通知：
+
+1. **管理者通知信** - 通知 lkkwellness@gmail.com 有新的表單提交
+2. **客戶確認信** - 向填表者發送收到確認信
+
+**通知信包含完整表單資料：**
+
+| 表單類型 | 通知內容 |
+|---------|---------|
+| booking | 姓名、電話、Email、門店、性別、出生年月、LINE ID、代填者資訊、健康狀況、方便時段、付款方式、得知管道 |
+| cooperation | 姓名、電話、Email、公司、洽詢類型、LINE ID、公司規模、預算區間、留言 |
+| franchise | 姓名、電話、Email、公司、目標區域、合作類型、留言 |
+
+**環境變數設定（apphosting.yaml）：**
+
+```yaml
+env:
+  - variable: SMTP_HOST
+    value: smtp.gmail.com
+  - variable: SMTP_PORT
+    value: "465"
+  - variable: SMTP_USER
+    value: lkkwellness@gmail.com
+  - variable: SMTP_FROM
+    value: lkkwellness@gmail.com
+  - variable: NOTIFICATION_EMAIL
+    value: lkkwellness@gmail.com
+  - variable: SMTP_PASS
+    secret: smtp-pass
+```
+
+**授權 Secret 給 newweb backend：**
+
+```bash
+firebase apphosting:secrets:grantaccess smtp-pass --project lkk-website-dev --backend newweb
+```
+
+### 手機版固定按鈕（Nuxt 版）
+
+Nuxt 版的手機版預約按鈕位於：
+
+| 項目 | 說明 |
+|------|------|
+| 元件 | `apps/newweb/components/layout/MobileBookingButton.vue` |
+| Layout | 在 `layouts/default.vue` 中引入 `<LayoutMobileBookingButton />` |
+| 顯示條件 | 僅手機版（`md:hidden`） |
+| 隱藏頁面 | `/booking` 頁面自動隱藏（使用 `useRoute()` 判斷） |
+| 連結 | `/booking#form` |
+
+### PWA 設定（apps/newweb/nuxt.config.ts）
+
+使用 `@vite-pwa/nuxt` 模組，針對 SSR 做特殊配置：
+
+```typescript
+pwa: {
+  registerType: 'autoUpdate',
+  workbox: {
+    // SSR 不使用 navigateFallback
+    navigateFallback: null,
+    // 只預快取必要的小檔案
+    globPatterns: ['**/*.{js,css,woff2}'],
+    // 排除大檔案和 HTML
+    globIgnores: ['**/images/**', '**/node_modules/**', '**/*.html'],
+    runtimeCaching: [
+      {
+        // 導航請求使用 NetworkFirst 策略
+        urlPattern: ({ request }) => request.mode === 'navigate',
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'pages-cache',
+          networkTimeoutSeconds: 3,
+        },
+      },
+      // ... 其他快取策略
+    ],
+  },
+}
+```
+
+### Nitro 設定（外部化 Node.js 模組）
+
+為避免 firebase-admin 和 nodemailer 在 Vite 打包時出錯：
+
+```typescript
+// nuxt.config.ts
+nitro: {
+  preset: 'firebase-app-hosting',
+  externals: {
+    external: [
+      'firebase-admin',
+      'firebase-admin/app',
+      'firebase-admin/firestore',
+      'firebase-admin/auth',
+      'firebase-admin/storage',
+      '@google-cloud/firestore',
+      'nodemailer',
+    ],
+  },
+},
+
+vite: {
+  ssr: {
+    external: [
+      'firebase-admin',
+      'firebase-admin/app',
+      'firebase-admin/firestore',
+      'firebase-admin/auth',
+      'firebase-admin/storage',
+      '@google-cloud/firestore',
+      'nodemailer',
+    ],
+  },
+},
+```
 
 ---
 
