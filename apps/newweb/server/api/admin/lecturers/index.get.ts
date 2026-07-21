@@ -2,13 +2,17 @@ import { getDb, docsToArray, LecturerDoc } from '~/server/utils/firebase'
 import { getSession } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  try {
-    const session = await getSession(event)
-    if (!session) {
-      throw createError({ statusCode: 401, message: '未授權' })
-    }
+  // Check authentication
+  const session = await getSession(event)
+  if (!session) {
+    throw createError({ statusCode: 401, message: '未授權' })
+  }
 
+  try {
+    console.log('[Admin Lecturers GET] Connecting to Firestore...')
     const db = await getDb()
+    console.log('[Admin Lecturers GET] Firestore connected, querying lecturers...')
+
     const query = getQuery(event)
     const type = query.type as string | undefined
 
@@ -22,13 +26,24 @@ export default defineEventHandler(async (event) => {
     }
 
     const lecturersSnapshot = await lecturersQuery.get()
+    console.log(`[Admin Lecturers GET] Found ${lecturersSnapshot.size} lecturers in Firestore`)
     const lecturers = docsToArray<LecturerDoc>(lecturersSnapshot)
 
-    return { success: true, data: lecturers }
+    return {
+      success: true,
+      data: lecturers,
+      _debug: {
+        source: 'firestore',
+        count: lecturers.length,
+      },
+    }
   } catch (error: any) {
-    console.error('Error fetching lecturers:', error)
+    console.error('[Admin Lecturers GET] Error:', error.message)
+    console.error('[Admin Lecturers GET] Full error:', error)
 
-    // Return fallback empty array
-    return { success: true, data: [] }
+    throw createError({
+      statusCode: 500,
+      statusMessage: `Firestore 錯誤: ${error.message}`,
+    })
   }
 })

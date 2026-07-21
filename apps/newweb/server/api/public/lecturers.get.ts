@@ -5,7 +5,9 @@ export default defineEventHandler(async (event) => {
   const type = query.type as string | undefined
 
   try {
+    console.log('[Public Lecturers GET] Connecting to Firestore...')
     const db = await getDb()
+    console.log('[Public Lecturers GET] Firestore connected')
 
     let lecturersQuery = db
       .collection('lecturers')
@@ -13,6 +15,7 @@ export default defineEventHandler(async (event) => {
       .orderBy('sortOrder', 'asc')
 
     if (type && ['lkk', 'partner', 'overseas'].includes(type)) {
+      console.log(`[Public Lecturers GET] Filtering by type: ${type}`)
       lecturersQuery = db
         .collection('lecturers')
         .where('type', '==', type)
@@ -21,6 +24,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const lecturersSnapshot = await lecturersQuery.get()
+    console.log(`[Public Lecturers GET] Found ${lecturersSnapshot.size} lecturers in Firestore`)
     const lecturers = docsToArray<LecturerDoc>(lecturersSnapshot)
 
     const lecturersData = lecturers.map((lecturer) => ({
@@ -42,12 +46,21 @@ export default defineEventHandler(async (event) => {
     return {
       success: true,
       data: lecturersData,
+      _debug: {
+        source: 'firestore',
+        count: lecturersData.length,
+      },
     }
-  } catch (error) {
-    console.error('Error fetching lecturers:', error)
+  } catch (error: any) {
+    console.error('[Public Lecturers GET] Error:', error.message)
+    console.error('[Public Lecturers GET] Full error:', error)
     return {
       success: true,
       data: [],
+      _debug: {
+        source: 'error',
+        error: error.message,
+      },
     }
   }
 })

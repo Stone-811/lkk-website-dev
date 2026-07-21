@@ -1,23 +1,5 @@
 import { getDb, CoachDoc, StoreDoc, docsToArray } from '~/server/utils/firebase';
 import { getSession } from '~/server/utils/auth';
-import { fallbackStores, fallbackCoaches } from '~/server/utils/fallback-data';
-
-function getAllFallbackCoaches() {
-  const allCoaches: any[] = [];
-  for (const [storeSlug, coaches] of Object.entries(fallbackCoaches)) {
-    const store = fallbackStores.find(s => s.slug === storeSlug);
-    for (const coach of coaches) {
-      allCoaches.push({
-        ...coach,
-        isActive: true,
-        sortOrder: 0,
-        storeId: storeSlug,
-        store: store ? { id: store.id, name: store.name, slug: store.slug } : null,
-      });
-    }
-  }
-  return allCoaches;
-}
 
 export default defineEventHandler(async (event) => {
   // Check authentication
@@ -30,22 +12,17 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    console.log('[Admin Coaches GET] Connecting to Firestore...');
     const db = await getDb();
+    console.log('[Admin Coaches GET] Firestore connected, querying coaches...');
+
     const coachesSnapshot = await db
       .collection('coaches')
       .orderBy('sortOrder', 'asc')
       .get();
 
+    console.log(`[Admin Coaches GET] Found ${coachesSnapshot.size} coaches in Firestore`);
     const coaches = docsToArray<CoachDoc>(coachesSnapshot);
-
-    // If no coaches in Firestore, use fallback
-    if (coaches.length === 0) {
-      console.log('No coaches in Firestore, using fallback data for admin');
-      return {
-        success: true,
-        data: getAllFallbackCoaches(),
-      };
-    }
 
     // Get store info for each coach
     const storeIds = [...new Set(coaches.map(c => c.storeId).filter(Boolean))];
@@ -69,12 +46,18 @@ export default defineEventHandler(async (event) => {
     return {
       success: true,
       data: coachesWithStore,
+      _debug: {
+        source: 'firestore',
+        count: coachesWithStore.length,
+      },
     };
-  } catch (error) {
-    console.error('Error fetching coaches for admin:', error);
-    return {
-      success: true,
-      data: getAllFallbackCoaches(),
-    };
+  } catch (error: any) {
+    console.error('[Admin Coaches GET] Error:', error.message);
+    console.error('[Admin Coaches GET] Full error:', error);
+
+    throw createError({
+      statusCode: 500,
+      statusMessage: `Firestore 錯誤: ${error.message}`,
+    });
   }
 });

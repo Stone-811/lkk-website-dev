@@ -15,7 +15,9 @@ function getFallbackStoresWithCounts() {
 
 export default defineEventHandler(async () => {
   try {
+    console.log('[Public Stores GET] Connecting to Firestore...');
     const db = await getDb();
+    console.log('[Public Stores GET] Firestore connected, querying active stores...');
 
     // Get active stores ordered by sortOrder
     const storesSnapshot = await db
@@ -24,14 +26,19 @@ export default defineEventHandler(async () => {
       .orderBy('sortOrder', 'asc')
       .get();
 
+    console.log(`[Public Stores GET] Found ${storesSnapshot.size} active stores in Firestore`);
     const stores = docsToArray<StoreDoc>(storesSnapshot);
 
     // If no stores in Firestore, use fallback
     if (stores.length === 0) {
-      console.log('No stores in Firestore, using fallback data for public API');
+      console.log('[Public Stores GET] No stores in Firestore, using fallback data');
       return {
         success: true,
         data: getFallbackStoresWithCounts(),
+        _debug: {
+          source: 'fallback',
+          reason: 'no_stores_in_firestore',
+        },
       };
     }
 
@@ -66,13 +73,23 @@ export default defineEventHandler(async () => {
     return {
       success: true,
       data: storesWithCounts,
+      _debug: {
+        source: 'firestore',
+        count: storesWithCounts.length,
+      },
     };
-  } catch (error) {
-    console.error('Error fetching stores:', error);
-    // Use fallback on error
+  } catch (error: any) {
+    console.error('[Public Stores GET] Error:', error.message);
+    console.error('[Public Stores GET] Full error:', error);
+    // Use fallback on error (for public API, we want to show something)
     return {
       success: true,
       data: getFallbackStoresWithCounts(),
+      _debug: {
+        source: 'fallback',
+        reason: 'error',
+        error: error.message,
+      },
     };
   }
 });

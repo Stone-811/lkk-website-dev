@@ -21,12 +21,16 @@ export default defineEventHandler(async (event) => {
   const storeSlug = query.store as string | undefined;
 
   try {
+    console.log('[Public Coaches GET] Connecting to Firestore...');
     const db = await getDb();
+    console.log('[Public Coaches GET] Firestore connected');
+
     let coachesQuery = db.collection('coaches').where('isActive', '==', true);
 
     // If filtering by store, find store first
     let storeId: string | undefined;
     if (storeSlug) {
+      console.log(`[Public Coaches GET] Looking for store with slug: ${storeSlug}`);
       const storeSnapshot = await db
         .collection('stores')
         .where('slug', '==', storeSlug)
@@ -35,8 +39,10 @@ export default defineEventHandler(async (event) => {
 
       if (!storeSnapshot.empty) {
         storeId = storeSnapshot.docs[0].id;
+        console.log(`[Public Coaches GET] Found store with id: ${storeId}`);
         coachesQuery = coachesQuery.where('storeId', '==', storeId);
       } else {
+        console.log(`[Public Coaches GET] Store not found in Firestore, using fallback`);
         // Use fallback data for this store
         const coaches = fallbackCoaches[storeSlug] || [];
         const store = fallbackStores.find(s => s.slug === storeSlug);
@@ -47,16 +53,21 @@ export default defineEventHandler(async (event) => {
             storeId: storeSlug,
             store: store ? { id: store.id, name: store.name, slug: store.slug } : null,
           })),
+          _debug: {
+            source: 'fallback',
+            reason: 'store_not_found',
+          },
         };
       }
     }
 
     const coachesSnapshot = await coachesQuery.orderBy('sortOrder', 'asc').get();
+    console.log(`[Public Coaches GET] Found ${coachesSnapshot.size} coaches in Firestore`);
     const coaches = docsToArray<CoachDoc>(coachesSnapshot);
 
     // If no coaches in Firestore, use fallback
     if (coaches.length === 0) {
-      console.log('No coaches in Firestore, using fallback data');
+      console.log('[Public Coaches GET] No coaches in Firestore, using fallback data');
       if (storeSlug) {
         const coachesForStore = fallbackCoaches[storeSlug] || [];
         const store = fallbackStores.find(s => s.slug === storeSlug);
@@ -67,11 +78,19 @@ export default defineEventHandler(async (event) => {
             storeId: storeSlug,
             store: store ? { id: store.id, name: store.name, slug: store.slug } : null,
           })),
+          _debug: {
+            source: 'fallback',
+            reason: 'no_coaches_in_firestore',
+          },
         };
       }
       return {
         success: true,
         data: getAllFallbackCoaches(),
+        _debug: {
+          source: 'fallback',
+          reason: 'no_coaches_in_firestore',
+        },
       };
     }
 
@@ -109,9 +128,14 @@ export default defineEventHandler(async (event) => {
     return {
       success: true,
       data: coachesWithStore,
+      _debug: {
+        source: 'firestore',
+        count: coachesWithStore.length,
+      },
     };
-  } catch (error) {
-    console.error('Error fetching coaches:', error);
+  } catch (error: any) {
+    console.error('[Public Coaches GET] Error:', error.message);
+    console.error('[Public Coaches GET] Full error:', error);
     // Use fallback on error
     if (storeSlug) {
       const coaches = fallbackCoaches[storeSlug] || [];
@@ -123,11 +147,21 @@ export default defineEventHandler(async (event) => {
           storeId: storeSlug,
           store: store ? { id: store.id, name: store.name, slug: store.slug } : null,
         })),
+        _debug: {
+          source: 'fallback',
+          reason: 'error',
+          error: error.message,
+        },
       };
     }
     return {
       success: true,
       data: getAllFallbackCoaches(),
+      _debug: {
+        source: 'fallback',
+        reason: 'error',
+        error: error.message,
+      },
     };
   }
 });
