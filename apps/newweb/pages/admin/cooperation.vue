@@ -4,11 +4,12 @@ definePageMeta({
 })
 
 useHead({
-  title: '合作表單｜練健康後台',
+  title: '合作加盟｜練健康後台',
 })
 
 interface CooperationLead {
   id: string
+  leadType: 'cooperation' | 'franchise'  // 區分合作洽詢和加盟洽詢
   name: string
   phone: string
   email: string
@@ -17,6 +18,8 @@ interface CooperationLead {
   cooperationType: string
   companySize: string
   budgetRange: string
+  region: string  // 加盟用：目標區域
+  franchiseType: string  // 加盟用：合作類型
   status: string
   message: string
   internalNote: string
@@ -43,12 +46,29 @@ const statusOptions = [
   { value: 'cancelled', label: '已取消' },
 ]
 
+// 表單來源類型
+const leadTypeOptions = [
+  { value: '', label: '全部來源' },
+  { value: 'cooperation', label: '合作洽詢' },
+  { value: 'franchise', label: '加盟洽詢' },
+]
+
+const leadTypeFilter = ref('')
+
 const typeOptions = [
   { value: '', label: '全部類型' },
   { value: '講座邀約', label: '講座邀約' },
   { value: '企業健康促進邀請', label: '企業健康促進' },
   { value: '媒體採訪與異業合作', label: '採訪與異業合作' },
+  { value: '加盟', label: '加盟' },
+  { value: '區域代理', label: '區域代理' },
+  { value: '技術授權', label: '技術授權' },
 ]
+
+const leadTypeLabels: Record<string, { label: string; class: string }> = {
+  cooperation: { label: '合作洽詢', class: 'bg-green-100 text-green-700' },
+  franchise: { label: '加盟洽詢', class: 'bg-purple-100 text-purple-700' },
+}
 
 const statusLabels: Record<string, { label: string; class: string }> = {
   new: { label: '新名單', class: 'bg-blue-100 text-blue-700' },

@@ -46,10 +46,12 @@ const defaultSettings: Settings = {
 }
 
 const settings = ref<Settings>({ ...defaultSettings })
-const activeTab = ref<'general' | 'social' | 'notifications'>('general')
+const activeTab = ref<'general' | 'social' | 'notifications' | 'data'>('general')
 const saving = ref(false)
 const loading = ref(true)
 const testingSend = ref(false)
+const seeding = ref(false)
+const seedResults = ref<{ stores: { created: number; skipped: number }; coaches: { created: number; skipped: number } } | null>(null)
 
 // Fetch settings on mount
 onMounted(async () => {
