@@ -38,6 +38,18 @@ const saving = ref(false)
 
 const typeFilter = ref('')
 const searchQuery = ref('')
+const filterStatus = ref<'all' | 'active' | 'inactive'>('all')
+const sortBy = ref<'sortOrder' | 'name' | 'type'>('sortOrder')
+const sortDir = ref<'asc' | 'desc'>('asc')
+
+function toggleSort(column: 'sortOrder' | 'name' | 'type') {
+  if (sortBy.value === column) {
+    sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortBy.value = column
+    sortDir.value = 'asc'
+  }
+}
 
 const typeLabels: Record<string, string> = {
   lkk: '練健康授權講師',
@@ -277,8 +289,10 @@ function handleNameChange() {
 onMounted(fetchLecturers)
 
 const filteredLecturers = computed(() => {
-  return lecturers.value.filter(lecturer => {
+  let result = lecturers.value.filter(lecturer => {
     if (typeFilter.value && lecturer.type !== typeFilter.value) return false
+    if (filterStatus.value === 'active' && !lecturer.isActive) return false
+    if (filterStatus.value === 'inactive' && lecturer.isActive) return false
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase()
       return (
@@ -289,6 +303,21 @@ const filteredLecturers = computed(() => {
     }
     return true
   })
+
+  // Sort
+  result.sort((a, b) => {
+    let comparison = 0
+    if (sortBy.value === 'name') {
+      comparison = a.name.localeCompare(b.name)
+    } else if (sortBy.value === 'type') {
+      comparison = a.type.localeCompare(b.type)
+    } else {
+      comparison = (a.sortOrder || 0) - (b.sortOrder || 0)
+    }
+    return sortDir.value === 'desc' ? -comparison : comparison
+  })
+
+  return result
 })
 </script>
 
@@ -311,22 +340,59 @@ const filteredLecturers = computed(() => {
     </div>
 
     <!-- Filters -->
-    <div class="flex flex-wrap gap-4 mb-6">
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="搜尋姓名、職稱、專長..."
-        class="flex-1 min-w-[200px] border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white"
-      />
-      <select
-        v-model="typeFilter"
-        class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white"
-      >
-        <option value="">全部類型</option>
-        <option value="lkk">練健康授權講師</option>
-        <option value="partner">合作講師</option>
-        <option value="overseas">海外授權講師</option>
-      </select>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4">
+      <div class="flex flex-wrap items-center gap-4">
+        <!-- Search -->
+        <div class="flex-1 min-w-[200px]">
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="搜尋姓名、職稱、專長..."
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
+            />
+          </div>
+        </div>
+
+        <!-- Filter by type -->
+        <select
+          v-model="typeFilter"
+          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
+        >
+          <option value="">全部類型</option>
+          <option value="lkk">練健康授權講師</option>
+          <option value="partner">合作講師</option>
+          <option value="overseas">海外授權講師</option>
+        </select>
+
+        <!-- Filter by status -->
+        <select
+          v-model="filterStatus"
+          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
+        >
+          <option value="all">所有狀態</option>
+          <option value="active">上架中</option>
+          <option value="inactive">已下架</option>
+        </select>
+
+        <!-- Sort -->
+        <select
+          v-model="sortBy"
+          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
+        >
+          <option value="sortOrder">按排序</option>
+          <option value="name">按姓名</option>
+          <option value="type">按類型</option>
+        </select>
+
+        <!-- Results count -->
+        <div class="text-sm text-gray-500">
+          共 {{ filteredLecturers.length }} 筆
+        </div>
+      </div>
     </div>
 
     <!-- Error -->
