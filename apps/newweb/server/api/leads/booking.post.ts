@@ -118,7 +118,7 @@ export default defineEventHandler(async (event) => {
     try {
       const { sendLeadNotification, sendBookingConfirmation } = await import('~/server/utils/email')
 
-      // Notify admins
+      // Notify admins with full form data
       sendLeadNotification({
         type: 'booking',
         name,
@@ -127,6 +127,19 @@ export default defineEventHandler(async (event) => {
         storeName,
         message,
         createdAt: new Date(),
+        // Booking specific fields
+        gender,
+        birthDate,
+        line,
+        filledBySelf,
+        relationship,
+        bookerName,
+        contactPhone,
+        hasMedicalCondition,
+        medicalConditionNote,
+        preferredTime: preferredTimeArray,
+        paymentMethod,
+        sources: Array.isArray(sources) ? sources : sources ? [sources] : [],
       }).catch(err => console.error('Failed to send admin notification:', err))
 
       // Send confirmation to customer (if email provided)

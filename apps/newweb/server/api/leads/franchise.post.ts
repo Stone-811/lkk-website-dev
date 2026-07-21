@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
     try {
       const { sendLeadNotification, sendFranchiseConfirmation } = await import('~/server/utils/email')
 
-      // Notify admins
+      // Notify admins with full form data
       sendLeadNotification({
         type: 'franchise',
         name,
@@ -83,6 +83,9 @@ export default defineEventHandler(async (event) => {
         organization,
         message,
         createdAt: new Date(),
+        // Franchise specific fields
+        region,
+        franchiseType: cooperationType,
       }).catch(err => console.error('Failed to send admin notification:', err))
 
       // Send confirmation to customer

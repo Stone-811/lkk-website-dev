@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
     try {
       const { sendLeadNotification, sendCooperationConfirmation } = await import('~/server/utils/email')
 
-      // Notify admins
+      // Notify admins with full form data
       sendLeadNotification({
         type: 'cooperation',
         name,
@@ -88,6 +88,10 @@ export default defineEventHandler(async (event) => {
         cooperationType,
         message,
         createdAt: new Date(),
+        // Cooperation specific fields
+        lineId,
+        companySize,
+        budgetRange,
       }).catch(err => console.error('Failed to send admin notification:', err))
 
       // Send confirmation to customer

@@ -68,6 +68,26 @@ interface LeadNotificationData {
   storeName?: string
   message?: string
   createdAt: Date
+  // Booking specific fields
+  gender?: string
+  birthDate?: string
+  line?: string
+  filledBySelf?: boolean
+  relationship?: string
+  bookerName?: string
+  contactPhone?: string
+  hasMedicalCondition?: boolean
+  medicalConditionNote?: string
+  preferredTime?: string[]
+  paymentMethod?: string
+  sources?: string[]
+  // Franchise specific fields
+  region?: string
+  franchiseType?: string
+  // Cooperation specific fields
+  companySize?: string
+  budgetRange?: string
+  lineId?: string
 }
 
 // Send lead notification email to admins
@@ -149,6 +169,147 @@ export async function sendLeadNotification(data: LeadNotificationData) {
         <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">選擇門店</td>
         <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.storeName}</td>
       </tr>`
+  }
+
+  // Booking specific fields
+  if (data.type === 'booking') {
+    if (data.gender) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">性別</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.gender}</td>
+      </tr>`
+    }
+
+    if (data.birthDate) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">出生年月</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.birthDate}</td>
+      </tr>`
+    }
+
+    if (data.line) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">LINE ID</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.line}</td>
+      </tr>`
+    }
+
+    // Booker info (代填者資訊)
+    if (data.filledBySelf === false) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold; background: #fff3cd;">填表人</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; background: #fff3cd;">代為填寫</td>
+      </tr>`
+      if (data.relationship) {
+        content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">與學員關係</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.relationship}</td>
+      </tr>`
+      }
+      if (data.bookerName) {
+        content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">填表人姓名</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.bookerName}</td>
+      </tr>`
+      }
+      if (data.contactPhone) {
+        content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">聯絡電話</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.contactPhone}</td>
+      </tr>`
+      }
+    }
+
+    // Medical condition (健康狀況)
+    if (data.hasMedicalCondition) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold; background: #f8d7da; color: #721c24;">健康狀況</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; background: #f8d7da; color: #721c24;">有特殊健康狀況</td>
+      </tr>`
+      if (data.medicalConditionNote) {
+        content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold; vertical-align: top;">健康狀況說明</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; white-space: pre-wrap;">${data.medicalConditionNote}</td>
+      </tr>`
+      }
+    }
+
+    if (data.preferredTime && data.preferredTime.length > 0) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">方便聯繫時段</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.preferredTime.join('、')}</td>
+      </tr>`
+    }
+
+    if (data.paymentMethod) {
+      const paymentLabel = data.paymentMethod === '50歲以上免費' ? '50 歲以上免費體驗' : '臨櫃付款 $500'
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">付款方式</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${paymentLabel}</td>
+      </tr>`
+    }
+
+    if (data.sources && data.sources.length > 0) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">得知管道</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.sources.join('、')}</td>
+      </tr>`
+    }
+  }
+
+  // Cooperation specific fields
+  if (data.type === 'cooperation') {
+    if (data.lineId) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">LINE ID</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.lineId}</td>
+      </tr>`
+    }
+    if (data.companySize) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">公司規模</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.companySize}</td>
+      </tr>`
+    }
+    if (data.budgetRange) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">預算區間</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.budgetRange}</td>
+      </tr>`
+    }
+  }
+
+  // Franchise specific fields
+  if (data.type === 'franchise') {
+    if (data.region) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">目標區域</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.region}</td>
+      </tr>`
+    }
+    if (data.franchiseType) {
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">合作類型</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${data.franchiseType}</td>
+      </tr>`
+    }
   }
 
   if (data.message) {
