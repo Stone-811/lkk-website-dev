@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+
 definePageMeta({
   layout: 'admin'
 })
@@ -9,7 +11,7 @@ useHead({
 
 interface CooperationLead {
   id: string
-  leadType: 'cooperation' | 'franchise'  // 區分合作洽詢和加盟洽詢
+  leadType: 'cooperation' | 'franchise'
   name: string
   phone: string
   email: string
@@ -18,8 +20,8 @@ interface CooperationLead {
   cooperationType: string
   companySize: string
   budgetRange: string
-  region: string  // 加盟用：目標區域
-  franchiseType: string  // 加盟用：合作類型
+  region: string
+  franchiseType: string
   status: string
   message: string
   internalNote: string
@@ -31,7 +33,7 @@ const isLoading = ref(true)
 const error = ref('')
 
 const statusFilter = ref('')
-const typeFilter = ref('')
+const leadTypeFilter = ref('')
 const searchQuery = ref('')
 const selectedLead = ref<CooperationLead | null>(null)
 const noteText = ref('')
@@ -46,23 +48,10 @@ const statusOptions = [
   { value: 'cancelled', label: '已取消' },
 ]
 
-// 表單來源類型
 const leadTypeOptions = [
   { value: '', label: '全部來源' },
   { value: 'cooperation', label: '合作洽詢' },
   { value: 'franchise', label: '加盟洽詢' },
-]
-
-const leadTypeFilter = ref('')
-
-const typeOptions = [
-  { value: '', label: '全部類型' },
-  { value: '講座邀約', label: '講座邀約' },
-  { value: '企業健康促進邀請', label: '企業健康促進' },
-  { value: '媒體採訪與異業合作', label: '採訪與異業合作' },
-  { value: '加盟', label: '加盟' },
-  { value: '區域代理', label: '區域代理' },
-  { value: '技術授權', label: '技術授權' },
 ]
 
 const leadTypeLabels: Record<string, { label: string; class: string }> = {
@@ -78,29 +67,68 @@ const statusLabels: Record<string, { label: string; class: string }> = {
   cancelled: { label: '已取消', class: 'bg-gray-100 text-gray-600' },
 }
 
-// Fetch leads from API (only cooperation type)
+// Fetch leads from API (cooperation and franchise types)
 async function fetchLeads() {
   isLoading.value = true
   error.value = ''
   try {
-    const response = await $fetch<{ success: boolean; data: any[] }>('/api/admin/leads?type=cooperation')
-    if (response.success) {
-      leads.value = response.data.map((lead: any) => ({
-        id: lead.id,
-        name: lead.name,
-        phone: lead.phone,
-        email: lead.email || '',
-        organization: lead.payload?.organization || '-',
-        lineId: lead.payload?.lineId || '-',
-        cooperationType: lead.payload?.cooperationType || '-',
-        companySize: lead.payload?.companySize || '',
-        budgetRange: lead.payload?.budgetRange || '',
-        status: lead.status,
-        message: lead.message || '',
-        internalNote: lead.internalNote || '',
-        createdAt: new Date(lead.createdAt).toLocaleString('zh-TW'),
-      }))
+    // Fetch both cooperation and franchise leads
+    const [cooperationRes, franchiseRes] = await Promise.all([
+      $fetch<{ success: boolean; data: any[] }>('/api/admin/leads?type=cooperation'),
+      $fetch<{ success: boolean; data: any[] }>('/api/admin/leads?type=franchise'),
+    ])
+
+    const allLeads: CooperationLead[] = []
+
+    if (cooperationRes.success) {
+      cooperationRes.data.forEach((lead: any) => {
+        allLeads.push({
+          id: lead.id,
+          leadType: 'cooperation',
+          name: lead.name,
+          phone: lead.phone,
+          email: lead.email || '',
+          organization: lead.payload?.organization || '-',
+          lineId: lead.payload?.lineId || '-',
+          cooperationType: lead.payload?.cooperationType || '-',
+          companySize: lead.payload?.companySize || '',
+          budgetRange: lead.payload?.budgetRange || '',
+          region: '',
+          franchiseType: '',
+          status: lead.status,
+          message: lead.message || '',
+          internalNote: lead.internalNote || '',
+          createdAt: lead.createdAt,
+        })
+      })
     }
+
+    if (franchiseRes.success) {
+      franchiseRes.data.forEach((lead: any) => {
+        allLeads.push({
+          id: lead.id,
+          leadType: 'franchise',
+          name: lead.name,
+          phone: lead.phone,
+          email: lead.email || '',
+          organization: lead.payload?.organization || '-',
+          lineId: '',
+          cooperationType: lead.payload?.cooperationType || '加盟',
+          companySize: '',
+          budgetRange: '',
+          region: lead.payload?.region || '-',
+          franchiseType: lead.payload?.cooperationType || '-',
+          status: lead.status,
+          message: lead.message || '',
+          internalNote: lead.internalNote || '',
+          createdAt: lead.createdAt,
+        })
+      })
+    }
+
+    // Sort by createdAt descending
+    allLeads.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    leads.value = allLeads
   } catch (e: any) {
     error.value = e.data?.message || '載入失敗'
     console.error('Error fetching leads:', e)
@@ -114,18 +142,24 @@ onMounted(fetchLeads)
 const filteredLeads = computed(() => {
   return leads.value.filter(lead => {
     if (statusFilter.value && lead.status !== statusFilter.value) return false
-    if (typeFilter.value && lead.cooperationType !== typeFilter.value) return false
+    if (leadTypeFilter.value && lead.leadType !== leadTypeFilter.value) return false
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase()
       return (
         lead.name.toLowerCase().includes(query) ||
         lead.phone.includes(query) ||
-        lead.organization.toLowerCase().includes(query)
+        lead.organization.toLowerCase().includes(query) ||
+        lead.email.toLowerCase().includes(query)
       )
     }
     return true
   })
 })
+
+function formatDate(dateStr: string) {
+  if (!dateStr) return '-'
+  return new Date(dateStr).toLocaleString('zh-TW')
+}
 
 async function handleStatusChange(leadId: string, newStatus: string) {
   try {
@@ -141,7 +175,7 @@ async function handleStatusChange(leadId: string, newStatus: string) {
 }
 
 async function handleSaveNote() {
-  if (!selectedLead.value || !noteText.value.trim()) return
+  if (!selectedLead.value) return
   saving.value = true
   try {
     await $fetch(`/api/admin/leads/${selectedLead.value.id}`, {
@@ -160,20 +194,20 @@ async function handleSaveNote() {
 }
 
 function handleExport() {
-  const headers = ['單位', '聯絡人', '電話', 'Line ID', 'Email', '公司規模', '預算區間', '洽詢類型', '狀態', '合作內容', '備註', '建立時間']
+  const headers = ['來源', '單位', '聯絡人', '電話', 'Line ID', 'Email', '目標區域', '洽詢類型', '狀態', '留言內容', '備註', '建立時間']
   const rows = filteredLeads.value.map(lead => [
+    leadTypeLabels[lead.leadType]?.label || lead.leadType,
     lead.organization,
     lead.name,
     lead.phone,
     lead.lineId,
     lead.email,
-    lead.companySize || '',
-    lead.budgetRange || '',
+    lead.region || '',
     lead.cooperationType,
     statusLabels[lead.status]?.label || lead.status,
     lead.message,
     lead.internalNote,
-    lead.createdAt,
+    formatDate(lead.createdAt),
   ])
 
   const csvContent =
@@ -183,7 +217,7 @@ function handleExport() {
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
-  link.download = `cooperation_${new Date().toISOString().split('T')[0]}.csv`
+  link.download = `cooperation_franchise_${new Date().toISOString().split('T')[0]}.csv`
   link.click()
 }
 
@@ -201,8 +235,8 @@ function closeDetail() {
   <div>
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">合作表單</h1>
-        <p class="text-gray-500 mt-1">管理講座邀約、企業健促、採訪與異業合作洽詢</p>
+        <h1 class="text-2xl font-bold text-gray-900">合作加盟</h1>
+        <p class="text-gray-500 mt-1">管理合作洽詢與加盟洽詢名單</p>
       </div>
       <button
         @click="handleExport"
@@ -216,35 +250,49 @@ function closeDetail() {
     </div>
 
     <!-- Filters -->
-    <div class="flex flex-wrap gap-4 mb-6">
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="搜尋單位、姓名、電話..."
-        class="flex-1 min-w-[200px] border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white"
-      />
-      <select
-        v-model="typeFilter"
-        class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white"
-      >
-        <option v-for="opt in typeOptions" :key="opt.value" :value="opt.value">
-          {{ opt.label }}
-        </option>
-      </select>
-      <select
-        v-model="statusFilter"
-        class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 bg-white"
-      >
-        <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
-          {{ opt.label }}
-        </option>
-      </select>
-    </div>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4">
+      <div class="flex flex-wrap items-center gap-4">
+        <!-- Search -->
+        <div class="flex-1 min-w-[200px]">
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="搜尋單位、姓名、電話、Email..."
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
+            />
+          </div>
+        </div>
 
-    <!-- Results count -->
-    <p class="text-sm text-gray-500 mb-4">
-      共 {{ filteredLeads.length }} 筆資料
-    </p>
+        <!-- Filter by lead type -->
+        <select
+          v-model="leadTypeFilter"
+          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
+        >
+          <option v-for="opt in leadTypeOptions" :key="opt.value" :value="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+
+        <!-- Filter by status -->
+        <select
+          v-model="statusFilter"
+          class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
+        >
+          <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+
+        <!-- Results count -->
+        <div class="text-sm text-gray-500">
+          共 {{ filteredLeads.length }} 筆
+        </div>
+      </div>
+    </div>
 
     <!-- Error -->
     <div v-if="error" class="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4">
@@ -261,29 +309,36 @@ function closeDetail() {
       <table class="w-full">
         <thead class="bg-gray-50">
           <tr>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">來源</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">單位 / 聯絡人</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">聯絡資訊</th>
-            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">洽詢類型</th>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">洽詢內容</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">狀態</th>
-            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">建立時間</th>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">時間</th>
             <th class="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">操作</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
           <tr v-if="filteredLeads.length === 0">
-            <td colspan="6" class="px-6 py-12 text-center text-gray-500">目前沒有合作洽詢資料</td>
+            <td colspan="7" class="px-6 py-12 text-center text-gray-500">目前沒有合作加盟資料</td>
           </tr>
           <tr v-for="lead in filteredLeads" :key="lead.id" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span :class="[leadTypeLabels[lead.leadType]?.class || 'bg-gray-100 text-gray-700', 'text-xs font-medium px-2.5 py-1 rounded-full']">
+                {{ leadTypeLabels[lead.leadType]?.label || lead.leadType }}
+              </span>
+            </td>
             <td class="px-6 py-4">
               <div class="font-medium text-gray-900">{{ lead.organization }}</div>
               <div class="text-sm text-gray-500">{{ lead.name }}</div>
             </td>
             <td class="px-6 py-4">
               <div class="text-sm">{{ lead.phone }}</div>
-              <div class="text-sm text-gray-500">Line: {{ lead.lineId }}</div>
+              <div v-if="lead.email" class="text-sm text-gray-500">{{ lead.email }}</div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ lead.cooperationType }}
+            <td class="px-6 py-4">
+              <div class="text-sm text-gray-700">{{ lead.cooperationType }}</div>
+              <div v-if="lead.region" class="text-xs text-gray-500">區域：{{ lead.region }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <select
@@ -297,7 +352,7 @@ function closeDetail() {
               </select>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ lead.createdAt }}
+              {{ formatDate(lead.createdAt) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right">
               <button
@@ -320,7 +375,14 @@ function closeDetail() {
     >
       <div class="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-200 flex items-center justify-between">
-          <h2 class="text-lg font-bold text-gray-900">合作洽詢詳情</h2>
+          <div class="flex items-center gap-3">
+            <h2 class="text-lg font-bold text-gray-900">
+              {{ selectedLead.leadType === 'franchise' ? '加盟洽詢詳情' : '合作洽詢詳情' }}
+            </h2>
+            <span :class="[leadTypeLabels[selectedLead.leadType]?.class || 'bg-gray-100 text-gray-700', 'text-xs font-medium px-2.5 py-1 rounded-full']">
+              {{ leadTypeLabels[selectedLead.leadType]?.label }}
+            </span>
+          </div>
           <button @click="closeDetail" class="text-gray-400 hover:text-gray-600">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -345,7 +407,7 @@ function closeDetail() {
               <p class="text-sm text-gray-500">電話</p>
               <p class="font-medium">{{ selectedLead.phone }}</p>
             </div>
-            <div>
+            <div v-if="selectedLead.lineId && selectedLead.lineId !== '-'">
               <p class="text-sm text-gray-500">Line ID</p>
               <p class="font-medium">{{ selectedLead.lineId }}</p>
             </div>
@@ -353,21 +415,30 @@ function closeDetail() {
               <p class="text-sm text-gray-500">Email</p>
               <p class="font-medium">{{ selectedLead.email || '-' }}</p>
             </div>
-            <div v-if="selectedLead.companySize">
+
+            <!-- Cooperation specific -->
+            <div v-if="selectedLead.leadType === 'cooperation' && selectedLead.companySize">
               <p class="text-sm text-gray-500">公司規模</p>
               <p class="font-medium">{{ selectedLead.companySize }}</p>
             </div>
-            <div v-if="selectedLead.budgetRange">
+            <div v-if="selectedLead.leadType === 'cooperation' && selectedLead.budgetRange">
               <p class="text-sm text-gray-500">預算區間</p>
               <p class="font-medium">{{ selectedLead.budgetRange }}</p>
             </div>
+
+            <!-- Franchise specific -->
+            <div v-if="selectedLead.leadType === 'franchise' && selectedLead.region">
+              <p class="text-sm text-gray-500">目標區域</p>
+              <p class="font-medium">{{ selectedLead.region }}</p>
+            </div>
+
             <div class="col-span-2">
               <p class="text-sm text-gray-500">建立時間</p>
-              <p class="font-medium">{{ selectedLead.createdAt }}</p>
+              <p class="font-medium">{{ formatDate(selectedLead.createdAt) }}</p>
             </div>
           </div>
           <div v-if="selectedLead.message">
-            <p class="text-sm text-gray-500">合作內容詳情</p>
+            <p class="text-sm text-gray-500">留言內容</p>
             <p class="mt-1 p-3 bg-gray-50 rounded-lg whitespace-pre-wrap">{{ selectedLead.message }}</p>
           </div>
           <div>

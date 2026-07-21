@@ -5,6 +5,7 @@ const navigation = [
   { name: '團隊介紹', href: '/team-intro' },
   { name: '門店資訊', href: '/locations' },
   { name: '預約體驗', href: '/booking' },
+  { name: '合作加盟', href: '/franchise' },
 ]
 
 const stores = [
