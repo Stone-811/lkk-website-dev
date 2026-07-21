@@ -1,4 +1,4 @@
-import { db } from '~/server/utils/firebase'
+import { getDb } from '~/server/utils/firebase'
 import { getSession } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 400, message: 'Missing lecturer ID' })
     }
 
+    const db = await getDb()
     const lecturerRef = db.collection('lecturers').doc(id)
     const lecturerDoc = await lecturerRef.get()
 

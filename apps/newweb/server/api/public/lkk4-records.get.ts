@@ -1,4 +1,4 @@
-import { db, docsToArray } from '~/server/utils/firebase'
+import { getDb, docsToArray } from '~/server/utils/firebase'
 
 interface LKK4Record {
   id: string
@@ -25,6 +25,7 @@ export default defineEventHandler(async (event) => {
     const year = query.year ? parseInt(query.year as string) : null
     const name = query.name as string | undefined
 
+    const db = await getDb()
     let recordsQuery = db.collection('lkk4_records').orderBy('finalScore', 'desc')
 
     // If searching by name, we need to filter after fetching

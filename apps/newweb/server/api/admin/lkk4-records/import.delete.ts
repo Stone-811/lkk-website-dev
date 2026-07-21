@@ -1,8 +1,8 @@
-import { db } from '~/server/utils/firebase'
+import { getDb } from '~/server/utils/firebase'
 import { getSession } from '~/server/utils/auth'
 
 // Helper function to delete all records
-async function deleteAllRecords(): Promise<number> {
+async function deleteAllRecords(db: FirebaseFirestore.Firestore): Promise<number> {
   const recordsRef = db.collection('lkk4_records')
   const snapshot = await recordsRef.get()
 
@@ -38,7 +38,8 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 401, message: '未授權' })
     }
 
-    const totalDeleted = await deleteAllRecords()
+    const db = await getDb()
+    const totalDeleted = await deleteAllRecords(db)
 
     return {
       success: true,

@@ -1,4 +1,4 @@
-import { db, StoreDoc, CoachDoc, docsToArray } from '~/server/utils/firebase';
+import { getDb, StoreDoc, CoachDoc, docsToArray } from '~/server/utils/firebase';
 import { fallbackStores, fallbackCoaches } from '~/server/utils/fallback-data';
 
 export default defineEventHandler(async (event) => {
@@ -12,6 +12,8 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    const db = await getDb();
+
     // Find store by slug
     const storeSnapshot = await db
       .collection('stores')

@@ -1,4 +1,4 @@
-import { db } from '~/server/utils/firebase'
+import { getDb } from '~/server/utils/firebase'
 import { getSession } from '~/server/utils/auth'
 
 interface LKK4Record {
@@ -53,7 +53,7 @@ function parseRank(value: string): number | null {
 }
 
 // Helper function to delete all records
-async function deleteAllRecords(): Promise<number> {
+async function deleteAllRecords(db: FirebaseFirestore.Firestore): Promise<number> {
   const recordsRef = db.collection('lkk4_records')
   const snapshot = await recordsRef.get()
 
@@ -87,6 +87,8 @@ export default defineEventHandler(async (event) => {
     if (!session) {
       throw createError({ statusCode: 401, message: '未授權' })
     }
+
+    const db = await getDb()
 
     const body = await readBody(event)
     const { csvData } = body
@@ -154,7 +156,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Delete existing records first (auto-overwrite mode)
-    const deletedCount = await deleteAllRecords()
+    const deletedCount = await deleteAllRecords(db)
 
     // Write to Firestore in batches (max 500 per batch)
     const batchSize = 500

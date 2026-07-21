@@ -1,4 +1,4 @@
-import { db, CoachDoc, StoreDoc, docsToArray } from '~/server/utils/firebase';
+import { getDb, CoachDoc, StoreDoc, docsToArray } from '~/server/utils/firebase';
 import { fallbackStores, fallbackCoaches } from '~/server/utils/fallback-data';
 
 function getAllFallbackCoaches() {
@@ -21,6 +21,7 @@ export default defineEventHandler(async (event) => {
   const storeSlug = query.store as string | undefined;
 
   try {
+    const db = await getDb();
     let coachesQuery = db.collection('coaches').where('isActive', '==', true);
 
     // If filtering by store, find store first

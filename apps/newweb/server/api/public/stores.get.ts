@@ -1,4 +1,4 @@
-import { db, StoreDoc, docsToArray } from '~/server/utils/firebase';
+import { getDb, StoreDoc, docsToArray } from '~/server/utils/firebase';
 import { fallbackStores, fallbackCoaches } from '~/server/utils/fallback-data';
 
 function getFallbackStoresWithCounts() {
@@ -15,6 +15,8 @@ function getFallbackStoresWithCounts() {
 
 export default defineEventHandler(async () => {
   try {
+    const db = await getDb();
+
     // Get active stores ordered by sortOrder
     const storesSnapshot = await db
       .collection('stores')
