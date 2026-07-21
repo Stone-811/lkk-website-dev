@@ -92,6 +92,32 @@ const steps = [
       </div>
     </section>
 
+    <!-- Lecturer Type Navigation -->
+    <section class="border-b border-cream-200 sticky top-16 bg-cream/95 backdrop-blur-sm z-20">
+      <div class="container mx-auto px-4">
+        <div class="flex gap-2 py-4 overflow-x-auto scrollbar-hide">
+          <NuxtLink
+            to="/lkk-lecturer"
+            class="px-4 py-2 rounded-full whitespace-nowrap font-medium bg-cream-200 text-ink hover:bg-cream-300 transition-colors"
+          >
+            練健康授權講師
+          </NuxtLink>
+          <NuxtLink
+            to="/co-lecturer"
+            class="px-4 py-2 rounded-full whitespace-nowrap font-medium bg-cream-200 text-ink hover:bg-cream-300 transition-colors"
+          >
+            合作講師
+          </NuxtLink>
+          <NuxtLink
+            to="/oversea-lecturer"
+            class="px-4 py-2 rounded-full whitespace-nowrap font-medium bg-navy text-white"
+          >
+            海外授權講師
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
+
     <!-- Loading -->
     <div v-if="pending" class="flex items-center justify-center py-24">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
@@ -222,3 +248,13 @@ const steps = [
     </section>
   </div>
 </template>
+
+<style scoped>
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+</style>

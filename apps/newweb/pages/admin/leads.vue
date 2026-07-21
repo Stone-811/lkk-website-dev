@@ -12,10 +12,10 @@ useHead({
 interface Lead {
   id: string
   name: string
-  type: 'booking' | 'franchise'
   phone: string
   email?: string
   storeId?: string
+  storeName?: string
   status: 'new' | 'contacted' | 'scheduled' | 'completed' | 'cancelled'
   internalNote?: string
   message?: string
@@ -25,16 +25,17 @@ interface Lead {
 }
 
 const leads = ref<Lead[]>([])
+const stores = ref<{ id: string; name: string }[]>([])
 const isLoading = ref(true)
 const error = ref('')
 
-const selectedType = ref('all')
+const selectedStore = ref('all')
 const selectedStatus = ref('all')
 const searchQuery = ref('')
-const sortBy = ref<'createdAt' | 'name' | 'type' | 'status'>('createdAt')
+const sortBy = ref<'createdAt' | 'name' | 'store' | 'status'>('createdAt')
 const sortDir = ref<'asc' | 'desc'>('desc')
 
-function toggleSort(column: 'createdAt' | 'name' | 'type' | 'status') {
+function toggleSort(column: 'createdAt' | 'name' | 'store' | 'status') {
   if (sortBy.value === column) {
     sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc'
   } else {
@@ -48,15 +49,28 @@ const selectedLead = ref<Lead | null>(null)
 const noteText = ref('')
 const saving = ref(false)
 
-// Fetch leads from API (only booking and franchise types)
+// Fetch leads from API (only booking type)
 async function fetchLeads() {
   isLoading.value = true
   error.value = ''
   try {
-    const response = await $fetch<{ success: boolean; data: Lead[] }>('/api/admin/leads')
-    if (response.success) {
-      // Filter out cooperation type - only show booking and franchise
-      leads.value = response.data.filter(lead => lead.type !== 'cooperation')
+    const [leadsRes, storesRes] = await Promise.all([
+      $fetch<{ success: boolean; data: any[] }>('/api/admin/leads?type=booking'),
+      $fetch<{ success: boolean; data: any[] }>('/api/admin/stores'),
+    ])
+
+    if (storesRes.success) {
+      stores.value = storesRes.data.map(s => ({ id: s.id, name: s.name }))
+    }
+
+    const storeMap: Record<string, string> = {}
+    stores.value.forEach(s => { storeMap[s.id] = s.name })
+
+    if (leadsRes.success) {
+      leads.value = leadsRes.data.map((lead: any) => ({
+        ...lead,
+        storeName: lead.storeId ? (storeMap[lead.storeId] || lead.storeId) : '-',
+      }))
     }
   } catch (e: any) {
     error.value = e.data?.message || '載入失敗'
@@ -83,16 +97,6 @@ async function updateStatus(lead: Lead, event: Event) {
 
 onMounted(fetchLeads)
 
-const typeLabels: Record<string, string> = {
-  booking: '預約體驗',
-  franchise: '加盟洽詢',
-}
-
-const typeColors: Record<string, string> = {
-  booking: 'bg-blue-100 text-blue-700',
-  franchise: 'bg-purple-100 text-purple-700',
-}
-
 const statusLabels: Record<string, { label: string; class: string }> = {
   new: { label: '新名單', class: 'bg-blue-100 text-blue-700' },
   contacted: { label: '已聯繫', class: 'bg-yellow-100 text-yellow-700' },
@@ -103,7 +107,7 @@ const statusLabels: Record<string, { label: string; class: string }> = {
 
 const filteredLeads = computed(() => {
   let result = leads.value.filter(lead => {
-    if (selectedType.value !== 'all' && lead.type !== selectedType.value) return false
+    if (selectedStore.value !== 'all' && lead.storeId !== selectedStore.value) return false
     if (selectedStatus.value !== 'all' && lead.status !== selectedStatus.value) return false
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase()
@@ -121,12 +125,11 @@ const filteredLeads = computed(() => {
     let comparison = 0
     if (sortBy.value === 'name') {
       comparison = a.name.localeCompare(b.name)
-    } else if (sortBy.value === 'type') {
-      comparison = a.type.localeCompare(b.type)
+    } else if (sortBy.value === 'store') {
+      comparison = (a.storeName || '').localeCompare(b.storeName || '')
     } else if (sortBy.value === 'status') {
       comparison = a.status.localeCompare(b.status)
     } else {
-      // createdAt
       const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
       const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
       comparison = dateA - dateB
@@ -166,14 +169,18 @@ async function handleSaveNote() {
 }
 
 function handleExport() {
-  const headers = ['姓名', '電話', 'Email', '類型', '狀態', '門店', '備註', '建立時間']
+  const headers = ['姓名', '電話', 'Email', '門店', '狀態', '性別', '年齡', '運動目標', '偏好時段', '來源', '備註', '建立時間']
   const rows = filteredLeads.value.map(lead => [
     lead.name,
     lead.phone,
     lead.email || '',
-    typeLabels[lead.type] || lead.type,
+    lead.storeName || '',
     statusLabels[lead.status]?.label || lead.status,
-    lead.storeId || '',
+    lead.payload?.gender || '',
+    lead.payload?.age || '',
+    lead.payload?.goal || '',
+    lead.payload?.preferredTime || '',
+    lead.payload?.source || '',
     lead.internalNote || '',
     lead.createdAt ? new Date(lead.createdAt).toLocaleString('zh-TW') : '',
   ])
@@ -185,7 +192,7 @@ function handleExport() {
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
-  link.download = `leads_${new Date().toISOString().split('T')[0]}.csv`
+  link.download = `booking_leads_${new Date().toISOString().split('T')[0]}.csv`
   link.click()
 }
 </script>
@@ -195,7 +202,7 @@ function handleExport() {
     <div class="flex items-center justify-between mb-8">
       <div>
         <h1 class="text-2xl font-bold text-gray-900">客戶預約</h1>
-        <p class="text-gray-500 mt-1">管理預約體驗與加盟洽詢名單</p>
+        <p class="text-gray-500 mt-1">管理預約體驗名單</p>
       </div>
       <button
         @click="handleExport"
@@ -226,14 +233,13 @@ function handleExport() {
           </div>
         </div>
 
-        <!-- Filter by type -->
+        <!-- Filter by store -->
         <select
-          v-model="selectedType"
+          v-model="selectedStore"
           class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
         >
-          <option value="all">所有類型</option>
-          <option value="booking">預約體驗</option>
-          <option value="franchise">加盟洽詢</option>
+          <option value="all">所有門店</option>
+          <option v-for="store in stores" :key="store.id" :value="store.id">{{ store.name }}</option>
         </select>
 
         <!-- Filter by status -->
@@ -283,12 +289,12 @@ function handleExport() {
               </div>
             </th>
             <th
-              @click="toggleSort('type')"
+              @click="toggleSort('store')"
               class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3 cursor-pointer hover:bg-gray-100"
             >
               <div class="flex items-center gap-1">
-                類型
-                <svg v-if="sortBy === 'type'" class="w-3 h-3" :class="sortDir === 'desc' ? 'rotate-180' : ''" fill="currentColor" viewBox="0 0 20 20">
+                門店
+                <svg v-if="sortBy === 'store'" class="w-3 h-3" :class="sortDir === 'desc' ? 'rotate-180' : ''" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                 </svg>
               </div>
@@ -321,17 +327,15 @@ function handleExport() {
         </thead>
         <tbody class="divide-y divide-gray-200">
           <tr v-if="filteredLeads.length === 0">
-            <td colspan="6" class="px-6 py-12 text-center text-gray-500">尚無名單資料</td>
+            <td colspan="6" class="px-6 py-12 text-center text-gray-500">尚無預約名單</td>
           </tr>
           <tr v-for="lead in filteredLeads" :key="lead.id" class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="font-medium text-gray-900">{{ lead.name }}</div>
               <div v-if="lead.email" class="text-sm text-gray-500">{{ lead.email }}</div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span :class="[typeColors[lead.type], 'text-xs font-medium px-2.5 py-1 rounded-full']">
-                {{ typeLabels[lead.type] }}
-              </span>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ lead.storeName }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ lead.phone }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
@@ -371,9 +375,7 @@ function handleExport() {
     >
       <div class="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-200 flex items-center justify-between">
-          <h2 class="text-lg font-bold text-gray-900">
-            {{ selectedLead.type === 'booking' ? '預約體驗詳情' : '加盟洽詢詳情' }}
-          </h2>
+          <h2 class="text-lg font-bold text-gray-900">預約體驗詳情</h2>
           <button @click="closeDetail" class="text-gray-400 hover:text-gray-600">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -382,12 +384,6 @@ function handleExport() {
         </div>
         <div class="p-6 space-y-4">
           <div class="grid grid-cols-2 gap-4">
-            <div class="col-span-2">
-              <p class="text-sm text-gray-500">類型</p>
-              <span :class="[typeColors[selectedLead.type], 'text-sm font-medium px-2.5 py-1 rounded-full']">
-                {{ typeLabels[selectedLead.type] }}
-              </span>
-            </div>
             <div>
               <p class="text-sm text-gray-500">姓名</p>
               <p class="font-medium">{{ selectedLead.name }}</p>
@@ -400,9 +396,9 @@ function handleExport() {
               <p class="text-sm text-gray-500">Email</p>
               <p class="font-medium">{{ selectedLead.email }}</p>
             </div>
-            <div v-if="selectedLead.storeId">
+            <div>
               <p class="text-sm text-gray-500">門店</p>
-              <p class="font-medium">{{ selectedLead.storeId }}</p>
+              <p class="font-medium">{{ selectedLead.storeName || '-' }}</p>
             </div>
             <div>
               <p class="text-sm text-gray-500">狀態</p>
@@ -416,7 +412,7 @@ function handleExport() {
             </div>
 
             <!-- Booking specific fields -->
-            <template v-if="selectedLead.type === 'booking' && selectedLead.payload">
+            <template v-if="selectedLead.payload">
               <div v-if="selectedLead.payload.gender">
                 <p class="text-sm text-gray-500">性別</p>
                 <p class="font-medium">{{ selectedLead.payload.gender }}</p>
@@ -438,26 +434,10 @@ function handleExport() {
                 <p class="font-medium">{{ selectedLead.payload.source }}</p>
               </div>
             </template>
-
-            <!-- Franchise specific fields -->
-            <template v-if="selectedLead.type === 'franchise' && selectedLead.payload">
-              <div v-if="selectedLead.payload.organization" class="col-span-2">
-                <p class="text-sm text-gray-500">公司/單位</p>
-                <p class="font-medium">{{ selectedLead.payload.organization }}</p>
-              </div>
-              <div v-if="selectedLead.payload.region">
-                <p class="text-sm text-gray-500">目標區域</p>
-                <p class="font-medium">{{ selectedLead.payload.region }}</p>
-              </div>
-              <div v-if="selectedLead.payload.cooperationType">
-                <p class="text-sm text-gray-500">合作類型</p>
-                <p class="font-medium">{{ selectedLead.payload.cooperationType }}</p>
-              </div>
-            </template>
           </div>
 
           <div v-if="selectedLead.message" class="col-span-2">
-            <p class="text-sm text-gray-500">留言/備註</p>
+            <p class="text-sm text-gray-500">留言</p>
             <p class="mt-1 p-3 bg-gray-50 rounded-lg whitespace-pre-wrap">{{ selectedLead.message }}</p>
           </div>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 useHead({
   title: '全體教練｜練健康 LKK Wellness',
@@ -30,6 +30,15 @@ interface Coach {
   }
 }
 
+interface Store {
+  id: string
+  name: string
+  slug: string
+}
+
+// Active store filter
+const activeStore = ref<string | null>(null)
+
 // Fetch coaches from API
 const { data: coachesResponse, pending } = await useFetch<{
   success: boolean
@@ -39,14 +48,73 @@ const { data: coachesResponse, pending } = await useFetch<{
 // Fetch stores for filter navigation
 const { data: storesResponse } = await useFetch<{
   success: boolean
-  data: { id: string; name: string; slug: string }[]
+  data: Store[]
 }>('/api/public/stores')
 
 const coaches = computed(() => coachesResponse.value?.data || [])
-const stores = computed(() => {
-  const storeList = storesResponse.value?.data || []
-  return storeList.map(s => ({ name: s.name, slug: s.slug }))
+const stores = computed(() => storesResponse.value?.data || [])
+
+// Group coaches by store
+const coachesByStore = computed(() => {
+  const grouped: Record<string, { store: Store | null; coaches: Coach[] }> = {}
+
+  // Initialize with store order
+  for (const store of stores.value) {
+    grouped[store.slug] = { store, coaches: [] }
+  }
+
+  // Add "no store" group for coaches without a store
+  grouped['_no_store'] = { store: null, coaches: [] }
+
+  // Group coaches
+  for (const coach of coaches.value) {
+    const storeSlug = coach.store?.slug
+    if (storeSlug && grouped[storeSlug]) {
+      grouped[storeSlug].coaches.push(coach)
+    } else {
+      grouped['_no_store'].coaches.push(coach)
+    }
+  }
+
+  // Remove empty groups and _no_store if empty
+  const result: { store: Store | null; coaches: Coach[] }[] = []
+  for (const store of stores.value) {
+    if (grouped[store.slug].coaches.length > 0) {
+      result.push(grouped[store.slug])
+    }
+  }
+  if (grouped['_no_store'].coaches.length > 0) {
+    result.push(grouped['_no_store'])
+  }
+
+  return result
 })
+
+// Filtered coaches based on active store
+const filteredCoachesByStore = computed(() => {
+  if (!activeStore.value) {
+    return coachesByStore.value
+  }
+  return coachesByStore.value.filter(g => g.store?.slug === activeStore.value)
+})
+
+// Total coach count
+const totalCoachCount = computed(() => coaches.value.length)
+
+// Set active store filter
+function setActiveStore(storeSlug: string | null) {
+  activeStore.value = storeSlug
+}
+
+// Scroll to store section
+function scrollToStore(storeSlug: string) {
+  const element = document.getElementById(`store-${storeSlug}`)
+  if (element) {
+    const offset = 140 // Account for sticky header + filter bar
+    const y = element.getBoundingClientRect().top + window.scrollY - offset
+    window.scrollTo({ top: y, behavior: 'smooth' })
+  }
+}
 </script>
 
 <template>
@@ -81,30 +149,63 @@ const stores = computed(() => {
           全體<span class="text-orange">教練</span>
         </h1>
 
-        <p class="text-white/60 text-lg font-light leading-relaxed max-w-2xl mx-auto">
+        <p class="text-white/60 text-lg font-light leading-relaxed max-w-2xl mx-auto mb-6">
           每位教練都有物理治療師或醫療專業背景，專精於中高齡與特殊族群訓練，讓您在安全的環境下達到最佳訓練效果。
         </p>
+
+        <div class="text-white/40 text-sm">
+          共 <span class="text-orange font-semibold">{{ totalCoachCount }}</span> 位專業教練
+        </div>
       </div>
     </section>
 
-    <!-- Store Filter -->
-    <section class="border-b border-cream-200 sticky top-16 bg-cream z-10">
+    <!-- Store Filter Bar -->
+    <section class="border-b border-cream-200 sticky top-16 bg-cream/95 backdrop-blur-sm z-20">
       <div class="container mx-auto px-4">
-        <div class="flex gap-2 py-4 overflow-x-auto">
-          <NuxtLink
-            to="/team-intro/coaches"
-            class="px-4 py-2 rounded-full whitespace-nowrap bg-orange text-white"
+        <div class="flex gap-2 py-4 overflow-x-auto scrollbar-hide">
+          <button
+            @click="setActiveStore(null)"
+            :class="[
+              'px-4 py-2 rounded-full whitespace-nowrap font-medium transition-colors',
+              activeStore === null
+                ? 'bg-navy text-white'
+                : 'bg-cream-200 text-ink hover:bg-cream-300'
+            ]"
           >
-            全部
-          </NuxtLink>
-          <NuxtLink
+            全部門店
+          </button>
+          <button
             v-for="store in stores"
             :key="store.slug"
-            :to="`/locations/${store.slug}`"
-            class="px-4 py-2 rounded-full whitespace-nowrap bg-cream-200 text-ink hover:bg-cream-300 transition-colors"
+            @click="setActiveStore(store.slug)"
+            :class="[
+              'px-4 py-2 rounded-full whitespace-nowrap font-medium transition-colors',
+              activeStore === store.slug
+                ? 'bg-navy text-white'
+                : 'bg-cream-200 text-ink hover:bg-cream-300'
+            ]"
           >
             {{ store.name }}
-          </NuxtLink>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Jump (only visible when showing all) -->
+    <section v-if="!activeStore && coachesByStore.length > 1" class="bg-cream-100 border-b border-cream-200">
+      <div class="container mx-auto px-4 py-3">
+        <div class="flex items-center gap-4 text-sm">
+          <span class="text-ink/50">快速跳轉：</span>
+          <div class="flex gap-2 flex-wrap">
+            <button
+              v-for="group in coachesByStore"
+              :key="group.store?.slug || 'no-store'"
+              @click="scrollToStore(group.store?.slug || 'no-store')"
+              class="text-navy hover:text-orange transition-colors"
+            >
+              {{ group.store?.name || '其他' }} ({{ group.coaches.length }})
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -114,70 +215,103 @@ const stores = computed(() => {
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
     </div>
 
-    <!-- Coaches Grid -->
+    <!-- Coaches by Store -->
     <section v-else class="py-12 lg:py-16">
       <div class="container mx-auto px-4">
-        <div v-if="coaches.length === 0" class="text-center py-12 text-ink/50">
+        <div v-if="filteredCoachesByStore.length === 0" class="text-center py-12 text-ink/50">
           目前沒有教練資料
         </div>
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <div v-else class="space-y-16">
+          <!-- Store Section -->
           <div
-            v-for="coach in coaches"
-            :key="coach.id"
-            class="bg-white rounded-2xl overflow-hidden shadow-sm border border-navy/10"
+            v-for="group in filteredCoachesByStore"
+            :key="group.store?.slug || 'no-store'"
+            :id="`store-${group.store?.slug || 'no-store'}`"
+            class="scroll-mt-40"
           >
-            <!-- Coach Image -->
-            <div class="aspect-square relative bg-cream-200">
-              <img
-                v-if="coach.photo"
-                :src="coach.photo"
-                :alt="coach.name"
-                class="w-full h-full object-cover"
-              />
-              <div v-else class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-navy to-navy/80">
-                <span class="font-serif text-6xl font-black text-white/20">{{ coach.name.charAt(0) }}</span>
-              </div>
-              <!-- Store badge -->
-              <div
-                v-if="coach.store?.name"
-                class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-xs font-medium text-navy px-3 py-1 rounded-full"
-              >
-                {{ coach.store.name }}
+            <!-- Store Header -->
+            <div class="flex items-center gap-4 mb-8">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <h2 class="font-serif text-2xl lg:text-3xl font-bold text-navy">
+                    {{ group.store?.name || '其他門店' }}
+                  </h2>
+                  <span class="px-3 py-1 bg-orange/10 text-orange text-sm font-medium rounded-full">
+                    {{ group.coaches.length }} 位教練
+                  </span>
+                </div>
+                <NuxtLink
+                  v-if="group.store"
+                  :to="`/locations/${group.store.slug}`"
+                  class="text-sm text-ink/50 hover:text-orange transition-colors inline-flex items-center gap-1"
+                >
+                  查看門店資訊
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </NuxtLink>
               </div>
             </div>
 
-            <!-- Coach Info -->
-            <div class="p-6">
-              <div class="mb-3">
-                <h2 class="text-xl font-bold text-navy font-serif">{{ coach.name }}</h2>
-                <p class="text-orange font-semibold">{{ coach.roleTitle || '' }}</p>
-              </div>
+            <!-- Coaches Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div
+                v-for="coach in group.coaches"
+                :key="coach.id"
+                class="group bg-white rounded-2xl overflow-hidden shadow-sm border border-navy/10 hover:shadow-lg hover:border-orange/30 transition-all duration-300"
+              >
+                <!-- Coach Image -->
+                <div class="aspect-square relative bg-cream-200 overflow-hidden">
+                  <img
+                    v-if="coach.photo"
+                    :src="coach.photo"
+                    :alt="coach.name"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div v-else class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-navy to-navy/80">
+                    <span class="font-serif text-6xl font-black text-white/20">{{ coach.name.charAt(0) }}</span>
+                  </div>
+                </div>
 
-              <!-- Specialties -->
-              <div v-if="coach.specialties && coach.specialties.length > 0" class="flex flex-wrap gap-2 mb-4">
-                <span
-                  v-for="specialty in coach.specialties.slice(0, 3)"
-                  :key="specialty"
-                  class="px-3 py-1 bg-orange/10 text-orange text-xs rounded-full"
-                >
-                  {{ specialty }}
-                </span>
-              </div>
+                <!-- Coach Info -->
+                <div class="p-5">
+                  <div class="mb-3">
+                    <h3 class="text-xl font-bold text-navy font-serif group-hover:text-orange transition-colors">
+                      {{ coach.name }}
+                    </h3>
+                    <p v-if="coach.roleTitle" class="text-orange font-semibold text-sm">
+                      {{ coach.roleTitle }}
+                    </p>
+                  </div>
 
-              <!-- Certifications -->
-              <div v-if="coach.certifications && coach.certifications.length > 0" class="pt-4 border-t border-cream-200">
-                <p class="text-xs text-ink/40 mb-2">專業認證</p>
-                <div class="flex flex-wrap gap-1">
-                  <span
-                    v-for="cert in coach.certifications.slice(0, 2)"
-                    :key="cert"
-                    class="text-xs text-ink/60"
-                  >
-                    {{ cert }}
-                  </span>
-                  <span v-if="coach.certifications.length > 2" class="text-xs text-ink/40">
-                    +{{ coach.certifications.length - 2 }}
-                  </span>
+                  <!-- Specialties -->
+                  <div v-if="coach.specialties && coach.specialties.length > 0" class="flex flex-wrap gap-1.5 mb-4">
+                    <span
+                      v-for="specialty in coach.specialties.slice(0, 3)"
+                      :key="specialty"
+                      class="px-2.5 py-1 bg-cream text-ink/70 text-xs rounded-full"
+                    >
+                      {{ specialty }}
+                    </span>
+                    <span
+                      v-if="coach.specialties.length > 3"
+                      class="px-2.5 py-1 text-ink/40 text-xs"
+                    >
+                      +{{ coach.specialties.length - 3 }}
+                    </span>
+                  </div>
+
+                  <!-- Certifications Preview -->
+                  <div v-if="coach.certifications && coach.certifications.length > 0" class="pt-3 border-t border-cream-200">
+                    <p class="text-[10px] text-ink/40 uppercase tracking-wider mb-1.5">專業認證</p>
+                    <p class="text-xs text-ink/60 line-clamp-2">
+                      {{ coach.certifications.slice(0, 2).join('、') }}
+                      <span v-if="coach.certifications.length > 2" class="text-ink/40">
+                        等 {{ coach.certifications.length }} 項
+                      </span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -208,3 +342,13 @@ const stores = computed(() => {
     </section>
   </div>
 </template>
+
+<style scoped>
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+</style>
