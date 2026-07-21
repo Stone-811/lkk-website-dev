@@ -11,26 +11,30 @@ const courseDirections = [
   {
     id: 'elderly',
     title: '中高齡肌力訓練',
-    description: '專為 50 歲以上設計，預防肌少症、提升平衡感與日常功能。',
+    description: '50歲以後肌肉每年流失 1%，透過循序漸進的重量訓練，重建肌力、改善骨密度，預防肌少症與跌倒。',
     icon: 'heart',
+    tags: ['50 歲以上', '預防肌少症', '生活功能提升'],
   },
   {
     id: 'special',
     title: '特殊族群訓練',
-    description: '針對慢性病、代謝症候群等特殊需求，安全有效地改善健康。',
+    description: '帕金森氏症、糖尿病、癌症術後、心肺疾病等慢性病患者，由具醫療背景的教練設計安全課程，提升生活品質。',
     icon: 'shield',
+    tags: ['帕金森', '糖尿病', '癌症術後', '慢性病'],
   },
   {
     id: 'rehab',
     title: '運動復健',
-    description: '結合物理治療與運動訓練，協助傷後復健與慢性疼痛改善。',
+    description: '結合物理治療與肌力訓練，針對關節炎、慢性腰背痛、術後恢復期，以漸進式訓練重建身體功能。',
     icon: 'refresh',
+    tags: ['關節炎', '腰背痛', '術後恢復', '姿勢矯正'],
   },
   {
     id: 'fitness',
     title: '一般肌力與體態',
-    description: '增肌減脂、體態雕塑，適合想要提升整體體能的族群。',
+    description: '想減重、增肌、改善體態，或剛開始運動不知道怎麼做？從正確動作模式開始，建立長期維持的訓練習慣。',
     icon: 'bolt',
+    tags: ['減重減脂', '增肌塑身', '運動新手'],
   },
 ]
 
@@ -39,57 +43,49 @@ const groupCourses = [
   {
     id: 'basic',
     title: '基礎重量訓練班',
-    target: '初學者',
-    description: '從零開始學習正確的重量訓練動作，建立肌力基礎。',
-    people: '4-8 人',
-    duration: '50 分鐘',
+    target: '適合初學者',
+    description: '從零開始學習正確的重量訓練動作模式，包含深蹲、硬舉、推拉等基本動作，建立安全且有效的訓練基礎。',
+    people: '小班制 4-8 人',
+    duration: '每堂 50 分鐘',
+    note: '一次購買四堂',
   },
   {
     id: 'strength',
     title: '肌力團練班',
-    target: '有基礎者',
-    description: '進階肌力訓練，挑戰更高強度，與夥伴互相激勵成長。',
-    people: '4-8 人',
-    duration: '50 分鐘',
+    target: '有基礎者適合',
+    description: '針對已有基礎動作能力的學員，以提升肌力和體能為目標，訓練強度較高，挑戰自我極限。',
+    people: '小班制 4-8 人',
+    duration: '每堂 50 分鐘',
+    note: '一次購買四堂',
   },
   {
     id: 'senior',
     title: '樂齡體適能訓練班',
-    target: '50 歲以上',
-    description: '專為熟齡族群設計的團體課，安全有趣地提升體能。',
-    people: '4-8 人',
-    duration: '50 分鐘',
+    target: '中高齡專屬',
+    description: '專為 50 歲以上設計，低衝擊、安全優先，兼顧肌力、平衡感與柔軟度，讓訓練融入日常生活。',
+    people: '小班制 4-8 人',
+    duration: '每堂 50 分鐘',
+    note: '一次購買四堂',
   },
 ]
 
-// 線上課程優勢
-const onlineAdvantages = [
-  {
-    title: '隨選播放',
-    description: '24 小時隨時觀看，依照自己的時間安排學習。',
-    icon: 'play',
-  },
-  {
-    title: '不受地點限制',
-    description: '在家、出差、旅行，只要有網路就能運動。',
-    icon: 'globe',
-  },
-  {
-    title: '專業課程設計',
-    description: '由練健康專業教練錄製，動作示範清楚易懂。',
-    icon: 'bulb',
-  },
+// 線上課程特色
+const onlineFeatures = [
+  '由練健康教練錄製，內容同等專業',
+  '可依個人進度自主安排學習節奏',
+  '居家器材即可完成，不需健身房',
+  '課程內容涵蓋中高齡訓練、肌力基礎、功能性動作',
 ]
 
 // 比較表資料
 const comparisonData = [
-  { item: '個人化程度', personal: '最高', group: '中等', online: '基礎' },
+  { item: '個人化程度', personal: '★★★', group: '★★', online: '★' },
   { item: '教練即時指導', personal: '✓', group: '✓', online: '—' },
-  { item: '人數配置', personal: '1 對 1', group: '4-8 人', online: '無限制' },
-  { item: '特殊族群適配', personal: '最適合', group: '部分適合', online: '需自行評估' },
-  { item: '時間彈性', personal: '彈性排課', group: '固定時段', online: '隨時觀看' },
-  { item: '地點需求', personal: '需到店', group: '需到店', online: '不限' },
-  { item: '開始方式', personal: '預約體驗', group: '查詢課表', online: '直接購買' },
+  { item: '小班人數', personal: '1 人（純個人）', group: '4-8 人', online: '自主學習' },
+  { item: '適合特殊族群', personal: '✓ 最適合', group: '部分課程', online: '—' },
+  { item: '時間彈性', personal: '依約定排課', group: '依固定時段', online: '✓ 完全彈性' },
+  { item: '需要到門店', personal: '✓', group: '✓', online: '不需要' },
+  { item: '開始方式', personal: '預約體驗課', group: '預約體驗課', online: '線上報名' },
 ]
 
 const tabs = [
@@ -119,7 +115,6 @@ onMounted(() => {
         const heroHeight = document.getElementById('hero')?.offsetHeight || 0
         const newIsSticky = window.scrollY > heroHeight - 60
 
-        // Only update if value changed
         if (isSticky.value !== newIsSticky) {
           isSticky.value = newIsSticky
         }
@@ -149,19 +144,12 @@ onMounted(() => {
 })
 
 const personalFeatures = [
-  '醫療背景教練一對一指導',
-  '完整身體評估與個人化課表',
-  '50 分鐘課程含動作指導與糾正',
-  '定期進度追蹤與課表調整',
-  '營養與生活習慣建議',
-  '彈性排課，配合您的時間',
-]
-
-const onlineFeatures = [
-  '由練健康專業教練親自錄製',
-  '自主安排學習進度',
-  '居家器材即可訓練',
-  '多元課程內容持續更新',
+  '物理治療師或呼吸治療師背景教練指導',
+  '訓練前進行身體評估，建立安全個人課表',
+  '每堂課 50 分鐘，動作示範與即時糾正',
+  '定期追蹤進度，課表隨狀況調整',
+  '必要時提供營養與生活習慣建議',
+  '彈性排課，配合你的時間',
 ]
 </script>
 
@@ -170,14 +158,14 @@ const onlineFeatures = [
     <!-- Hero -->
     <section id="hero" class="bg-gradient-to-br from-navy-700 to-navy-800 text-white py-16 md:py-24">
       <div class="container mx-auto px-4 text-center">
-        <h1 class="text-3xl md:text-5xl font-bold mb-4 font-serif">
+        <h1 class="text-3xl md:text-5xl font-bold mb-6 font-serif">
           找到最適合你的上課方式
         </h1>
-        <p class="text-cream-200 text-lg md:text-xl mb-6 max-w-2xl mx-auto">
-          一對一訓練｜團體課程｜線上課程
+        <p class="text-cream-200 text-lg md:text-xl mb-6 max-w-3xl mx-auto leading-relaxed">
+          練健康提供三種上課形式，不管你是第一次接觸重訓、希望有同伴一起練，還是想在家自主訓練，都有對應的選擇。
         </p>
         <p class="text-orange text-lg md:text-xl font-semibold mb-10">
-          50 歲以上完全免費・一般首次體驗 $500
+          50 歲以上完全免費 · 一般首次體驗 $500
         </p>
 
         <!-- 快速導航按鈕 -->
@@ -192,7 +180,7 @@ const onlineFeatures = [
               </svg>
             </div>
             <h3 class="font-bold text-lg mb-1">一對一訓練</h3>
-            <p class="text-cream-300 text-sm">專屬教練・客製課表</p>
+            <p class="text-cream-300 text-sm">最熱門 · 個人化課表</p>
           </button>
 
           <button
@@ -205,7 +193,7 @@ const onlineFeatures = [
               </svg>
             </div>
             <h3 class="font-bold text-lg mb-1">團體課程</h3>
-            <p class="text-cream-300 text-sm">小班教學・互相激勵</p>
+            <p class="text-cream-300 text-sm">小班制 · 4-8 人</p>
           </button>
 
           <button
@@ -218,7 +206,7 @@ const onlineFeatures = [
               </svg>
             </div>
             <h3 class="font-bold text-lg mb-1">線上課程</h3>
-            <p class="text-cream-300 text-sm">隨時隨地・自主學習</p>
+            <p class="text-cream-300 text-sm">不受地點限制</p>
           </button>
         </div>
       </div>
@@ -254,7 +242,7 @@ const onlineFeatures = [
     <section id="personal" class="py-16 md:py-24">
       <div class="container mx-auto px-4">
         <!-- 上半部：圖片+文字說明 -->
-        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center mb-12">
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center mb-16">
           <!-- 左側圖片 -->
           <div class="lg:w-1/2">
             <div class="rounded-3xl overflow-hidden shadow-xl">
@@ -268,10 +256,18 @@ const onlineFeatures = [
 
           <!-- 右側內容 -->
           <div class="lg:w-1/2">
-            <span class="text-orange font-semibold mb-2 block">最熱門</span>
-            <h2 class="text-3xl md:text-4xl font-bold text-navy-700 font-serif mb-6">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="bg-orange/10 text-orange font-semibold px-3 py-1 rounded-full text-sm">最熱門</span>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-navy-700 font-serif mb-4">
               一對一訓練
             </h2>
+            <p class="text-ink-600 text-lg mb-6 leading-relaxed">
+              由專業教練全程陪伴，根據你的身體狀況、健康目標與生活習慣，量身打造個人訓練計畫。一週一次，持續進步。
+            </p>
+            <p class="text-orange font-semibold mb-6">
+              首次體驗 $500 · 50歲以上免費
+            </p>
 
             <!-- 特色列表 -->
             <ul class="space-y-3">
@@ -282,51 +278,64 @@ const onlineFeatures = [
                 <span class="text-ink-700">{{ feature }}</span>
               </li>
             </ul>
+
+            <div class="mt-8">
+              <NuxtLink
+                to="/booking"
+                class="inline-flex items-center gap-2 bg-orange hover:bg-orange-400 text-white font-bold px-8 py-4 rounded-full transition-colors"
+              >
+                預約首次體驗
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </NuxtLink>
+            </div>
           </div>
         </div>
 
         <!-- 下半部：四種課表方向（全寬度） -->
         <div class="max-w-5xl mx-auto">
-          <h3 class="text-xl font-bold text-navy-700 mb-4 text-center">四種課表方向</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <h3 class="text-xl font-bold text-navy-700 mb-6 text-center">四種課表方向，針對不同需求</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div
               v-for="course in courseDirections"
               :key="course.id"
-              class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow border border-cream-200"
+              class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-cream-200"
             >
-              <div class="text-orange mb-3">
-                <!-- Heart icon -->
-                <svg v-if="course.icon === 'heart'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                <!-- Shield icon -->
-                <svg v-else-if="course.icon === 'shield'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-                <!-- Refresh icon -->
-                <svg v-else-if="course.icon === 'refresh'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <!-- Bolt icon -->
-                <svg v-else-if="course.icon === 'bolt'" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+              <div class="flex items-start gap-4">
+                <div class="text-orange flex-shrink-0">
+                  <!-- Heart icon -->
+                  <svg v-if="course.icon === 'heart'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  <!-- Shield icon -->
+                  <svg v-else-if="course.icon === 'shield'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <!-- Refresh icon -->
+                  <svg v-else-if="course.icon === 'refresh'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <!-- Bolt icon -->
+                  <svg v-else-if="course.icon === 'bolt'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-bold text-navy-700 text-lg mb-2">{{ course.title }}</h4>
+                  <p class="text-ink-600 text-sm mb-3">{{ course.description }}</p>
+                  <div class="flex flex-wrap gap-2">
+                    <span
+                      v-for="tag in course.tags"
+                      :key="tag"
+                      class="text-xs bg-cream-200 text-ink-600 px-2 py-1 rounded-full"
+                    >
+                      {{ tag }}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <h4 class="font-bold text-navy-700 mb-2">{{ course.title }}</h4>
-              <p class="text-sm text-ink-600">{{ course.description }}</p>
             </div>
-          </div>
-
-          <div class="text-center">
-            <NuxtLink
-              to="/booking"
-              class="inline-flex items-center gap-2 bg-orange hover:bg-orange-light text-white font-bold px-8 py-4 rounded-full transition-colors"
-            >
-              預約首次體驗
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </NuxtLink>
           </div>
         </div>
       </div>
@@ -336,12 +345,14 @@ const onlineFeatures = [
     <section id="group" class="py-16 md:py-24 bg-cream-200">
       <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-          <span class="text-orange font-semibold mb-2 block">小班制教學</span>
+          <div class="flex items-center justify-center gap-3 mb-4">
+            <span class="bg-orange/10 text-orange font-semibold px-3 py-1 rounded-full text-sm">小班制</span>
+          </div>
           <h2 class="text-3xl md:text-4xl font-bold text-navy-700 font-serif mb-4">
             團體課程
           </h2>
-          <p class="text-ink-600 max-w-2xl mx-auto">
-            與志同道合的夥伴一起運動，互相激勵成長，享受團體訓練的樂趣。
+          <p class="text-ink-600 max-w-2xl mx-auto leading-relaxed">
+            一次買四堂，與志同道合的夥伴一起訓練，互相激勵。小班制（4-8 人）確保教練能顧到每個人的動作品質。
           </p>
         </div>
 
@@ -356,43 +367,46 @@ const onlineFeatures = [
               {{ course.target }}
             </span>
             <h3 class="text-xl font-bold text-navy-700 mb-3">{{ course.title }}</h3>
-            <p class="text-ink-600 mb-6">{{ course.description }}</p>
-            <div class="flex items-center gap-4 text-sm text-ink-500 pt-4 border-t border-cream-200">
-              <span class="flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-ink-600 mb-6 text-sm leading-relaxed">{{ course.description }}</p>
+            <div class="flex flex-col gap-2 text-sm text-ink-500 pt-4 border-t border-cream-200">
+              <span class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
                 {{ course.people }}
               </span>
-              <span class="flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {{ course.duration }}
+              </span>
+              <span class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {{ course.note }}
               </span>
             </div>
           </div>
         </div>
 
         <!-- 說明框 -->
-        <div class="bg-navy-700/5 border border-navy-700/10 rounded-2xl p-6 mb-10 max-w-2xl mx-auto">
+        <div class="bg-white border border-cream-300 rounded-2xl p-6 mb-10 max-w-2xl mx-auto">
           <h4 class="font-bold text-navy-700 mb-3 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             購課與請假規定
           </h4>
-          <ul class="text-sm text-ink-600 space-y-2">
-            <li>• 團體課以四堂為一期購買，可彈性選擇開始日期</li>
-            <li>• 每堂課 50 分鐘，4-8 人小班制</li>
-            <li>• 請假需提前一週通知，可安排補課</li>
-            <li>• 歡迎先預約單堂體驗試上</li>
-          </ul>
+          <p class="text-sm text-ink-600">
+            請假規定：最晚提前一週與教練告知，並順延一週。購買後不須從月初開始，彈性安排上課時間。
+          </p>
         </div>
 
         <div class="text-center">
           <NuxtLink
-            to="/404"
+            to="/booking"
             class="inline-flex items-center gap-2 bg-navy-700 hover:bg-navy-800 text-white font-bold px-8 py-4 rounded-full transition-colors"
           >
             查詢團體課時間
@@ -433,40 +447,51 @@ const onlineFeatures = [
 
           <!-- 右側內容 -->
           <div class="lg:w-1/2">
-            <span class="text-orange font-semibold mb-2 block">sat.cool 線上平台</span>
-            <h2 class="text-3xl md:text-4xl font-bold text-navy-700 font-serif mb-6">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="bg-orange/10 text-orange font-semibold px-3 py-1 rounded-full text-sm">不受地點限制</span>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-navy-700 font-serif mb-4">
               線上課程
             </h2>
+            <p class="text-ink-600 text-lg mb-6 leading-relaxed">
+              不方便到門店，或是想在家自主訓練？線上課程讓你在任何地點、任何時間，跟著練健康的教練動起來。
+            </p>
+            <p class="text-orange font-semibold mb-6">
+              sat.cool 線上平台
+            </p>
 
             <!-- 三大優勢 -->
-            <div class="grid gap-6 mb-8">
-              <div v-for="advantage in onlineAdvantages" :key="advantage.title" class="flex items-start gap-4">
-                <div class="text-orange flex-shrink-0">
-                  <!-- Play icon -->
-                  <svg v-if="advantage.icon === 'play'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <!-- Globe icon -->
-                  <svg v-else-if="advantage.icon === 'globe'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <!-- Bulb icon -->
-                  <svg v-else-if="advantage.icon === 'bulb'" class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            <div class="grid gap-4 mb-8">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-orange/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5 text-orange" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
-                <div>
-                  <h3 class="font-bold text-navy-700 mb-1">{{ advantage.title }}</h3>
-                  <p class="text-ink-600">{{ advantage.description }}</p>
+                <span class="text-ink-700">隨時隨選播放</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-orange/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
                 </div>
+                <span class="text-ink-700">在家不受地點限制</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-orange/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+                <span class="text-ink-700">教練專業課程設計</span>
               </div>
             </div>
 
             <!-- 課程特色 -->
             <ul class="space-y-2 mb-8">
-              <li v-for="feature in onlineFeatures" :key="feature" class="flex items-center gap-2 text-ink-700">
-                <svg class="w-5 h-5 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <li v-for="feature in onlineFeatures" :key="feature" class="flex items-center gap-2 text-ink-700 text-sm">
+                <svg class="w-5 h-5 text-orange flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
                 {{ feature }}
@@ -478,7 +503,7 @@ const onlineFeatures = [
                 href="https://sat.cool/course/97"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center justify-center gap-2 bg-orange hover:bg-orange-light text-white font-bold px-8 py-4 rounded-full transition-colors"
+                class="inline-flex items-center justify-center gap-2 bg-orange hover:bg-orange-400 text-white font-bold px-8 py-4 rounded-full transition-colors"
               >
                 前往線上課程平台
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -489,7 +514,7 @@ const onlineFeatures = [
                 to="/booking"
                 class="inline-flex items-center justify-center gap-2 border-2 border-navy-700 text-navy-700 hover:bg-navy-700 hover:text-white font-bold px-8 py-4 rounded-full transition-colors"
               >
-                想嘗試一對一
+                想嘗試一對一？
               </NuxtLink>
             </div>
           </div>
@@ -500,9 +525,12 @@ const onlineFeatures = [
     <!-- 比較表 -->
     <section id="compare" class="py-16 md:py-24 bg-[#1a3545] text-white">
       <div class="container mx-auto px-4">
-        <h2 class="text-3xl md:text-4xl font-bold text-center font-serif mb-12">
-          三種上課形式快速比較
+        <h2 class="text-3xl md:text-4xl font-bold text-center font-serif mb-4">
+          怎麼選？三種上課形式<span class="text-orange">快速比較</span>
         </h2>
+        <p class="text-center text-cream-200 mb-12 max-w-2xl mx-auto">
+          不確定適合哪一種？先來一堂體驗課，教練會評估你的狀況再建議最適合的方式。
+        </p>
 
         <div class="overflow-x-auto">
           <div class="bg-white/5 rounded-[14px] max-w-4xl mx-auto">
@@ -521,19 +549,34 @@ const onlineFeatures = [
                   :key="row.item"
                   :class="index !== comparisonData.length - 1 ? 'border-b border-white/[0.06]' : ''"
                 >
-                  <td class="py-4 px-4 text-white/70 text-left">{{ row.item }}</td>
+                  <td class="py-4 px-4 text-white/70 text-left text-sm">{{ row.item }}</td>
                   <td class="py-4 px-4 text-center bg-orange/[0.08]">
-                    <span :class="row.personal === '✓' ? 'text-orange font-bold' : row.personal === '—' ? 'text-white/20' : 'text-white/70'">
+                    <span :class="[
+                      row.personal.includes('★') ? 'text-orange' :
+                      row.personal === '✓' || row.personal.includes('✓') ? 'text-orange font-bold' :
+                      row.personal === '—' ? 'text-white/20' : 'text-white/70',
+                      'text-sm'
+                    ]">
                       {{ row.personal }}
                     </span>
                   </td>
                   <td class="py-4 px-4 text-center">
-                    <span :class="row.group === '✓' ? 'text-orange font-bold' : row.group === '—' ? 'text-white/20' : 'text-white/70'">
+                    <span :class="[
+                      row.group.includes('★') ? 'text-orange' :
+                      row.group === '✓' || row.group.includes('✓') ? 'text-orange font-bold' :
+                      row.group === '—' ? 'text-white/20' : 'text-white/70',
+                      'text-sm'
+                    ]">
                       {{ row.group }}
                     </span>
                   </td>
                   <td class="py-4 px-4 text-center">
-                    <span :class="row.online === '✓' ? 'text-orange font-bold' : row.online === '—' ? 'text-white/20' : 'text-white/70'">
+                    <span :class="[
+                      row.online.includes('★') ? 'text-orange' :
+                      row.online === '✓' || row.online.includes('✓') ? 'text-orange font-bold' :
+                      row.online === '—' ? 'text-white/20' : 'text-white/70',
+                      'text-sm'
+                    ]">
                       {{ row.online }}
                     </span>
                   </td>
@@ -542,43 +585,25 @@ const onlineFeatures = [
             </table>
           </div>
         </div>
+
+        <div class="text-center mt-10">
+          <NuxtLink
+            to="/booking"
+            class="inline-flex items-center gap-2 bg-orange hover:bg-orange-400 text-white font-bold px-10 py-4 rounded-full transition-colors text-lg"
+          >
+            立即預約體驗課
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </NuxtLink>
+          <p class="text-cream-200 text-sm mt-6">
+            50歲以上完全免費 · 一般首次體驗 $500 · 無隱藏費用
+          </p>
+        </div>
       </div>
     </section>
 
-    <!-- 橘色 CTA Banner -->
-    <section class="py-16 md:py-20 bg-orange">
-      <div class="container mx-auto px-4 text-center">
-        <h2 class="text-3xl md:text-4xl font-bold text-white font-serif mb-4">
-          不確定適合哪一種？
-        </h2>
-        <p class="text-white/90 text-lg mb-8 max-w-xl mx-auto">
-          別擔心！先預約一堂體驗課，讓教練為您評估並提供最適合的建議。
-        </p>
-        <NuxtLink
-          to="/booking"
-          class="inline-flex items-center gap-2 bg-white hover:bg-cream-100 text-orange font-bold px-10 py-4 rounded-full transition-colors text-lg"
-        >
-          立即預約體驗課
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </NuxtLink>
-        <p class="text-white/80 text-sm mt-6">
-          50 歲以上完全免費・一般首次體驗 $500
-        </p>
-      </div>
-    </section>
-
-    <!-- 手機版粘性 CTA -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-cream-200 p-4 md:hidden z-50">
-      <NuxtLink
-        to="/booking"
-        class="block w-full bg-orange hover:bg-orange-light text-white font-bold py-4 rounded-full text-center transition-colors"
-      >
-        立即預約體驗
-      </NuxtLink>
-    </div>
-
+    <!-- 手機版 CTA 已在 MobileBookingButton 處理，此處移除重複 -->
     <!-- 為手機版粘性 CTA 預留空間 -->
     <div class="h-20 md:hidden" />
   </div>
