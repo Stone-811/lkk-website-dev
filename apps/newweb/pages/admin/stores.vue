@@ -157,6 +157,45 @@ async function deleteStore(store: Store) {
   }
 }
 
+// Move store up/down in sort order
+async function moveStore(store: Store, direction: 'up' | 'down') {
+  const currentIndex = stores.value.findIndex(s => s.id === store.id)
+  if (currentIndex === -1) return
+
+  const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
+  if (newIndex < 0 || newIndex >= stores.value.length) return
+
+  // Swap items
+  const items = [...stores.value]
+  const temp = items[currentIndex]
+  items[currentIndex] = items[newIndex]
+  items[newIndex] = temp
+
+  // Update local state immediately for responsive UI
+  stores.value = items
+
+  // Prepare reorder data
+  const reorderItems = items.map((item, index) => ({
+    id: item.id,
+    sortOrder: index + 1,
+  }))
+
+  try {
+    await $fetch('/api/admin/stores/reorder', {
+      method: 'PATCH',
+      body: { items: reorderItems },
+    })
+    // Update local sortOrder values
+    stores.value.forEach((s, idx) => {
+      s.sortOrder = idx + 1
+    })
+  } catch (e: any) {
+    // Revert on error
+    await fetchStores()
+    alert(e.data?.message || '更新排序失敗')
+  }
+}
+
 function generateSlug(name: string): string {
   const mapping: Record<string, string> = {
     '台北': 'taipei', '新北': 'newtaipei', '新竹': 'hsinchu',
@@ -237,7 +276,29 @@ onMounted(fetchStores)
             <p v-if="store.coachCount !== undefined" class="text-gray-400 text-xs mt-1">{{ store.coachCount }} 位教練</p>
           </div>
 
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1">
+            <!-- Sort buttons -->
+            <button
+              @click="moveStore(store, 'up')"
+              :disabled="stores.indexOf(store) === 0"
+              class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              title="上移"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+            <button
+              @click="moveStore(store, 'down')"
+              :disabled="stores.indexOf(store) === stores.length - 1"
+              class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              title="下移"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="w-px h-6 bg-gray-200 mx-1"></div>
             <button
               @click="openEditModal(store)"
               class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"

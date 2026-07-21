@@ -47,6 +47,23 @@ export default defineEventHandler(async (event) => {
       });
     }
 
+    // Auto-calculate sortOrder if not provided
+    let sortOrder = body.sortOrder;
+    if (sortOrder === undefined || sortOrder === null) {
+      const lastStoreSnapshot = await db
+        .collection('stores')
+        .orderBy('sortOrder', 'desc')
+        .limit(1)
+        .get();
+
+      if (lastStoreSnapshot.empty) {
+        sortOrder = 1;
+      } else {
+        const lastSortOrder = lastStoreSnapshot.docs[0].data().sortOrder || 0;
+        sortOrder = lastSortOrder + 1;
+      }
+    }
+
     const now = Timestamp.now();
     const storeRef = db.collection('stores').doc();
 
@@ -61,7 +78,7 @@ export default defineEventHandler(async (event) => {
       businessHours: body.businessHours || null,
       transportation: body.transportation || null,
       images: body.images || [],
-      sortOrder: body.sortOrder || 0,
+      sortOrder,
       isActive: body.isActive ?? true,
       createdAt: now,
       updatedAt: now,

@@ -25,6 +25,23 @@ export default defineEventHandler(async (event) => {
     const db = await getDb();
     const Timestamp = await getTimestamp();
 
+    // Auto-calculate sortOrder if not provided
+    let sortOrder = body.sortOrder;
+    if (sortOrder === undefined || sortOrder === null) {
+      const lastCoachSnapshot = await db
+        .collection('coaches')
+        .orderBy('sortOrder', 'desc')
+        .limit(1)
+        .get();
+
+      if (lastCoachSnapshot.empty) {
+        sortOrder = 1;
+      } else {
+        const lastSortOrder = lastCoachSnapshot.docs[0].data().sortOrder || 0;
+        sortOrder = lastSortOrder + 1;
+      }
+    }
+
     const now = Timestamp.now();
     const coachRef = db.collection('coaches').doc();
 
@@ -42,7 +59,7 @@ export default defineEventHandler(async (event) => {
       experiences: body.experiences || [],
       education: body.education || [],
       description: body.description || null,
-      sortOrder: body.sortOrder || 0,
+      sortOrder,
       isActive: body.isActive ?? true,
       createdAt: now,
       updatedAt: now,

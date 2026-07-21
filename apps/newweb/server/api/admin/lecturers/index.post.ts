@@ -48,6 +48,23 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 400, message: '此網址代稱已存在' })
     }
 
+    // Auto-calculate sortOrder if not provided
+    let calculatedSortOrder = sortOrder
+    if (calculatedSortOrder === undefined || calculatedSortOrder === null) {
+      const lastLecturerSnapshot = await db
+        .collection('lecturers')
+        .orderBy('sortOrder', 'desc')
+        .limit(1)
+        .get()
+
+      if (lastLecturerSnapshot.empty) {
+        calculatedSortOrder = 1
+      } else {
+        const lastSortOrder = lastLecturerSnapshot.docs[0].data().sortOrder || 0
+        calculatedSortOrder = lastSortOrder + 1
+      }
+    }
+
     const now = Timestamp.now()
     const lecturerRef = db.collection('lecturers').doc()
     const lecturerData = {
@@ -63,7 +80,7 @@ export default defineEventHandler(async (event) => {
       specialties: specialties || [],
       courses: courses || [],
       certifications: certifications || [],
-      sortOrder: sortOrder ?? 0,
+      sortOrder: calculatedSortOrder,
       isActive: isActive ?? true,
       createdAt: now,
       updatedAt: now,

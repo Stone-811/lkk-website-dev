@@ -205,6 +205,45 @@ async function deleteCoach(coach: Coach) {
   }
 }
 
+// Move coach up/down in sort order
+async function moveCoach(coach: Coach, direction: 'up' | 'down') {
+  const currentIndex = coaches.value.findIndex(c => c.id === coach.id)
+  if (currentIndex === -1) return
+
+  const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
+  if (newIndex < 0 || newIndex >= coaches.value.length) return
+
+  // Swap items
+  const items = [...coaches.value]
+  const temp = items[currentIndex]
+  items[currentIndex] = items[newIndex]
+  items[newIndex] = temp
+
+  // Update local state immediately for responsive UI
+  coaches.value = items
+
+  // Prepare reorder data
+  const reorderItems = items.map((item, index) => ({
+    id: item.id,
+    sortOrder: index + 1,
+  }))
+
+  try {
+    await $fetch('/api/admin/coaches/reorder', {
+      method: 'PATCH',
+      body: { items: reorderItems },
+    })
+    // Update local sortOrder values
+    coaches.value.forEach((c, idx) => {
+      c.sortOrder = idx + 1
+    })
+  } catch (e: any) {
+    // Revert on error
+    await fetchCoaches()
+    alert(e.data?.message || '更新排序失敗')
+  }
+}
+
 onMounted(() => {
   fetchCoaches()
   fetchStores()
@@ -239,6 +278,7 @@ onMounted(() => {
       <table class="w-full">
         <thead class="bg-gray-50">
           <tr>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3 w-16">排序</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">教練</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">門店</th>
             <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">職稱</th>
@@ -248,9 +288,33 @@ onMounted(() => {
         </thead>
         <tbody class="divide-y divide-gray-200">
           <tr v-if="coaches.length === 0">
-            <td colspan="5" class="px-6 py-12 text-center text-gray-500">尚無教練資料</td>
+            <td colspan="6" class="px-6 py-12 text-center text-gray-500">尚無教練資料</td>
           </tr>
-          <tr v-for="coach in coaches" :key="coach.id" class="hover:bg-gray-50">
+          <tr v-for="(coach, index) in coaches" :key="coach.id" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center gap-0.5">
+                <button
+                  @click="moveCoach(coach, 'up')"
+                  :disabled="index === 0"
+                  class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="上移"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                  </svg>
+                </button>
+                <button
+                  @click="moveCoach(coach, 'down')"
+                  :disabled="index === coaches.length - 1"
+                  class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="下移"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center gap-3">
                 <img v-if="coach.photo" :src="coach.photo" :alt="coach.name" class="w-10 h-10 rounded-full object-cover" />

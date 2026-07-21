@@ -205,6 +205,57 @@ async function deleteLecturer(lecturer: Lecturer) {
   }
 }
 
+// Move lecturer up/down in sort order
+async function moveLecturer(lecturer: Lecturer, direction: 'up' | 'down') {
+  // Use filteredLecturers for current view, but update main array
+  const currentList = filteredLecturers.value
+  const currentIndex = currentList.findIndex(l => l.id === lecturer.id)
+  if (currentIndex === -1) return
+
+  const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
+  if (newIndex < 0 || newIndex >= currentList.length) return
+
+  // Get the IDs we need to swap
+  const currentId = currentList[currentIndex].id
+  const swapId = currentList[newIndex].id
+
+  // Find these in the main array and swap their sortOrder
+  const mainIndex1 = lecturers.value.findIndex(l => l.id === currentId)
+  const mainIndex2 = lecturers.value.findIndex(l => l.id === swapId)
+
+  if (mainIndex1 === -1 || mainIndex2 === -1) return
+
+  // Swap in main array
+  const items = [...lecturers.value]
+  const temp = items[mainIndex1]
+  items[mainIndex1] = items[mainIndex2]
+  items[mainIndex2] = temp
+
+  // Update local state immediately
+  lecturers.value = items
+
+  // Prepare reorder data for all items
+  const reorderItems = items.map((item, index) => ({
+    id: item.id,
+    sortOrder: index + 1,
+  }))
+
+  try {
+    await $fetch('/api/admin/lecturers/reorder', {
+      method: 'PATCH',
+      body: { items: reorderItems },
+    })
+    // Update local sortOrder values
+    lecturers.value.forEach((l, idx) => {
+      l.sortOrder = idx + 1
+    })
+  } catch (e: any) {
+    // Revert on error
+    await fetchLecturers()
+    alert(e.data?.message || '更新排序失敗')
+  }
+}
+
 function generateSlug(name: string): string {
   const mapping: Record<string, string> = {
     '陳': 'chen', '林': 'lin', '黃': 'huang', '張': 'zhang', '李': 'li',
@@ -350,25 +401,49 @@ const filteredLecturers = computed(() => {
           </div>
 
           <!-- Actions -->
-          <div class="flex items-center justify-end gap-2 mt-4 pt-4 border-t border-gray-100">
-            <button
-              @click="toggleActive(lecturer)"
-              class="text-sm text-gray-600 hover:text-gray-900 px-3 py-1"
-            >
-              {{ lecturer.isActive ? '下架' : '上架' }}
-            </button>
-            <button
-              @click="openEditModal(lecturer)"
-              class="text-sm text-navy hover:text-navy-600 px-3 py-1"
-            >
-              編輯
-            </button>
-            <button
-              @click="deleteLecturer(lecturer)"
-              class="text-sm text-red-500 hover:text-red-600 px-3 py-1"
-            >
-              刪除
-            </button>
+          <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+            <div class="flex items-center gap-0.5">
+              <button
+                @click="moveLecturer(lecturer, 'up')"
+                :disabled="filteredLecturers.indexOf(lecturer) === 0"
+                class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                title="上移"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+              <button
+                @click="moveLecturer(lecturer, 'down')"
+                :disabled="filteredLecturers.indexOf(lecturer) === filteredLecturers.length - 1"
+                class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                title="下移"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                @click="toggleActive(lecturer)"
+                class="text-sm text-gray-600 hover:text-gray-900 px-3 py-1"
+              >
+                {{ lecturer.isActive ? '下架' : '上架' }}
+              </button>
+              <button
+                @click="openEditModal(lecturer)"
+                class="text-sm text-navy hover:text-navy-600 px-3 py-1"
+              >
+                編輯
+              </button>
+              <button
+                @click="deleteLecturer(lecturer)"
+                class="text-sm text-red-500 hover:text-red-600 px-3 py-1"
+              >
+                刪除
+              </button>
+            </div>
           </div>
         </div>
       </div>
