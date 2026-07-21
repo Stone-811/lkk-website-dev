@@ -23,6 +23,8 @@ export default defineEventHandler(async (event) => {
       preferredTime,
       sources,
       paymentMethod,
+      exerciseGoals,
+      exerciseGoalOther,
       message,
       sourcePage,
     } = body
@@ -82,6 +84,8 @@ export default defineEventHandler(async (event) => {
         // 預約資訊
         preferredTime: preferredTimeArray,
         paymentMethod: paymentMethod || null,
+        exerciseGoals: exerciseGoals || [],
+        exerciseGoalOther: exerciseGoalOther || null,
         sources: sources || [],
       },
       status: 'new',
@@ -139,6 +143,8 @@ export default defineEventHandler(async (event) => {
         medicalConditionNote,
         preferredTime: preferredTimeArray,
         paymentMethod,
+        exerciseGoals: Array.isArray(exerciseGoals) ? exerciseGoals : [],
+        exerciseGoalOther,
         sources: Array.isArray(sources) ? sources : sources ? [sources] : [],
       }).catch(err => console.error('Failed to send admin notification:', err))
 

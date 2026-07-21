@@ -80,6 +80,8 @@ interface LeadNotificationData {
   medicalConditionNote?: string
   preferredTime?: string[]
   paymentMethod?: string
+  exerciseGoals?: string[]
+  exerciseGoalOther?: string
   sources?: string[]
   // Franchise specific fields
   region?: string
@@ -257,6 +259,18 @@ export async function sendLeadNotification(data: LeadNotificationData) {
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">付款方式</td>
         <td style="padding: 10px; border-bottom: 1px solid #ddd;">${paymentLabel}</td>
+      </tr>`
+    }
+
+    if (data.exerciseGoals && data.exerciseGoals.length > 0) {
+      let goalsText = data.exerciseGoals.join('、')
+      if (data.exerciseGoalOther) {
+        goalsText += `（其他：${data.exerciseGoalOther}）`
+      }
+      content += `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">運動目的</td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;">${goalsText}</td>
       </tr>`
     }
 

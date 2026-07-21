@@ -169,21 +169,41 @@ async function handleSaveNote() {
 }
 
 function handleExport() {
-  const headers = ['姓名', '電話', 'Email', '門店', '狀態', '性別', '年齡', '運動目標', '偏好時段', '來源', '備註', '建立時間']
-  const rows = filteredLeads.value.map(lead => [
-    lead.name,
-    lead.phone,
-    lead.email || '',
-    lead.storeName || '',
-    statusLabels[lead.status]?.label || lead.status,
-    lead.payload?.gender || '',
-    lead.payload?.age || '',
-    lead.payload?.goal || '',
-    lead.payload?.preferredTime || '',
-    lead.payload?.source || '',
-    lead.internalNote || '',
-    lead.createdAt ? new Date(lead.createdAt).toLocaleString('zh-TW') : '',
-  ])
+  const headers = ['姓名', '電話', 'Email', '門店', '狀態', '性別', '出生年月', '運動目的', '偏好時段', '付款方式', '來源', '備註', '建立時間']
+  const rows = filteredLeads.value.map(lead => {
+    // 處理運動目的
+    let exerciseGoalsText = ''
+    if (lead.payload?.exerciseGoals && lead.payload.exerciseGoals.length > 0) {
+      exerciseGoalsText = lead.payload.exerciseGoals.join('、')
+      if (lead.payload.exerciseGoalOther) {
+        exerciseGoalsText += `（其他：${lead.payload.exerciseGoalOther}）`
+      }
+    }
+    // 處理偏好時段
+    const preferredTime = Array.isArray(lead.payload?.preferredTime)
+      ? lead.payload.preferredTime.join('、')
+      : lead.payload?.preferredTime || ''
+    // 處理來源
+    const sources = Array.isArray(lead.payload?.sources)
+      ? lead.payload.sources.join('、')
+      : lead.payload?.sources || ''
+
+    return [
+      lead.name,
+      lead.phone,
+      lead.email || '',
+      lead.storeName || '',
+      statusLabels[lead.status]?.label || lead.status,
+      lead.payload?.gender || '',
+      lead.payload?.birthDate || '',
+      exerciseGoalsText,
+      preferredTime,
+      lead.payload?.paymentMethod || '',
+      sources,
+      lead.internalNote || '',
+      lead.createdAt ? new Date(lead.createdAt).toLocaleString('zh-TW') : '',
+    ]
+  })
 
   const csvContent =
     '\uFEFF' +
@@ -417,21 +437,36 @@ function handleExport() {
                 <p class="text-sm text-gray-500">性別</p>
                 <p class="font-medium">{{ selectedLead.payload.gender }}</p>
               </div>
-              <div v-if="selectedLead.payload.age">
-                <p class="text-sm text-gray-500">年齡</p>
-                <p class="font-medium">{{ selectedLead.payload.age }}</p>
+              <div v-if="selectedLead.payload.birthDate">
+                <p class="text-sm text-gray-500">出生年月</p>
+                <p class="font-medium">{{ selectedLead.payload.birthDate }}</p>
+              </div>
+              <div v-if="selectedLead.payload.line">
+                <p class="text-sm text-gray-500">LINE ID</p>
+                <p class="font-medium">{{ selectedLead.payload.line }}</p>
               </div>
               <div v-if="selectedLead.payload.goal" class="col-span-2">
                 <p class="text-sm text-gray-500">運動目標</p>
                 <p class="font-medium">{{ selectedLead.payload.goal }}</p>
               </div>
+              <div v-if="selectedLead.payload.exerciseGoals && selectedLead.payload.exerciseGoals.length > 0" class="col-span-2">
+                <p class="text-sm text-gray-500">運動目的</p>
+                <p class="font-medium">
+                  {{ selectedLead.payload.exerciseGoals.join('、') }}
+                  <span v-if="selectedLead.payload.exerciseGoalOther">（其他：{{ selectedLead.payload.exerciseGoalOther }}）</span>
+                </p>
+              </div>
               <div v-if="selectedLead.payload.preferredTime" class="col-span-2">
                 <p class="text-sm text-gray-500">偏好時段</p>
-                <p class="font-medium">{{ selectedLead.payload.preferredTime }}</p>
+                <p class="font-medium">{{ Array.isArray(selectedLead.payload.preferredTime) ? selectedLead.payload.preferredTime.join('、') : selectedLead.payload.preferredTime }}</p>
               </div>
-              <div v-if="selectedLead.payload.source" class="col-span-2">
-                <p class="text-sm text-gray-500">來源</p>
-                <p class="font-medium">{{ selectedLead.payload.source }}</p>
+              <div v-if="selectedLead.payload.paymentMethod">
+                <p class="text-sm text-gray-500">付款方式</p>
+                <p class="font-medium">{{ selectedLead.payload.paymentMethod === '50歲以上免費' ? '50歲以上免費體驗' : '臨櫃付款 $500' }}</p>
+              </div>
+              <div v-if="selectedLead.payload.sources && selectedLead.payload.sources.length > 0" class="col-span-2">
+                <p class="text-sm text-gray-500">得知管道</p>
+                <p class="font-medium">{{ Array.isArray(selectedLead.payload.sources) ? selectedLead.payload.sources.join('、') : selectedLead.payload.sources }}</p>
               </div>
             </template>
           </div>
