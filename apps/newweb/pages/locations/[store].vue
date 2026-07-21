@@ -104,6 +104,11 @@ const storesData: Record<string, any> = {
 
 const store = computed(() => storesData[storeSlug])
 
+// 取得其他分店（排除當前分店）
+const otherStores = computed(() => {
+  return Object.values(storesData).filter((s: any) => s.id !== storeSlug)
+})
+
 // 處理 404
 if (!store.value) {
   throw createError({
@@ -418,23 +423,67 @@ const coaches = coachesByStore[storeSlug] || []
       </div>
     </section>
 
-    <!-- CTA Section -->
+    <!-- Other Stores Section -->
     <section class="bg-orange py-16 lg:py-20 text-center">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-center gap-2 text-sm font-bold text-white/70 tracking-widest uppercase mb-2">
+          <span class="w-5 h-0.5 bg-white/50" />
+          其他分店
+          <span class="w-5 h-0.5 bg-white/50" />
+        </div>
+        <h2 class="font-serif text-2xl lg:text-3xl font-black text-white mb-3">
+          其他分店選擇
+        </h2>
+        <p class="text-white/80 mb-10 max-w-lg mx-auto">
+          若{{ store.name }}不方便，歡迎參考我們的其他分店
+        </p>
+
+        <!-- Other stores grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          <NuxtLink
+            v-for="otherStore in otherStores"
+            :key="otherStore.id"
+            :to="`/locations/${otherStore.id}`"
+            class="group bg-white rounded-2xl p-6 text-left shadow-lg hover:-translate-y-1 transition-all duration-300"
+          >
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <h3 class="font-serif text-lg font-bold text-navy-700 group-hover:text-orange transition-colors">
+                  {{ otherStore.name }}
+                </h3>
+                <p class="text-sm text-ink/60">{{ otherStore.district }}</p>
+              </div>
+              <span class="w-8 h-8 rounded-full bg-orange/10 flex items-center justify-center text-orange group-hover:bg-orange group-hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </span>
+            </div>
+            <p class="text-xs text-ink/50 leading-relaxed line-clamp-2">
+              {{ otherStore.address }}
+            </p>
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-navy-700 py-16 lg:py-20 text-center">
       <div class="container mx-auto px-4">
         <h2 class="font-serif text-3xl lg:text-4xl font-black text-white mb-3">
           {{ store.name }}，等你來
         </h2>
-        <p class="text-white/80 mb-8">
+        <p class="text-white/70 mb-8">
           從捷運站走過來只要幾分鐘，第一堂 50 歲以上完全免費。
         </p>
         <NuxtLink
           to="/booking"
-          class="inline-flex items-center gap-2 bg-white text-orange font-bold px-8 py-3.5 rounded-full shadow-lg hover:-translate-y-0.5 transition-transform"
+          class="inline-flex items-center gap-2 bg-orange text-white font-bold px-8 py-3.5 rounded-full shadow-lg hover:-translate-y-0.5 transition-transform"
         >
           立即預約體驗 →
         </NuxtLink>
-        <div class="mt-4 text-white/60 text-sm">
-          或直接來電：<a :href="`tel:${store.phoneRaw}`" class="text-white font-medium">{{ store.phone }}</a>
+        <div class="mt-4 text-white/50 text-sm">
+          或直接來電：<a :href="`tel:${store.phoneRaw}`" class="text-white font-medium hover:text-orange transition-colors">{{ store.phone }}</a>
         </div>
       </div>
     </section>
