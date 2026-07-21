@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 useHead({
   title: '合作講師｜練健康 LKK Wellness',
   meta: [
@@ -6,40 +8,25 @@ useHead({
   ]
 })
 
-// 合作講師資料
-const partnerLecturers = [
-  {
-    id: 'zhuo-yanting',
-    name: '卓彥廷',
-    title: '復健科醫師',
-    photo: '/images/lecturers/partner/zhuo-yanting.png',
-    organization: '天母力康診所',
-    description: '復健科專科醫師，致力於將臨床醫學與運動科學深度結合，強調訓練策略而非僅消除疼痛。',
-    specialties: ['骨骼肌肉傷害', '運動醫學', '疼痛治療', '特殊族群運動處方'],
-    certifications: ['復健科專科醫師', '前台北慈濟醫院復健科主治醫師', 'CAK 認證', 'Dynamic tape 認證', 'PNF 認證'],
-  },
-  {
-    id: 'chen-yanzhi',
-    name: '陳彥志',
-    title: '骨科醫師',
-    photo: '/images/lecturers/partner/chen-yanzhi.png',
-    organization: '光田綜合醫院運動醫學科',
-    description: '骨科專科醫師，整合臨床骨科與系統化訓練指導，強調安全的動作優化。',
-    specialties: ['運動傷害動作評估', '手術評估', '超音波導引注射', '運動處方介入'],
-    certifications: ['骨科專科醫師', 'NASM-CES 矯正運動專家', 'NSCA-CSPS 特殊族群訓練專家', '光田綜合醫院運動醫學科主任'],
-  },
-  {
-    id: 'lu-changshuo',
-    name: '盧昶碩',
-    nickname: 'Justin',
-    title: '運動專業講師',
-    photo: '/images/lecturers/partner/lu-changshuo.png',
-    organization: '動思學院/運動解密 創辦人',
-    description: '專精運動專項肌力與體能訓練，曾培訓多支國家代表隊，著有《把私人教練帶回家》。',
-    specialties: ['運動專項肌力與體能訓練', '全人教育', '運動心理學'],
-    certifications: ['ACE-CPT', 'NSCA-CSCS', 'P3 應用運動科學', '衛福部預防及延緩失能協助員'],
-  },
-]
+interface Lecturer {
+  id: string
+  name: string
+  slug?: string
+  photo?: string
+  title?: string
+  organization?: string
+  description?: string
+  specialties?: string[]
+  certifications?: string[]
+}
+
+// Fetch lecturers from API
+const { data: lecturersResponse, pending } = await useFetch<{
+  success: boolean
+  data: Lecturer[]
+}>('/api/public/lecturers?type=partner')
+
+const partnerLecturers = computed(() => lecturersResponse.value?.data || [])
 
 // 合作優勢
 const benefits = [
@@ -99,17 +86,26 @@ const benefits = [
       </div>
     </section>
 
+    <!-- Loading -->
+    <div v-if="pending" class="flex items-center justify-center py-24">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
+    </div>
+
     <!-- Partners Grid -->
-    <section class="py-16 lg:py-24">
+    <section v-else class="py-16 lg:py-24">
       <div class="container mx-auto px-4">
-        <div class="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
-          <span class="w-5 h-0.5 bg-orange" />
-          醫療專業合作
+        <div v-if="partnerLecturers.length === 0" class="text-center py-12 text-ink/50">
+          目前沒有合作講師資料
         </div>
-        <h2 class="font-serif text-2xl lg:text-3xl font-black text-navy mb-8">
-          練健康<span class="text-orange">合作講師</span>
-        </h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <template v-else>
+          <div class="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
+            <span class="w-5 h-0.5 bg-orange" />
+            醫療專業合作
+          </div>
+          <h2 class="font-serif text-2xl lg:text-3xl font-black text-navy mb-8">
+            練健康<span class="text-orange">合作講師</span>
+          </h2>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           <article
             v-for="lecturer in partnerLecturers"
             :key="lecturer.id"
@@ -162,7 +158,8 @@ const benefits = [
               </div>
             </div>
           </article>
-        </div>
+          </div>
+        </template>
       </div>
     </section>
 

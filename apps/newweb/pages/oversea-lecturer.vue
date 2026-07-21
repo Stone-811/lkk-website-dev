@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 useHead({
   title: '海外授權講師｜練健康 LKK Wellness',
   meta: [
@@ -6,20 +8,26 @@ useHead({
   ]
 })
 
-// 海外授權講師資料
-const overseasLecturers = [
-  {
-    id: 'zhou-qianmei',
-    name: '周千媚',
-    title: '海外授權講師',
-    photo: '/images/lecturers/overseas/zhou-qianmei.png',
-    region: '馬來西亞',
-    countries: ['馬來西亞'],
-    description: '練健康首位海外授權講師，將台灣專業的中高齡訓練系統引進馬來西亞，推廣安全有效的銀髮健身課程。',
-    specialties: ['中高齡肌力訓練', '特殊族群訓練'],
-    certifications: ['練健康授權講師認證'],
-  },
-]
+interface Lecturer {
+  id: string
+  name: string
+  slug?: string
+  photo?: string
+  title?: string
+  region?: string
+  countries?: string[]
+  description?: string
+  specialties?: string[]
+  certifications?: string[]
+}
+
+// Fetch lecturers from API
+const { data: lecturersResponse, pending } = await useFetch<{
+  success: boolean
+  data: Lecturer[]
+}>('/api/public/lecturers?type=overseas')
+
+const overseasLecturers = computed(() => lecturersResponse.value?.data || [])
 
 // 授權流程
 const steps = [
@@ -84,17 +92,26 @@ const steps = [
       </div>
     </section>
 
+    <!-- Loading -->
+    <div v-if="pending" class="flex items-center justify-center py-24">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
+    </div>
+
     <!-- Lecturers Grid -->
-    <section class="py-16 lg:py-24">
+    <section v-else class="py-16 lg:py-24">
       <div class="container mx-auto px-4">
-        <div class="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
-          <span class="w-5 h-0.5 bg-orange" />
-          授權講師
+        <div v-if="overseasLecturers.length === 0" class="text-center py-12 text-ink/50">
+          目前沒有海外授權講師資料
         </div>
-        <h2 class="font-serif text-2xl lg:text-3xl font-black text-navy mb-8">
-          海外<span class="text-orange">授權講師</span>
-        </h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <template v-else>
+          <div class="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
+            <span class="w-5 h-0.5 bg-orange" />
+            授權講師
+          </div>
+          <h2 class="font-serif text-2xl lg:text-3xl font-black text-navy mb-8">
+            海外<span class="text-orange">授權講師</span>
+          </h2>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           <article
             v-for="lecturer in overseasLecturers"
             :key="lecturer.id"
@@ -144,7 +161,8 @@ const steps = [
               </div>
             </div>
           </article>
-        </div>
+          </div>
+        </template>
       </div>
     </section>
 

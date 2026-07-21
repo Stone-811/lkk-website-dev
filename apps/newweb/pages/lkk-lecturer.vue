@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 useHead({
   title: '練健康講師｜練健康 LKK Wellness',
   meta: [
@@ -6,104 +8,26 @@ useHead({
   ]
 })
 
-// 授權講師資料
-const authorizedLecturers = [
-  {
-    id: 'cheng-yushao',
-    name: '鄭宇劭',
-    title: 'Lv 3 講師・物理治療師',
-    photo: '/images/lecturers/lkk/cheng-yushao.png',
-    specialties: ['運動專項肌力訓練', '中高齡/特殊族群訓練'],
-    certifications: ['競技與教練科學碩士', '物理治療學士'],
-  },
-  {
-    id: 'lin-xingchen',
-    name: '林星辰',
-    title: 'Lv 1 講師・物理治療師',
-    photo: '/images/lecturers/lkk/lin-xingchen.png',
-    specialties: ['中高齡/特殊族群訓練', '動作控制', '功能改善'],
-    certifications: ['物理治療學系', 'Neurac 認證'],
-  },
-  {
-    id: 'cheng-jiankuan',
-    name: '鄭健寬',
-    title: 'Lv 1 講師・職能治療師',
-    photo: '/images/lecturers/lkk/cheng-jiankuan.png',
-    specialties: ['中高齡/特殊族群訓練', '日常功能整合'],
-    certifications: ['職能治療學系'],
-  },
-  {
-    id: 'li-boqiao',
-    name: '李柏橋',
-    title: 'Lv 1 講師',
-    photo: '/images/lecturers/lkk/li-boqiao.png',
-    specialties: ['健力訓練', '中高齡肌力訓練'],
-    certifications: ['NSCA-CPT'],
-  },
-  {
-    id: 'wu-zhenming',
-    name: '吳禎明',
-    title: 'Lv 1 講師',
-    photo: '/images/lecturers/lkk/wu-zhenming.png',
-    specialties: ['運動科學檢測', '增肌訓練', '週期化課表設計'],
-    certifications: ['NSCA-CSCS', 'ACE-CPT'],
-  },
-  {
-    id: 'wang-yunting',
-    name: '王韻婷',
-    title: 'Lv 1 講師',
-    photo: '/images/lecturers/lkk/wang-yunting.png',
-    specialties: ['功能性訓練', '身體組成調整', '壺鈴', '中高齡訓練'],
-    certifications: ['NASM-CPT'],
-  },
-]
+interface Lecturer {
+  id: string
+  name: string
+  slug?: string
+  photo?: string
+  title?: string
+  organization?: string
+  description?: string
+  specialties?: string[]
+  courses?: string[]
+  certifications?: string[]
+}
 
-// 客座講師資料
-const guestLecturers = [
-  {
-    id: 'tseng-tzuhuan',
-    name: '曾子桓',
-    title: '訓練部區域經理',
-    photo: '/images/lecturers/lkk/tseng-tzuhuan.png',
-    specialties: ['肌力與體能訓練', '運動表現提升'],
-  },
-  {
-    id: 'wu-haoyu',
-    name: '吳皓宇',
-    title: '營養師・訓練部副理',
-    photo: '/images/lecturers/lkk/wu-haoyu.png',
-    specialties: ['運動營養', '增肌減脂', '中高齡訓練'],
-  },
-  {
-    id: 'xiao-yanrong',
-    name: '蕭彥嶸',
-    title: '運動防護師・南京店店主管',
-    photo: '/images/lecturers/lkk/xiao-yanrong.png',
-    specialties: ['重訓', '健力', '傷害預防'],
-  },
-  {
-    id: 'li-zheyu',
-    name: '李哲宇',
-    title: '新店七張店店主管',
-    photo: '/images/lecturers/lkk/li-zheyu.png',
-    specialties: ['肌力訓練', '功能性動作', '中高齡訓練'],
-  },
-  {
-    id: 'liuchang',
-    name: '石峻瑋',
-    title: '營運經理',
-    photo: '/images/lecturers/lkk/liuchang.png',
-    specialties: ['營運管理', '課程規劃'],
-  },
-  {
-    id: 'ruan-wenwen',
-    name: '阮玟文',
-    title: '品牌經理',
-    photo: '/images/lecturers/lkk/ruan-wenwen.png',
-    specialties: ['品牌行銷', '課程推廣'],
-    certifications: ['NSCA-CPT'],
-  },
-]
+// Fetch lecturers from API
+const { data: lecturersResponse, pending } = await useFetch<{
+  success: boolean
+  data: Lecturer[]
+}>('/api/public/lecturers?type=lkk')
+
+const lecturers = computed(() => lecturersResponse.value?.data || [])
 
 // 培訓課程
 const courses = [
@@ -163,11 +87,18 @@ const courses = [
       </div>
     </section>
 
+    <!-- Loading -->
+    <div v-if="pending" class="flex items-center justify-center py-24">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
+    </div>
+
     <!-- Instructors Grid -->
-    <section class="py-16 lg:py-24">
+    <section v-else class="py-16 lg:py-24">
       <div class="container mx-auto px-4">
-        <!-- 授權講師 -->
-        <div class="mb-16">
+        <div v-if="lecturers.length === 0" class="text-center py-12 text-ink/50">
+          目前沒有講師資料
+        </div>
+        <div v-else>
           <div class="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
             <span class="w-5 h-0.5 bg-orange" />
             授權講師
@@ -177,66 +108,7 @@ const courses = [
           </h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             <article
-              v-for="lecturer in authorizedLecturers"
-              :key="lecturer.id"
-              class="bg-white rounded-2xl overflow-hidden shadow-lg border border-navy/10 hover:-translate-y-1 transition-transform"
-            >
-              <div class="aspect-square bg-gradient-to-br from-navy to-navy/80 relative">
-                <img
-                  v-if="lecturer.photo"
-                  :src="lecturer.photo"
-                  :alt="lecturer.name"
-                  class="w-full h-full object-cover object-top"
-                />
-                <div v-else class="absolute inset-0 flex items-center justify-center">
-                  <span class="font-serif text-7xl font-black text-white/20">{{ lecturer.name.charAt(0) }}</span>
-                </div>
-              </div>
-
-              <div class="p-5">
-                <div class="mb-3">
-                  <h3 class="font-serif text-xl font-bold text-navy">{{ lecturer.name }}</h3>
-                  <p class="text-orange font-semibold text-sm">{{ lecturer.title }}</p>
-                </div>
-
-                <div v-if="lecturer.specialties?.length" class="flex flex-wrap gap-1.5 mb-3">
-                  <span
-                    v-for="spec in lecturer.specialties"
-                    :key="spec"
-                    class="text-xs font-medium text-white bg-orange px-2.5 py-1 rounded-full"
-                  >
-                    {{ spec }}
-                  </span>
-                </div>
-
-                <div v-if="lecturer.certifications?.length" class="pt-3 border-t border-navy/10">
-                  <div class="flex flex-wrap gap-1.5">
-                    <span
-                      v-for="cert in lecturer.certifications"
-                      :key="cert"
-                      class="text-xs text-navy/70 bg-navy/[0.06] px-2 py-0.5 rounded"
-                    >
-                      {{ cert }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <!-- 客座講師 -->
-        <div>
-          <div class="flex items-center gap-2 text-sm font-bold text-orange tracking-widest uppercase mb-2">
-            <span class="w-5 h-0.5 bg-orange" />
-            客座講師
-          </div>
-          <h2 class="font-serif text-2xl lg:text-3xl font-black text-navy mb-8">
-            專業<span class="text-orange">客座講師</span>
-          </h2>
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            <article
-              v-for="lecturer in guestLecturers"
+              v-for="lecturer in lecturers"
               :key="lecturer.id"
               class="bg-white rounded-2xl overflow-hidden shadow-lg border border-navy/10 hover:-translate-y-1 transition-transform"
             >
