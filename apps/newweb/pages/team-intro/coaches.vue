@@ -341,31 +341,37 @@ function setActiveStore(storeSlug: string | null) {
       </div>
     </section>
 
-    <!-- Coach Detail Modal -->
+    <!-- Coach Detail Modal (Bottom Sheet) -->
     <Teleport to="body">
-      <Transition name="modal">
+      <Transition name="bottom-sheet">
         <div
           v-if="selectedCoach"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-          @click.self="closeCoachModal"
+          class="fixed inset-0 z-50 flex items-end justify-center"
         >
           <!-- Backdrop -->
-          <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeCoachModal" />
+          <div class="absolute inset-0 bg-black/60" @click="closeCoachModal" />
 
-          <!-- Modal Content -->
-          <div class="relative bg-white rounded-2xl w-full max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl z-10">
+          <!-- Modal Content - Bottom Sheet -->
+          <div class="relative bg-white rounded-t-3xl w-full max-h-[90vh] shadow-2xl z-10 flex flex-col pb-safe">
+            <!-- Drag Handle -->
+            <div class="flex justify-center pt-3 pb-2 flex-shrink-0">
+              <div class="w-10 h-1 bg-gray-300 rounded-full" />
+            </div>
+
             <!-- Close Button -->
             <button
               @click="closeCoachModal"
-              class="absolute top-3 right-3 z-20 w-9 h-9 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors"
+              class="absolute top-3 right-4 z-20 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
             >
-              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
-            <!-- Coach Header -->
-            <div class="flex flex-col md:flex-row">
+            <!-- Scrollable Content -->
+            <div class="overflow-y-auto flex-1 overscroll-contain">
+              <!-- Coach Header -->
+              <div class="flex flex-col sm:flex-row">
               <!-- Photo -->
               <div class="w-full md:w-2/5 aspect-square md:aspect-[3/4] bg-cream-200 flex-shrink-0 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
                 <img
@@ -492,22 +498,28 @@ function setActiveStore(storeSlug: string | null) {
   display: none;
 }
 
-/* Modal transitions */
-.modal-enter-active,
-.modal-leave-active {
+/* Bottom Sheet transitions */
+.bottom-sheet-enter-active,
+.bottom-sheet-leave-active {
   transition: opacity 0.3s ease;
 }
-.modal-enter-active > div:last-child,
-.modal-leave-active > div:last-child {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+.bottom-sheet-enter-active > div:last-child,
+.bottom-sheet-leave-active > div:last-child {
+  transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
 }
-.modal-enter-from,
-.modal-leave-to {
+.bottom-sheet-enter-from,
+.bottom-sheet-leave-to {
   opacity: 0;
 }
-.modal-enter-from > div:last-child,
-.modal-leave-to > div:last-child {
-  transform: scale(0.95) translateY(10px);
-  opacity: 0;
+.bottom-sheet-enter-from > div:last-child {
+  transform: translateY(100%);
+}
+.bottom-sheet-leave-to > div:last-child {
+  transform: translateY(100%);
+}
+
+/* Safe area for mobile devices with home indicator */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 </style>
