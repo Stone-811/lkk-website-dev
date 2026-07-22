@@ -94,18 +94,23 @@ export default defineEventHandler(async (event) => {
       };
     }
 
-    // Get store info for each coach
-    const storeIds = [...new Set(coaches.map(c => c.storeId).filter(Boolean))];
+    // Get store info for each coach - batch query instead of N+1
+    const storeIds = [...new Set(coaches.map(c => c.storeId).filter(Boolean))] as string[];
     const storesMap: Record<string, { id: string; name: string; slug: string }> = {};
 
     if (storeIds.length > 0) {
-      for (const sid of storeIds) {
-        if (sid) {
-          const storeDoc = await db.collection('stores').doc(sid).get();
-          if (storeDoc.exists) {
-            const data = storeDoc.data() as StoreDoc;
-            storesMap[sid] = { id: storeDoc.id, name: data.name, slug: data.slug };
-          }
+      // Firestore allows up to 10 items in 'in' query, batch if needed
+      const batchSize = 10;
+      for (let i = 0; i < storeIds.length; i += batchSize) {
+        const batch = storeIds.slice(i, i + batchSize);
+        const storesSnapshot = await db
+          .collection('stores')
+          .where('__name__', 'in', batch)
+          .get();
+
+        for (const doc of storesSnapshot.docs) {
+          const data = doc.data() as StoreDoc;
+          storesMap[doc.id] = { id: doc.id, name: data.name, slug: data.slug };
         }
       }
     }

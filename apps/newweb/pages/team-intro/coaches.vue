@@ -132,7 +132,7 @@ function scrollToStore(storeSlug: string) {
         />
       </div>
 
-      <div class="container mx-auto px-4 relative z-10 py-16 lg:py-24 text-center">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 py-16 lg:py-24 text-center">
         <nav class="flex items-center justify-center gap-1.5 text-xs text-white/35 mb-6">
           <NuxtLink to="/" class="hover:text-white/70 transition-colors">練健康</NuxtLink>
           <span class="text-white/20">›</span>
@@ -161,7 +161,7 @@ function scrollToStore(storeSlug: string) {
 
     <!-- Store Filter Bar -->
     <section class="border-b border-cream-200 sticky top-16 bg-cream/95 backdrop-blur-sm z-20">
-      <div class="container mx-auto px-4">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="flex gap-2 py-4 overflow-x-auto scrollbar-hide">
           <button
             @click="setActiveStore(null)"
@@ -193,7 +193,7 @@ function scrollToStore(storeSlug: string) {
 
     <!-- Quick Jump (only visible when showing all) -->
     <section v-if="!activeStore && coachesByStore.length > 1" class="bg-cream-100 border-b border-cream-200">
-      <div class="container mx-auto px-4 py-3">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8 py-3">
         <div class="flex items-center gap-4 text-sm">
           <span class="text-ink/50">快速跳轉：</span>
           <div class="flex gap-2 flex-wrap">
@@ -216,13 +216,13 @@ function scrollToStore(storeSlug: string) {
     </div>
 
     <!-- Coaches by Store -->
-    <section v-else class="py-12 lg:py-16">
-      <div class="container mx-auto px-4">
+    <section v-else class="py-12 lg:py-20">
+      <div class="px-6 lg:px-8">
         <div v-if="filteredCoachesByStore.length === 0" class="text-center py-12 text-ink/50">
           目前沒有教練資料
         </div>
 
-        <div v-else class="space-y-16">
+        <div v-else class="space-y-20">
           <!-- Store Section -->
           <div
             v-for="group in filteredCoachesByStore"
@@ -231,7 +231,7 @@ function scrollToStore(storeSlug: string) {
             class="scroll-mt-40"
           >
             <!-- Store Header -->
-            <div class="flex items-center gap-4 mb-8">
+            <div class="max-w-7xl mx-auto flex items-center gap-4 mb-8">
               <div class="flex-1">
                 <div class="flex items-center gap-3 mb-2">
                   <h2 class="font-serif text-2xl lg:text-3xl font-bold text-navy">
@@ -254,63 +254,51 @@ function scrollToStore(storeSlug: string) {
               </div>
             </div>
 
-            <!-- Coaches Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Coaches Grid - Full width with more columns -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 lg:gap-6">
               <div
                 v-for="coach in group.coaches"
                 :key="coach.id"
-                class="group bg-white rounded-2xl overflow-hidden shadow-sm border border-navy/10 hover:shadow-lg hover:border-orange/30 transition-all duration-300"
+                class="group bg-white rounded-xl overflow-hidden shadow-sm border border-navy/10 hover:shadow-lg hover:border-orange/30 transition-all duration-300"
               >
                 <!-- Coach Image -->
-                <div class="aspect-square relative bg-cream-200 overflow-hidden">
+                <div class="aspect-[3/4] relative bg-cream-200 overflow-hidden">
                   <img
                     v-if="coach.photo"
                     :src="coach.photo"
                     :alt="coach.name"
+                    loading="lazy"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div v-else class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-navy to-navy/80">
-                    <span class="font-serif text-6xl font-black text-white/20">{{ coach.name.charAt(0) }}</span>
+                    <span class="font-serif text-5xl font-black text-white/20">{{ coach.name.charAt(0) }}</span>
                   </div>
                 </div>
 
-                <!-- Coach Info -->
-                <div class="p-5">
-                  <div class="mb-3">
-                    <h3 class="text-xl font-bold text-navy font-serif group-hover:text-orange transition-colors">
-                      {{ coach.name }}
-                    </h3>
-                    <p v-if="coach.roleTitle" class="text-orange font-semibold text-sm">
-                      {{ coach.roleTitle }}
-                    </p>
-                  </div>
+                <!-- Coach Info - Compact -->
+                <div class="p-4">
+                  <h3 class="text-lg font-bold text-navy font-serif group-hover:text-orange transition-colors truncate">
+                    {{ coach.name }}
+                  </h3>
+                  <p v-if="coach.roleTitle" class="text-orange font-medium text-sm truncate">
+                    {{ coach.roleTitle }}
+                  </p>
 
-                  <!-- Specialties -->
-                  <div v-if="coach.specialties && coach.specialties.length > 0" class="flex flex-wrap gap-1.5 mb-4">
+                  <!-- Specialties - Compact -->
+                  <div v-if="coach.specialties && coach.specialties.length > 0" class="flex flex-wrap gap-1 mt-2">
                     <span
-                      v-for="specialty in coach.specialties.slice(0, 3)"
+                      v-for="specialty in coach.specialties.slice(0, 2)"
                       :key="specialty"
-                      class="px-2.5 py-1 bg-cream text-ink/70 text-xs rounded-full"
+                      class="px-2 py-0.5 bg-cream text-ink/70 text-[11px] rounded-full truncate max-w-[90px]"
                     >
                       {{ specialty }}
                     </span>
                     <span
-                      v-if="coach.specialties.length > 3"
-                      class="px-2.5 py-1 text-ink/40 text-xs"
+                      v-if="coach.specialties.length > 2"
+                      class="px-2 py-0.5 text-ink/40 text-[11px]"
                     >
-                      +{{ coach.specialties.length - 3 }}
+                      +{{ coach.specialties.length - 2 }}
                     </span>
-                  </div>
-
-                  <!-- Certifications Preview -->
-                  <div v-if="coach.certifications && coach.certifications.length > 0" class="pt-3 border-t border-cream-200">
-                    <p class="text-[10px] text-ink/40 uppercase tracking-wider mb-1.5">專業認證</p>
-                    <p class="text-xs text-ink/60 line-clamp-2">
-                      {{ coach.certifications.slice(0, 2).join('、') }}
-                      <span v-if="coach.certifications.length > 2" class="text-ink/40">
-                        等 {{ coach.certifications.length }} 項
-                      </span>
-                    </p>
                   </div>
                 </div>
               </div>
@@ -322,7 +310,7 @@ function scrollToStore(storeSlug: string) {
 
     <!-- CTA Section -->
     <section class="bg-orange py-16 lg:py-20 text-center">
-      <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto px-6 lg:px-8">
         <h2 class="font-serif text-3xl lg:text-4xl font-black text-white mb-3">
           找到適合您的教練了嗎？
         </h2>
