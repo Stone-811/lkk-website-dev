@@ -440,6 +440,43 @@ npm run preview
 - 頁面使用 `useHead()` 設定 meta
 - 動態路由使用 `[param].vue` 檔名格式
 
+### Composables（apps/newweb/composables/）
+
+共用邏輯抽取為 Nuxt composables，自動匯入無需 import：
+
+```
+composables/
+├── useFormatDate.ts      # 日期格式化
+└── useLeadStatus.ts      # 名單狀態標籤與樣式
+```
+
+**useFormatDate**
+
+```typescript
+const { formatDateTime, formatDate, formatRelativeTime } = useFormatDate()
+
+formatDateTime('2024-01-15T10:30:00')  // '2024/01/15 10:30'
+formatDate('2024-01-15')               // '2024/01/15'
+formatRelativeTime('2024-01-15')       // '3 天前' 或日期
+```
+
+**useLeadStatus**
+
+```typescript
+const {
+  statusLabels,       // Record<string, { label, class }>
+  leadTypeLabels,     // Record<string, { label, class }>
+  statusOptions,      // [{ value, label }] 含「全部狀態」
+  leadTypeOptions,    // [{ value, label }] 含「全部來源」
+  getStatusLabel,     // (status) => '新名單'
+  getStatusClass,     // (status) => 'bg-blue-100 text-blue-700'
+  getLeadTypeLabel,   // (type) => '預約體驗'
+  getLeadTypeClass,   // (type) => 'bg-blue-100 text-blue-700'
+} = useLeadStatus()
+```
+
+**使用頁面**：leads.vue、cooperation.vue、index.vue（dashboard）
+
 ### Nuxt Server API（apps/newweb/server/）
 
 newweb 使用 Nitro 作為 server-side 引擎，API 放在 `server/api/` 目錄：
