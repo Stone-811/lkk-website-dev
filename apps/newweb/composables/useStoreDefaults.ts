@@ -25,7 +25,7 @@ export interface StoreDefaultData {
 const storeDefaults: Record<string, StoreDefaultData> = {
   xindian: {
     phone: '02-8914-6428',
-    googleMapUrl: 'https://maps.app.goo.gl/p4E4vEU7nHjS9ycP9',
+    googleMapUrl: 'https://www.google.com/maps/search/?api=1&query=24.9682,121.5396',
     description: '新北市新店區唯一專注中高齡與特殊族群的肌力訓練中心，由物理治療師背景教練帶領，捷運七張站步行 3 分鐘。',
     businessHours: {
       weekday: '09:00 – 21:00',
