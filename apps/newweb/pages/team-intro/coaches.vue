@@ -353,7 +353,7 @@ function setActiveStore(storeSlug: string | null) {
           <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeCoachModal" />
 
           <!-- Modal Content -->
-          <div class="relative bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+          <div class="relative bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
             <!-- Close Button -->
             <button
               @click="closeCoachModal"
@@ -364,7 +364,7 @@ function setActiveStore(storeSlug: string | null) {
               </svg>
             </button>
 
-            <div class="overflow-y-auto max-h-[90vh]">
+            <div>
               <!-- Coach Header -->
               <div class="relative">
                 <div class="flex flex-col md:flex-row">
