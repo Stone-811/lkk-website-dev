@@ -25,7 +25,7 @@ export interface StoreDefaultData {
 const storeDefaults: Record<string, StoreDefaultData> = {
   xindian: {
     phone: '02-8914-6428',
-    googleMapUrl: 'https://www.google.com/maps/search/?api=1&query=24.9682,121.5396',
+    googleMapUrl: 'https://maps.app.goo.gl/TMJki8DVdS6bE3sR7',
     description: '新北市新店區唯一專注中高齡與特殊族群的肌力訓練中心，由物理治療師背景教練帶領，捷運七張站步行 3 分鐘。',
     businessHours: {
       weekday: '09:00 – 21:00',
@@ -43,7 +43,7 @@ const storeDefaults: Record<string, StoreDefaultData> = {
   },
   nanjing: {
     phone: '02-2507-4196',
-    googleMapUrl: 'https://www.google.com/maps/search/?api=1&query=25.0522,121.5443',
+    googleMapUrl: 'https://maps.app.goo.gl/gnGhthhJNtiww4jn9',
     description: '位於台北市中心南京復興商圈，捷運南京復興站步行 3 分鐘。專為中高齡及特殊族群設計的肌力訓練中心。',
     businessHours: {
       weekday: '09:00 – 21:00',
@@ -61,7 +61,7 @@ const storeDefaults: Record<string, StoreDefaultData> = {
   },
   songjiang: {
     phone: '02-2537-1055',
-    googleMapUrl: 'https://www.google.com/maps/search/?api=1&query=25.0531,121.5332',
+    googleMapUrl: 'https://maps.app.goo.gl/YzNzUDwxVLgSJgxr8',
     description: '位於台北市松江路商圈，捷運松江南京站步行 5 分鐘。專業物理治療師教練團隊。',
     businessHours: {
       weekday: '09:00 – 21:00',
@@ -79,7 +79,7 @@ const storeDefaults: Record<string, StoreDefaultData> = {
   },
   ximending: {
     phone: '02-2370-3245',
-    googleMapUrl: 'https://www.google.com/maps/search/?api=1&query=25.0423,121.5069',
+    googleMapUrl: 'https://maps.app.goo.gl/9N3aCCfo1DFP1raG7',
     description: '位於西門町商圈，捷運西門站步行 3 分鐘。鄰近交通便利，適合各年齡層。',
     businessHours: {
       weekday: '09:00 – 21:00',
