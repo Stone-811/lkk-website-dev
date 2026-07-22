@@ -346,14 +346,15 @@ function setActiveStore(storeSlug: string | null) {
       <Transition name="modal">
         <div
           v-if="selectedCoach"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
-          @click.self="closeCoachModal"
+          class="fixed inset-0 z-50 overflow-y-auto"
         >
           <!-- Backdrop -->
-          <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeCoachModal" />
+          <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="closeCoachModal" />
 
-          <!-- Modal Content -->
-          <div class="relative bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
+          <!-- Modal Wrapper for centering -->
+          <div class="min-h-full flex items-center justify-center p-4">
+            <!-- Modal Content -->
+            <div class="relative bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl z-10">
             <!-- Close Button -->
             <button
               @click="closeCoachModal"
@@ -488,6 +489,7 @@ function setActiveStore(storeSlug: string | null) {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </Transition>
