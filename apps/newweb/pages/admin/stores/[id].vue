@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
+const { getStoreDefaults } = useStoreDefaults()
+
 definePageMeta({
   layout: 'admin'
 })
@@ -192,6 +194,10 @@ onMounted(async () => {
         }
       }
 
+      // 取得預設資料（如果有的話）
+      const defaults = getStoreDefaults(storeData.slug || '')
+
+      // 合併預設資料（只在欄位為空時使用預設值）
       formData.value = {
         id: storeData.id || '',
         name: storeData.name || '',
@@ -199,10 +205,30 @@ onMounted(async () => {
         city: storeData.city || '',
         district: storeData.district || '',
         address: storeData.address || '',
-        phone: storeData.phone || '',
-        googleMapUrl: storeData.googleMapUrl || '',
-        businessHours,
-        transport,
+        phone: storeData.phone || defaults?.phone || '',
+        googleMapUrl: storeData.googleMapUrl || defaults?.googleMapUrl || '',
+        businessHours: {
+          weekday: businessHours.weekday || defaults?.businessHours?.weekday || '09:00 - 21:00',
+          saturday: businessHours.saturday || defaults?.businessHours?.saturday || '09:00 - 18:00',
+          sunday: businessHours.sunday || defaults?.businessHours?.sunday || '公休',
+          holiday: businessHours.holiday || defaults?.businessHours?.holiday || '依公告，請來電確認',
+        },
+        transport: {
+          mrt: {
+            station: transport.mrt.station || defaults?.transport?.mrt?.station || '',
+            desc: transport.mrt.desc || defaults?.transport?.mrt?.desc || '',
+          },
+          bus: {
+            stop: transport.bus.stop || defaults?.transport?.bus?.stop || '',
+            desc: transport.bus.desc || defaults?.transport?.bus?.desc || '',
+          },
+          car: {
+            desc: transport.car.desc || defaults?.transport?.car?.desc || '',
+          },
+          parking: {
+            desc: transport.parking.desc || defaults?.transport?.parking?.desc || '',
+          },
+        },
         images,
         sortOrder: storeData.sortOrder || 0,
         isActive: storeData.isActive ?? true,
