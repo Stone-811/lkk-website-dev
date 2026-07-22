@@ -193,8 +193,8 @@ function scrollToStore(storeSlug: string) {
 
     <!-- Quick Jump (only visible when showing all) -->
     <section v-if="!activeStore && coachesByStore.length > 1" class="bg-cream-100 border-b border-cream-200">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8 py-3">
-        <div class="flex items-center gap-4 text-sm">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <div class="flex items-center gap-4 text-sm py-3">
           <span class="text-ink/50">快速跳轉：</span>
           <div class="flex gap-2 flex-wrap">
             <button
@@ -217,12 +217,12 @@ function scrollToStore(storeSlug: string) {
 
     <!-- Coaches by Store -->
     <section v-else class="py-12 lg:py-20">
-      <div class="px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div v-if="filteredCoachesByStore.length === 0" class="text-center py-12 text-ink/50">
           目前沒有教練資料
         </div>
 
-        <div v-else class="space-y-20">
+        <div v-else class="space-y-16">
           <!-- Store Section -->
           <div
             v-for="group in filteredCoachesByStore"
@@ -231,9 +231,9 @@ function scrollToStore(storeSlug: string) {
             class="scroll-mt-40"
           >
             <!-- Store Header -->
-            <div class="max-w-7xl mx-auto flex items-center gap-4 mb-8">
+            <div class="flex items-center gap-4 mb-6">
               <div class="flex-1">
-                <div class="flex items-center gap-3 mb-2">
+                <div class="flex items-center gap-3 mb-1">
                   <h2 class="font-serif text-2xl lg:text-3xl font-bold text-navy">
                     {{ group.store?.name || '其他門店' }}
                   </h2>
@@ -254,8 +254,8 @@ function scrollToStore(storeSlug: string) {
               </div>
             </div>
 
-            <!-- Coaches Grid - Full width with more columns -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 lg:gap-6">
+            <!-- Coaches Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-5">
               <div
                 v-for="coach in group.coaches"
                 :key="coach.id"
