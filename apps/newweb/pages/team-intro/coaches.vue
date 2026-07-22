@@ -39,17 +39,19 @@ interface Store {
 // Active store filter
 const activeStore = ref<string | null>(null)
 
-// Fetch coaches from API
-const { data: coachesResponse, pending } = await useFetch<{
+// Fetch coaches and stores with lazy loading to prevent blocking
+const { data: coachesResponse, pending: coachesPending } = useLazyFetch<{
   success: boolean
   data: Coach[]
 }>('/api/public/coaches')
 
-// Fetch stores for filter navigation
-const { data: storesResponse } = await useFetch<{
+const { data: storesResponse, pending: storesPending } = useLazyFetch<{
   success: boolean
   data: Store[]
 }>('/api/public/stores')
+
+// Combined pending state
+const pending = computed(() => coachesPending.value || storesPending.value)
 
 const coaches = computed(() => coachesResponse.value?.data || [])
 const stores = computed(() => storesResponse.value?.data || [])
@@ -106,15 +108,6 @@ function setActiveStore(storeSlug: string | null) {
   activeStore.value = storeSlug
 }
 
-// Scroll to store section
-function scrollToStore(storeSlug: string) {
-  const element = document.getElementById(`store-${storeSlug}`)
-  if (element) {
-    const offset = 140 // Account for sticky header + filter bar
-    const y = element.getBoundingClientRect().top + window.scrollY - offset
-    window.scrollTo({ top: y, behavior: 'smooth' })
-  }
-}
 </script>
 
 <template>
@@ -191,29 +184,26 @@ function scrollToStore(storeSlug: string) {
       </div>
     </section>
 
-    <!-- Quick Jump (only visible when showing all) -->
-    <section v-if="!activeStore && coachesByStore.length > 1" class="bg-cream-100 border-b border-cream-200">
+    <!-- Loading Skeleton -->
+    <section v-if="pending" class="py-12 lg:py-20">
       <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="flex items-center gap-4 text-sm py-3">
-          <span class="text-ink/50">快速跳轉：</span>
-          <div class="flex gap-2 flex-wrap">
-            <button
-              v-for="group in coachesByStore"
-              :key="group.store?.slug || 'no-store'"
-              @click="scrollToStore(group.store?.slug || 'no-store')"
-              class="text-navy hover:text-orange transition-colors"
-            >
-              {{ group.store?.name || '其他' }} ({{ group.coaches.length }})
-            </button>
+        <!-- Skeleton Store Header -->
+        <div class="flex items-center gap-3 mb-6">
+          <div class="h-8 w-32 bg-cream-300 rounded animate-pulse" />
+          <div class="h-6 w-20 bg-cream-300 rounded-full animate-pulse" />
+        </div>
+        <!-- Skeleton Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-5">
+          <div v-for="i in 10" :key="i" class="bg-white rounded-xl overflow-hidden border border-navy/10">
+            <div class="aspect-[3/4] bg-cream-200 animate-pulse" />
+            <div class="p-4 space-y-2">
+              <div class="h-5 w-20 bg-cream-200 rounded animate-pulse" />
+              <div class="h-4 w-16 bg-cream-200 rounded animate-pulse" />
+            </div>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- Loading -->
-    <div v-if="pending" class="flex items-center justify-center py-24">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange"></div>
-    </div>
 
     <!-- Coaches by Store -->
     <section v-else class="py-12 lg:py-20">
