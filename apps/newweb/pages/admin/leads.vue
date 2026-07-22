@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
+const { statusLabels, getStatusLabel, getStatusClass } = useLeadStatus()
+const { formatDateTime } = useFormatDate()
+
 definePageMeta({
   layout: 'admin'
 })
@@ -97,13 +100,6 @@ async function updateStatus(lead: Lead, event: Event) {
 
 onMounted(fetchLeads)
 
-const statusLabels: Record<string, { label: string; class: string }> = {
-  new: { label: '新名單', class: 'bg-blue-100 text-blue-700' },
-  contacted: { label: '已聯繫', class: 'bg-yellow-100 text-yellow-700' },
-  scheduled: { label: '已預約', class: 'bg-purple-100 text-purple-700' },
-  completed: { label: '已完成', class: 'bg-green-100 text-green-700' },
-  cancelled: { label: '已取消', class: 'bg-gray-100 text-gray-600' },
-}
 
 const filteredLeads = computed(() => {
   let result = leads.value.filter(lead => {
@@ -201,7 +197,7 @@ function handleExport() {
       lead.payload?.paymentMethod || '',
       sources,
       lead.internalNote || '',
-      lead.createdAt ? new Date(lead.createdAt).toLocaleString('zh-TW') : '',
+      formatDateTime(lead.createdAt),
     ]
   })
 
@@ -372,7 +368,7 @@ function handleExport() {
               </select>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-400 text-sm">
-              {{ lead.createdAt ? new Date(lead.createdAt).toLocaleString('zh-TW') : '-' }}
+              {{ formatDateTime(lead.createdAt) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right">
               <button
@@ -428,7 +424,7 @@ function handleExport() {
             </div>
             <div>
               <p class="text-sm text-gray-500">建立時間</p>
-              <p class="font-medium">{{ selectedLead.createdAt ? new Date(selectedLead.createdAt).toLocaleString('zh-TW') : '-' }}</p>
+              <p class="font-medium">{{ formatDateTime(selectedLead.createdAt) }}</p>
             </div>
 
             <!-- Booking specific fields -->

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
+const { getStatusLabel, getStatusClass, getLeadTypeLabel, getLeadTypeClass } = useLeadStatus()
+const { formatDateTime } = useFormatDate()
+
 definePageMeta({
   layout: 'admin'
 })
@@ -80,45 +83,6 @@ const secondaryStats = computed(() => [
   { label: '總名單數', value: stats.value.totalLeads.toString(), href: '/admin/leads' },
 ])
 
-const typeLabels: Record<string, string> = {
-  booking: '預約體驗',
-  franchise: '加盟洽詢',
-  cooperation: '合作洽詢',
-}
-
-const typeColors: Record<string, string> = {
-  booking: 'bg-blue-100 text-blue-700',
-  franchise: 'bg-purple-100 text-purple-700',
-  cooperation: 'bg-green-100 text-green-700',
-}
-
-const statusColors: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-700',
-  contacted: 'bg-yellow-100 text-yellow-700',
-  scheduled: 'bg-purple-100 text-purple-700',
-  completed: 'bg-green-100 text-green-700',
-  cancelled: 'bg-red-100 text-red-700',
-}
-
-const statusLabels: Record<string, string> = {
-  new: '新名單',
-  contacted: '已聯繫',
-  scheduled: '已預約',
-  completed: '已完成',
-  cancelled: '已取消',
-}
-
-function formatDate(dateStr: string) {
-  if (!dateStr) return '-'
-  const date = new Date(dateStr)
-  return date.toLocaleString('zh-TW', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 
 // Quick actions
 const quickActions = [
@@ -232,17 +196,17 @@ const quickActions = [
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ lead.phone }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span :class="[typeColors[lead.type] || 'bg-gray-100 text-gray-700', 'text-xs font-medium px-2.5 py-1 rounded-full']">
-                    {{ typeLabels[lead.type] || lead.type }}
+                  <span :class="[getLeadTypeClass(lead.type), 'text-xs font-medium px-2.5 py-1 rounded-full']">
+                    {{ getLeadTypeLabel(lead.type) }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ lead.storeName }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span :class="[statusColors[lead.status] || 'bg-gray-100 text-gray-700', 'text-xs font-medium px-2.5 py-1 rounded-full']">
-                    {{ statusLabels[lead.status] || lead.status }}
+                  <span :class="[getStatusClass(lead.status), 'text-xs font-medium px-2.5 py-1 rounded-full']">
+                    {{ getStatusLabel(lead.status) }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-400 text-sm">{{ formatDate(lead.createdAt) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-400 text-sm">{{ formatDateTime(lead.createdAt) }}</td>
               </tr>
             </tbody>
           </table>
