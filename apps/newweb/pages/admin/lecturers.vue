@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-
 definePageMeta({
   layout: 'admin'
 })
@@ -27,9 +25,15 @@ interface Lecturer {
   isActive: boolean
 }
 
-const lecturers = ref<Lecturer[]>([])
-const isLoading = ref(true)
-const error = ref('')
+// 使用 useLazyAsyncData 優化載入速度（不阻塞導航）
+const { data: lecturersData, pending: isLoading, error: fetchError, refresh: refreshLecturers } = await useLazyAsyncData(
+  'admin-lecturers',
+  () => $fetch<{ success: boolean; data: Lecturer[] }>('/api/admin/lecturers'),
+  { server: false }
+)
+
+const lecturers = computed(() => lecturersData.value?.data || [])
+const error = computed(() => fetchError.value?.data?.message || (fetchError.value ? '載入失敗' : ''))
 
 // Edit modal
 const showEditModal = ref(false)
@@ -128,23 +132,6 @@ function removePhoto() {
   formData.value.photo = ''
 }
 
-// Fetch lecturers from API
-async function fetchLecturers() {
-  isLoading.value = true
-  error.value = ''
-  try {
-    const response = await $fetch<{ success: boolean; data: Lecturer[] }>('/api/admin/lecturers')
-    if (response.success) {
-      lecturers.value = response.data
-    }
-  } catch (e: any) {
-    error.value = e.data?.message || '載入失敗'
-    console.error('Error fetching lecturers:', e)
-  } finally {
-    isLoading.value = false
-  }
-}
-
 function openEditModal(lecturer?: Lecturer) {
   if (lecturer) {
     editingLecturer.value = lecturer
@@ -227,7 +214,7 @@ async function saveLecturer() {
     })
 
     if (response.success) {
-      await fetchLecturers()
+      await refreshLecturers()
       closeEditModal()
     } else {
       alert(response.error || '儲存失敗')
@@ -246,7 +233,7 @@ async function toggleActive(lecturer: Lecturer) {
       method: 'PATCH',
       body: { isActive: !lecturer.isActive },
     })
-    lecturer.isActive = !lecturer.isActive
+    await refreshLecturers()
   } catch (e: any) {
     alert(e.data?.message || '更新失敗')
   }
@@ -259,7 +246,7 @@ async function deleteLecturer(lecturer: Lecturer) {
     await $fetch(`/api/admin/lecturers/${lecturer.id}`, {
       method: 'DELETE',
     })
-    lecturers.value = lecturers.value.filter(l => l.id !== lecturer.id)
+    await refreshLecturers()
   } catch (e: any) {
     alert(e.data?.message || '刪除失敗')
   }
@@ -267,7 +254,6 @@ async function deleteLecturer(lecturer: Lecturer) {
 
 // Move lecturer up/down in sort order
 async function moveLecturer(lecturer: Lecturer, direction: 'up' | 'down') {
-  // Use filteredLecturers for current view, but update main array
   const currentList = filteredLecturers.value
   const currentIndex = currentList.findIndex(l => l.id === lecturer.id)
   if (currentIndex === -1) return
@@ -275,26 +261,17 @@ async function moveLecturer(lecturer: Lecturer, direction: 'up' | 'down') {
   const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
   if (newIndex < 0 || newIndex >= currentList.length) return
 
-  // Get the IDs we need to swap
-  const currentId = currentList[currentIndex].id
-  const swapId = currentList[newIndex].id
-
-  // Find these in the main array and swap their sortOrder
-  const mainIndex1 = lecturers.value.findIndex(l => l.id === currentId)
-  const mainIndex2 = lecturers.value.findIndex(l => l.id === swapId)
+  // Prepare reorder data with swapped positions
+  const items = [...lecturers.value]
+  const mainIndex1 = items.findIndex(l => l.id === currentList[currentIndex].id)
+  const mainIndex2 = items.findIndex(l => l.id === currentList[newIndex].id)
 
   if (mainIndex1 === -1 || mainIndex2 === -1) return
 
-  // Swap in main array
-  const items = [...lecturers.value]
   const temp = items[mainIndex1]
   items[mainIndex1] = items[mainIndex2]
   items[mainIndex2] = temp
 
-  // Update local state immediately
-  lecturers.value = items
-
-  // Prepare reorder data for all items
   const reorderItems = items.map((item, index) => ({
     id: item.id,
     sortOrder: index + 1,
@@ -305,13 +282,8 @@ async function moveLecturer(lecturer: Lecturer, direction: 'up' | 'down') {
       method: 'PATCH',
       body: { items: reorderItems },
     })
-    // Update local sortOrder values
-    lecturers.value.forEach((l, idx) => {
-      l.sortOrder = idx + 1
-    })
+    await refreshLecturers()
   } catch (e: any) {
-    // Revert on error
-    await fetchLecturers()
     alert(e.data?.message || '更新排序失敗')
   }
 }
@@ -333,8 +305,6 @@ function handleNameChange() {
     formData.value.slug = generateSlug(formData.value.name)
   }
 }
-
-onMounted(fetchLecturers)
 
 const filteredLecturers = computed(() => {
   let result = lecturers.value.filter(lecturer => {

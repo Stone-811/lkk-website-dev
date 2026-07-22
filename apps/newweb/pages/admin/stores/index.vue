@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-
 definePageMeta({
   layout: 'admin'
 })
@@ -21,25 +19,15 @@ interface Store {
   coachCount?: number
 }
 
-const stores = ref<Store[]>([])
-const isLoading = ref(true)
-const error = ref('')
+// 使用 useLazyAsyncData 優化載入速度（不阻塞導航）
+const { data: storesData, pending: isLoading, error: fetchError, refresh } = await useLazyAsyncData(
+  'admin-stores',
+  () => $fetch<{ success: boolean; data: Store[] }>('/api/admin/stores'),
+  { server: false }
+)
 
-async function fetchStores() {
-  isLoading.value = true
-  error.value = ''
-  try {
-    const response = await $fetch<{ success: boolean; data: Store[] }>('/api/admin/stores')
-    if (response.success) {
-      stores.value = response.data
-    }
-  } catch (e: any) {
-    error.value = e.data?.message || '載入失敗'
-    console.error('Error fetching stores:', e)
-  } finally {
-    isLoading.value = false
-  }
-}
+const stores = computed(() => storesData.value?.data || [])
+const error = computed(() => fetchError.value?.data?.message || (fetchError.value ? '載入失敗' : ''))
 
 async function toggleActive(store: Store) {
   try {
@@ -47,7 +35,7 @@ async function toggleActive(store: Store) {
       method: 'PATCH',
       body: { isActive: !store.isActive },
     })
-    store.isActive = !store.isActive
+    await refresh()
   } catch (e: any) {
     alert(e.data?.message || '更新失敗')
   }
@@ -59,13 +47,11 @@ async function deleteStore(store: Store) {
     await $fetch(`/api/admin/stores/${store.id}`, {
       method: 'DELETE',
     })
-    stores.value = stores.value.filter(s => s.id !== store.id)
+    await refresh()
   } catch (e: any) {
     alert(e.data?.message || '刪除失敗')
   }
 }
-
-onMounted(fetchStores)
 </script>
 
 <template>

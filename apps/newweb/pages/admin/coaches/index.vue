@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-
 definePageMeta({
   layout: 'admin'
 })
@@ -31,10 +29,24 @@ interface StoreOption {
   label: string
 }
 
-const coaches = ref<Coach[]>([])
-const storeOptions = ref<StoreOption[]>([])
-const isLoading = ref(true)
-const error = ref('')
+// 使用 useLazyAsyncData 優化載入速度（不阻塞導航）
+const { data: coachesData, pending: isLoading, error: fetchError, refresh: refreshCoaches } = await useLazyAsyncData(
+  'admin-coaches',
+  () => $fetch<{ success: boolean; data: Coach[] }>('/api/admin/coaches'),
+  { server: false }
+)
+
+const { data: storesData } = await useLazyAsyncData(
+  'admin-stores-options',
+  () => $fetch<{ success: boolean; data: any[] }>('/api/public/stores'),
+  { server: false }
+)
+
+const coaches = computed(() => coachesData.value?.data || [])
+const storeOptions = computed<StoreOption[]>(() =>
+  storesData.value?.data?.map((s: any) => ({ value: s.id, label: s.name })) || []
+)
+const error = computed(() => fetchError.value?.data?.message || (fetchError.value ? '載入失敗' : ''))
 
 // Filters
 const searchQuery = ref('')
@@ -94,35 +106,6 @@ function toggleSort(column: 'sortOrder' | 'name' | 'store') {
   }
 }
 
-// Fetch coaches from API
-async function fetchCoaches() {
-  isLoading.value = true
-  error.value = ''
-  try {
-    const response = await $fetch<{ success: boolean; data: Coach[] }>('/api/admin/coaches')
-    if (response.success) {
-      coaches.value = response.data
-    }
-  } catch (e: any) {
-    error.value = e.data?.message || '載入失敗'
-    console.error('Error fetching coaches:', e)
-  } finally {
-    isLoading.value = false
-  }
-}
-
-// Fetch stores for dropdown
-async function fetchStores() {
-  try {
-    const response = await $fetch<{ success: boolean; data: any[] }>('/api/public/stores')
-    if (response.success) {
-      storeOptions.value = response.data.map(s => ({ value: s.id, label: s.name }))
-    }
-  } catch (e) {
-    console.error('Error fetching stores:', e)
-  }
-}
-
 // Toggle coach active status
 async function toggleActive(coach: Coach) {
   try {
@@ -130,7 +113,7 @@ async function toggleActive(coach: Coach) {
       method: 'PATCH',
       body: { isActive: !coach.isActive },
     })
-    coach.isActive = !coach.isActive
+    await refreshCoaches()
   } catch (e: any) {
     alert(e.data?.message || '更新失敗')
   }
@@ -143,7 +126,7 @@ async function deleteCoach(coach: Coach) {
     await $fetch(`/api/admin/coaches/${coach.id}`, {
       method: 'DELETE',
     })
-    coaches.value = coaches.value.filter(c => c.id !== coach.id)
+    await refreshCoaches()
   } catch (e: any) {
     alert(e.data?.message || '刪除失敗')
   }
@@ -157,16 +140,12 @@ async function moveCoach(coach: Coach, direction: 'up' | 'down') {
   const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
   if (newIndex < 0 || newIndex >= coaches.value.length) return
 
-  // Swap items
+  // Prepare reorder data with swapped positions
   const items = [...coaches.value]
   const temp = items[currentIndex]
   items[currentIndex] = items[newIndex]
   items[newIndex] = temp
 
-  // Update local state immediately for responsive UI
-  coaches.value = items
-
-  // Prepare reorder data
   const reorderItems = items.map((item, index) => ({
     id: item.id,
     sortOrder: index + 1,
@@ -177,21 +156,11 @@ async function moveCoach(coach: Coach, direction: 'up' | 'down') {
       method: 'PATCH',
       body: { items: reorderItems },
     })
-    // Update local sortOrder values
-    coaches.value.forEach((c, idx) => {
-      c.sortOrder = idx + 1
-    })
+    await refreshCoaches()
   } catch (e: any) {
-    // Revert on error
-    await fetchCoaches()
     alert(e.data?.message || '更新排序失敗')
   }
 }
-
-onMounted(() => {
-  fetchCoaches()
-  fetchStores()
-})
 </script>
 
 <template>
