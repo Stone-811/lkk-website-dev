@@ -346,13 +346,15 @@ function setActiveStore(storeSlug: string | null) {
       <Transition name="bottom-sheet">
         <div
           v-if="selectedCoach"
-          class="fixed inset-0 z-50 flex items-end justify-center"
+          class="fixed inset-0 z-[60] flex items-end justify-center"
         >
           <!-- Backdrop -->
           <div class="absolute inset-0 bg-black/60" @click="closeCoachModal" />
 
-          <!-- Modal Content - Bottom Sheet -->
-          <div class="relative bg-white rounded-t-3xl w-full max-w-lg mx-auto max-h-[75vh] shadow-2xl z-10 flex flex-col pb-safe">
+          <!-- Modal Content - Bottom Sheet (responsive) -->
+          <!-- Mobile: floating card with margin for fixed button -->
+          <!-- Desktop: full bottom sheet style -->
+          <div class="relative bg-white rounded-2xl md:rounded-t-3xl md:rounded-b-none w-[calc(100%-2rem)] sm:max-w-md md:max-w-lg md:w-full mx-auto max-h-[65vh] md:max-h-[70vh] mb-20 md:mb-0 shadow-2xl z-10 flex flex-col">
             <!-- Drag Handle -->
             <div class="flex justify-center pt-3 pb-2 flex-shrink-0">
               <div class="w-10 h-1 bg-gray-300 rounded-full" />
