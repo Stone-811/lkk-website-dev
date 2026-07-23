@@ -561,6 +561,33 @@ Nuxt 版的手機版預約按鈕位於：
 | 隱藏頁面 | `/booking` 頁面自動隱藏（使用 `useRoute()` 判斷） |
 | 連結 | `/booking#form` |
 
+### 教練詳情彈窗（Nuxt 版）
+
+全體教練頁面 `/team-intro/coaches` 點擊教練卡片會顯示詳情彈窗：
+
+| 項目 | 說明 |
+|------|------|
+| 頁面 | `apps/newweb/pages/team-intro/coaches.vue` |
+| 元件類型 | Bottom Sheet（從底部滑入） |
+| 動畫 | Vue Transition + CSS `translateY` |
+
+**響應式設計：**
+
+| 裝置 | 樣式 |
+|------|------|
+| 手機 (< md) | 浮動卡片、全圓角 `rounded-2xl`、`max-h-[65vh]`、`mb-20` 避開固定按鈕 |
+| 桌機 (md+) | 底部彈窗、頂部圓角 `rounded-t-3xl`、`max-h-[70vh]`、貼齊底部 |
+
+**彈窗內容：**
+- 教練照片（96x96px 圓角方塊）
+- 姓名、職稱、所屬門店
+- 專長標籤（最多顯示 3 個）
+- 詳細資訊：簡介、專業認證、學歷背景、經歷
+- CTA 按鈕：預約體驗（帶門店參數）
+
+**Z-index 層級：**
+- 彈窗：`z-[60]`（高於手機固定按鈕 `z-50`）
+
 ### PWA 設定（apps/newweb/nuxt.config.ts）
 
 使用 `@vite-pwa/nuxt` 模組，針對 SSR 做特殊配置：
