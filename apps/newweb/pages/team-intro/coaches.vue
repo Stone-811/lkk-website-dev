@@ -482,8 +482,9 @@ function setActiveStore(storeSlug: string | null) {
                 </NuxtLink>
               </div>
             </div>
-          </div>
-        </div>
+            </div><!-- closes Scrollable Content -->
+          </div><!-- closes Modal Content -->
+        </div><!-- closes Outer modal -->
       </Transition>
     </Teleport>
   </div>
